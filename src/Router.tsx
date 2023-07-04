@@ -1,12 +1,17 @@
+import {LoginPage, OauthKakaoPage} from "@/features/Auth";
+import {HomePage} from "@/features/Home";
+import {PenNameSettingPage, TermsAndConditionsPage} from "@/features/SignUp";
 import {Navigate, Route, Routes} from "react-router-dom";
-
-import {HomePage} from "@/page";
 
 export default function Router() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route index element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login/oauth/kakao" element={<OauthKakaoPage />} />
+        <Route path="/sign-up/terms-and-conditions" element={<TermsAndConditionsPage />} />
+        <Route path="/sign-up/pen-name" element={<PenNameSettingPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
