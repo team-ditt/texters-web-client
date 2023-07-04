@@ -1,4 +1,4 @@
-import {axiosPublic} from "@/api/config";
+import {axiosAuthenticated, axiosPublic} from "@/api/config";
 
 type SignInResponse = {
   responseType: "signIn" | "signUp";
@@ -20,4 +20,8 @@ export function signIn(provider: "KAKAO" | "NAVER" | "GOOGLE", authorizationCode
 
 export function signUp(form: SignUpForm) {
   return axiosPublic.post("/auth/sign-up", form);
+}
+
+export function reissueTokens() {
+  return axiosAuthenticated.post("/auth/token-refresh");
 }

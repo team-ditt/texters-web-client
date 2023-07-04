@@ -11,10 +11,13 @@ export const axiosPublic = axios.create(DEFAULT_OPTIONS);
 
 axiosPublic.interceptors.response.use(
   response => {
-    if (response.data.responseType === "signIn") {
-      const {tokens} = response.data;
-      const {saveTokens} = useAuthStore.getState();
-      saveTokens(`Bearer ${tokens.accessToken}`, tokens.refreshToken);
+    if (
+      response.config.url?.includes("auth/sign-in") ||
+      response.config.url?.includes("auth/sign-up")
+    ) {
+      const accessToken = response.data;
+      const {saveToken} = useAuthStore.getState();
+      saveToken(`Bearer ${accessToken}`);
     }
 
     return response.data;
@@ -22,7 +25,7 @@ axiosPublic.interceptors.response.use(
   error => Promise.reject(error),
 );
 
-export const axiosAuthenticated = axios.create(DEFAULT_OPTIONS);
+export const axiosAuthenticated = axios.create({...DEFAULT_OPTIONS, withCredentials: true});
 
 axiosAuthenticated.interceptors.request.use(
   request => {
@@ -36,14 +39,30 @@ axiosAuthenticated.interceptors.request.use(
 );
 
 axiosAuthenticated.interceptors.response.use(
-  response => response.data,
-  async error => {
-    const {reissueTokens, removeTokens} = useAuthStore.getState();
+  response => {
+    if (response.config.url?.includes("auth/refresh-token")) {
+      const accessToken = response.data;
+      const {saveToken} = useAuthStore.getState();
+      saveToken(`Bearer ${accessToken}`);
+    }
 
-    if (error.config.url.includes("auth/token-refresh")) return removeTokens();
+    return response.data;
+  },
+  error => {
+    const {expireSession} = useAuthStore.getState();
 
-    if (error.response.state === 401) {
-      return reissueTokens().then(() => axiosAuthenticated.request(error.config));
+    if (error.config.url.includes("auth/token-refresh")) {
+      return expireSession();
+    }
+
+    if (error.response.status === 401) {
+      return axiosAuthenticated
+        .request({
+          url: "/auth/token-refresh",
+        })
+        .then(response => {
+          if (!!response) return axiosAuthenticated.request(error.config);
+        });
     }
 
     return Promise.reject(error);
