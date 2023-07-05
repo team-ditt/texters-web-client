@@ -25,3 +25,7 @@ export function signUp(form: SignUpForm) {
 export function reissueTokens() {
   return axiosAuthenticated.post("/auth/token-refresh");
 }
+
+export function signOut() {
+  return axiosAuthenticated.post("/auth/sign-out");
+}
