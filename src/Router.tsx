@@ -1,4 +1,4 @@
-import {LoginPage, OauthGooglePage, OauthKakaoPage, OauthNaverPage} from "@/features/Auth";
+import {LoginPage, OauthCallbackPage} from "@/features/Auth";
 import {HomePage} from "@/features/Home";
 import {PenNameSettingPage, TermsAndConditionsPage} from "@/features/SignUp";
 import {useAuthStore} from "@/stores";
@@ -21,9 +21,9 @@ export default function Router() {
     <Routes>
       <Route index element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/login/oauth/kakao" element={<OauthKakaoPage />} />
-      <Route path="/login/oauth/naver" element={<OauthNaverPage />} />
-      <Route path="/login/oauth/google" element={<OauthGooglePage />} />
+      <Route path="/login/oauth/kakao" element={<OauthCallbackPage />} />
+      <Route path="/login/oauth/naver" element={<OauthCallbackPage />} />
+      <Route path="/login/oauth/google" element={<OauthCallbackPage />} />
       <Route path="/sign-up/terms-and-conditions" element={<TermsAndConditionsPage />} />
       <Route path="/sign-up/pen-name" element={<PenNameSettingPage />} />
       <Route path="*" element={<Navigate to="/" />} />

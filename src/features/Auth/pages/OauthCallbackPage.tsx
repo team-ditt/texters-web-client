@@ -1,12 +1,18 @@
 import {SpinningLoader} from "@/components";
 import {useSignIn} from "@/features/Auth/hooks";
-import {useEffect} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useEffect, useMemo} from "react";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 
 export default function OauthGooglePage() {
+  const location = useLocation();
+  const oauthProvider = useMemo(() => {
+    if (location.pathname.endsWith("kakao")) return "KAKAO";
+    if (location.pathname.endsWith("naver")) return "NAVER";
+    return "GOOGLE";
+  }, [location]);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {mutate: signIn} = useSignIn("GOOGLE");
+  const {mutate: signIn} = useSignIn(oauthProvider);
 
   useEffect(() => {
     const authorizationCode = searchParams.get("code");
