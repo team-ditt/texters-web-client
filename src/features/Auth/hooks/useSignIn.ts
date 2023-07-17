@@ -13,7 +13,7 @@ export default function useSignIn(provider: "KAKAO" | "NAVER" | "GOOGLE") {
       const oauthId = error.response?.data.oauthId;
       if (oauthId)
         navigate({
-          pathname: "/sign-up/terms-and-conditions",
+          pathname: "/sign-up",
           search: `oauthId=${oauthId}`,
         });
     },

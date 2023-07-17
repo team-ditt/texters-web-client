@@ -1,6 +1,6 @@
 import {LoginPage} from "@/features/Auth";
 import {HomePage} from "@/features/Home";
-import {TermsAndConditionsPage} from "@/features/SignUp";
+import {SignUpPage} from "@/features/SignUp";
 import {useAuthStore} from "@/stores";
 import {AnimatePresence} from "framer-motion";
 import {useEffect} from "react";
@@ -24,7 +24,7 @@ export default function Router() {
       <Routes location={location} key={location.pathname}>
         <Route index element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<TermsAndConditionsPage />} />
+        <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </AnimatePresence>
