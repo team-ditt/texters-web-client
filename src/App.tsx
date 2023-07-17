@@ -13,12 +13,23 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <div className="main">
-            <Router />
+            <MobileViewBackground />
+            <RouterContainer>
+              <Router />
+            </RouterContainer>
           </div>
         </BrowserRouter>
       </QueryClientProvider>
     </React.StrictMode>
   );
+}
+
+function MobileViewBackground() {
+  return <div className="absolute left-auto right-auto w-full max-w-[850px] h-full bg-white" />;
+}
+
+function RouterContainer({children}: {children: React.ReactNode}) {
+  return <div className="absolute left-0 top-0 w-full h-full flex justify-center">{children}</div>;
 }
 
 export default App;

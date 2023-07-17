@@ -1,11 +1,13 @@
-import {LoginPage, OauthCallbackPage} from "@/features/Auth";
+import {LoginPage} from "@/features/Auth";
 import {HomePage} from "@/features/Home";
-import {PenNameSettingPage, TermsAndConditionsPage} from "@/features/SignUp";
+import {TermsAndConditionsPage} from "@/features/SignUp";
 import {useAuthStore} from "@/stores";
+import {AnimatePresence} from "framer-motion";
 import {useEffect} from "react";
-import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
+import {Navigate, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 
 export default function Router() {
+  const location = useLocation();
   const navigate = useNavigate();
   const {isSessionExpired, resolveExpiredSession} = useAuthStore();
 
@@ -18,15 +20,13 @@ export default function Router() {
   }, [isSessionExpired]);
 
   return (
-    <Routes>
-      <Route index element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/login/oauth/kakao" element={<OauthCallbackPage />} />
-      <Route path="/login/oauth/naver" element={<OauthCallbackPage />} />
-      <Route path="/login/oauth/google" element={<OauthCallbackPage />} />
-      <Route path="/sign-up/terms-and-conditions" element={<TermsAndConditionsPage />} />
-      <Route path="/sign-up/pen-name" element={<PenNameSettingPage />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <AnimatePresence mode="sync">
+      <Routes location={location} key={location.pathname}>
+        <Route index element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/sign-up" element={<TermsAndConditionsPage />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </AnimatePresence>
   );
 }

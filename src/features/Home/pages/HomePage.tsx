@@ -3,6 +3,7 @@ import {keys} from "@/constants";
 import {useSignOut} from "@/features/Auth/hooks";
 import {useAuthStore} from "@/stores";
 import {useQuery} from "@tanstack/react-query";
+import {motion} from "framer-motion";
 import {Link} from "react-router-dom";
 
 export default function HomePage() {
@@ -13,7 +14,12 @@ export default function HomePage() {
   const {mutate: signOut} = useSignOut();
 
   return (
-    <div className="page-container gap-[16px] items-stretch">
+    <motion.div
+      className="mobile-view"
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
+      transition={{duration: 0.1}}>
       홈 화면
       {profile ? (
         <>
@@ -27,6 +33,6 @@ export default function HomePage() {
           로그인 페이지 이동
         </Link>
       )}
-    </div>
+    </motion.div>
   );
 }

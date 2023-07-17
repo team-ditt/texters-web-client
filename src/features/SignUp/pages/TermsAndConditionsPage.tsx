@@ -7,7 +7,7 @@ export default function TermsAndConditionsPage() {
   usePreventDirectSignUp();
 
   return (
-    <div className="page-container gap-[16px] items-stretch">
+    <div className="mobile-view">
       약관 동의하시겠습니까?
       <Link
         className="px-4 py-2 bg-blue-primary text-white rounded-md self-center"
