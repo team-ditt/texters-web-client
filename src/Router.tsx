@@ -1,4 +1,4 @@
-import {LoginPage} from "@/features/Auth";
+import {SignInPage} from "@/features/Auth";
 import {HomePage} from "@/features/Home";
 import {SignUpPage} from "@/features/SignUp";
 import {useAuthStore} from "@/stores";
@@ -15,7 +15,7 @@ export default function Router() {
     if (isSessionExpired) {
       resolveExpiredSession();
       alert("세션이 만료되었습니다.");
-      navigate("/login");
+      navigate("/sign-in");
     }
   }, [isSessionExpired]);
 
@@ -23,7 +23,7 @@ export default function Router() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route index element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

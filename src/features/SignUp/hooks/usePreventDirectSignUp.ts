@@ -8,7 +8,7 @@ export default function usePreventDirectSignUp() {
 
   useEffect(() => {
     if (!oauthId) {
-      navigate("/login");
+      navigate("/sign-in");
     }
   }, []);
 }

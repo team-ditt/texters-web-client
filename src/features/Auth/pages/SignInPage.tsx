@@ -4,7 +4,7 @@ import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
 import {motion} from "framer-motion";
 import {Link, useNavigate} from "react-router-dom";
 
-export default function LoginPage() {
+export default function SignInPage() {
   const navigate = useNavigate();
 
   const {KAKAO_LOGIN_URI, NAVER_LOGIN_URI, GOOGLE_LOGIN_URI, isSigningIn} = useOauthSignIn();
@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   return (
     <motion.div
-      className="mobile-view fixed left-auto right-auto p-6 justify-center items-center"
+      className="mobile-view fixed left-auto right-auto h-full p-6 justify-center items-center"
       initial={{top: "100%"}}
       animate={{top: 0}}
       exit={{top: "100%"}}>

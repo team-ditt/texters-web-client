@@ -4,10 +4,31 @@ import {PenNameForm, TermsAndConditionsForm} from "@/features/SignUp/components"
 import {usePenNameForm, usePreventDirectSignUp} from "@/features/SignUp/hooks";
 import {useMutation} from "@tanstack/react-query";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
+import {motion} from "framer-motion";
 import {useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
+const HORIZONTAL_HIDDEN_ANIMATION_PROPS = {
+  left: "100%",
+};
+const HORIZONTAL_IDLE_ANIMATION_PROPS = {
+  left: "auto",
+};
+const VERTICAL_HIDDEN_ANIMATION_PROPS = {
+  top: "100%",
+};
+const VERTICAL_IDLE_ANIMATION_PROPS = {
+  top: 0,
+};
+
 export default function SignUpPage() {
+  const [pageHiddenAnimationProps, setPageHiddenAnimationProps] = useState<any>(
+    HORIZONTAL_HIDDEN_ANIMATION_PROPS,
+  );
+  const [pageIdleAnimationProps, setPageIdleAnimationProps] = useState<any>(
+    HORIZONTAL_IDLE_ANIMATION_PROPS,
+  );
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -22,17 +43,25 @@ export default function SignUpPage() {
   const {mutate: signUp, isLoading} = useMutation({
     mutationFn: () =>
       api.auth.signUp({oauthId: searchParams.get("oauthId")!, penName: penNameForm.penName}),
-    onSuccess: () => navigate("/"),
-    onError: () => navigate("/login"),
+    onSuccess: () => {
+      setPageHiddenAnimationProps(VERTICAL_HIDDEN_ANIMATION_PROPS);
+      setPageIdleAnimationProps(VERTICAL_IDLE_ANIMATION_PROPS);
+      navigate("/", {replace: true});
+    },
+    onError: () => navigate("/sign-in", {replace: true}),
   });
 
-  const onGoBack = () => navigate("/login");
+  const onGoBack = () => navigate("/sign-in");
 
   usePreventDirectSignUp();
 
   return (
-    <div className="mobile-view relative px-6 pt-20 pb-10 justify-center items-center">
-      <button className="fixed left-6 top-6" onClick={onGoBack}>
+    <motion.div
+      className="mobile-view fixed left-auto right-auto h-full px-6 pt-20 pb-10 justify-center items-center"
+      initial={pageHiddenAnimationProps}
+      animate={pageIdleAnimationProps}
+      exit={pageHiddenAnimationProps}>
+      <button className="absolute left-6 top-6" onClick={onGoBack}>
         <LeftArrowIcon />
       </button>
 
@@ -46,6 +75,6 @@ export default function SignUpPage() {
           <span>가입하기</span>
         </FlatButton>
       </div>
-    </div>
+    </motion.div>
   );
 }
