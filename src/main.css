@@ -34,7 +34,9 @@ body,
 .main {
   position: relative;
   width: 100%;
+  min-width: 320px;
   height: 100%;
+  min-height: 640px;
   display: flex;
   justify-content: center;
   background-color: #ededed;
@@ -54,94 +56,14 @@ body,
 }
 
 @layer base {
-  @import "../assets/fonts/Pretendard/pretendardvariable.css";
+  button,
+  input,
+  textarea {
+    @apply outline-none;
+  }
 }
 
 @layer components {
-  /* Typography System */
-  .text-display-1 {
-    @apply text-[40px] font-bold leading-[52px] tracking-[-0.6px];
-  }
-  .text-display-2 {
-    @apply text-[36px] font-bold leading-[46px] tracking-[-0.6px];
-  }
-  .text-display-3 {
-    @apply text-[32px] font-bold leading-[42px] tracking-[-0.6px];
-  }
-  .text-display-4 {
-    @apply text-[28px] font-bold leading-[38px] tracking-[-0.6px];
-  }
-  .text-display-5 {
-    @apply text-[24px] font-bold leading-[34px] tracking-[-0.6px];
-  }
-  .text-headline {
-    @apply text-[20px] font-bold leading-[28px] tracking-[-0.6px];
-  }
-  .text-subhead-1 {
-    @apply text-[16px] font-bold leading-[22px] tracking-[-0.6px];
-  }
-  .text-subhead-long-1 {
-    @apply text-[16px] font-bold leading-[28px] tracking-[-0.6px];
-  }
-  .text-subhead-2 {
-    @apply text-[14px] font-bold leading-[20px] tracking-[-0.6px];
-  }
-  .text-subhead-long-2 {
-    @apply text-[14px] font-bold leading-[24px] tracking-[-0.6px];
-  }
-  .text-subhead-3 {
-    @apply text-[12px] font-bold leading-[18px] tracking-[-0.6px];
-  }
-  .text-body-1 {
-    @apply text-[16px] font-normal leading-[20px] tracking-[-0.6px];
-  }
-  .text-body-long-1 {
-    @apply text-[16px] font-normal leading-[28px] tracking-[-0.6px];
-  }
-  .text-body-2 {
-    @apply text-[14px] font-normal leading-[20px] tracking-[-0.6px];
-  }
-  .text-body-long-2 {
-    @apply text-[14px] font-normal leading-[24px] tracking-[-0.6px];
-  }
-  .text-caption {
-    @apply text-[12px] font-normal leading-[18px] tracking-[-0.6px];
-  }
-
-  /* Button UI */
-  .btn {
-    @apply w-full flex flex-row justify-center items-center transition-colors duration-200 ease-in-out;
-  }
-  .btn-large {
-    @apply h-[60px] px-[24px] py-[4px] rounded-[8px] gap-[8px] text-headline;
-  }
-  .btn-medium {
-    @apply h-[48px] px-[16px] py-[4px] rounded-[8px] gap-[8px] text-subhead-1;
-  }
-  .btn-small {
-    @apply w-fit h-[32px] px-[16px] py-[4px] rounded-[4px] gap-[4px] text-subhead-2;
-  }
-  .btn-primary {
-    @apply bg-blue-primary text-white;
-  }
-  .btn-primary:hover {
-    @apply bg-blue-primary-dark;
-  }
-  .btn-secondary {
-    @apply bg-black-200 text-black;
-  }
-  .btn-secondary:hover {
-    @apply bg-black-300;
-  }
-  .btn:disabled {
-    @apply bg-black-400 text-black-500;
-  }
-
-  /* Chip UI */
-  .chip {
-    @apply w-fit h-[24px] rounded-[8px] px-[12px] py-[4px] text-subhead-3;
-  }
-
   /* Layout */
   .mobile-view {
     @apply w-full max-w-[850px] h-full bg-white flex flex-col justify-start items-stretch;
@@ -149,68 +71,6 @@ body,
 
   .desktop-view {
     @apply w-full h-full bg-white flex flex-col justify-start items-center;
-  }
-
-  /* Dual Range Slider */
-  .slider {
-    @apply w-[250px] relative;
-  }
-  .slider__track,
-  .slider__range,
-  .slider__left-value,
-  .slider__right-value {
-    @apply absolute;
-  }
-  .slider__track,
-  .slider__range {
-    @apply rounded-[4px] h-2;
-  }
-  .slider__track {
-    @apply w-full bg-black-300 z-[1];
-  }
-  .slider__range {
-    @apply bg-blue-light-1 z-[2];
-  }
-  .slider__left-value,
-  .slider__right-value {
-    @apply mt-4 text-caption text-black-600;
-  }
-  .slider__left-value {
-    @apply left-[2px];
-  }
-  .slider__right-value {
-    @apply -right-1;
-  }
-  .thumb,
-  .thumb::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .thumb {
-    pointer-events: none;
-    position: absolute;
-    height: 0;
-    width: 250px;
-    outline: none;
-  }
-  .thumb::-webkit-slider-thumb {
-    @apply relative mt-1 w-6 h-6;
-    background-color: rgb(248 250 252);
-    border: 1px solid rgb(226 232 240);
-    border-radius: 50%;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-    pointer-events: all;
-  }
-
-  .thumb::-moz-range-thumb {
-    @apply relative mt-1 w-6 h-6;
-    background-color: rgb(248 250 252);
-    border: 1px solid rgb(226 232 240);
-    border-radius: 50%;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-    pointer-events: all;
   }
 
   /* Scroll Bar */

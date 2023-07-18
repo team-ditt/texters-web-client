@@ -10,7 +10,7 @@ type Props = HTMLAttributes<HTMLButtonElement> &
 export default function FlatButton({className, disabled = false, children, ...props}: Props) {
   return (
     <motion.button
-      className={`w-full h-[52px] ${className}`}
+      className={`w-full h-[52px] rounded-md text-white text-[18px] font-bold ${className}`}
       variants={variants}
       animate={disabled ? "inactive" : "active"}
       disabled={disabled}
@@ -22,5 +22,5 @@ export default function FlatButton({className, disabled = false, children, ...pr
 
 const variants = {
   active: {backgroundColor: "#383838"},
-  inactive: {backgroundColor: "#CECECE", transition: {duration: 0.15}},
+  inactive: {backgroundColor: "#CECECE", transition: {duration: 0.1}},
 };

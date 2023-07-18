@@ -1,5 +1,4 @@
 import {api} from "@/api";
-import {AnimatedMobilePageContainer} from "@/components";
 import {keys} from "@/constants";
 import {useSignOut} from "@/features/Auth/hooks";
 import {useAuthStore} from "@/stores";
@@ -14,7 +13,7 @@ export default function HomePage() {
   const {mutate: signOut} = useSignOut();
 
   return (
-    <AnimatedMobilePageContainer>
+    <div className="mobile-view">
       홈 화면
       {profile ? (
         <>
@@ -28,6 +27,6 @@ export default function HomePage() {
           로그인 페이지 이동
         </Link>
       )}
-    </AnimatedMobilePageContainer>
+    </div>
   );
 }

@@ -20,7 +20,7 @@ export default function Router() {
   }, [isSessionExpired]);
 
   return (
-    <AnimatePresence mode="sync">
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route index element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
