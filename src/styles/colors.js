@@ -29,5 +29,5 @@ module.exports = {
   point: {
     red: "#FF4C4C",
   },
-  overlay: "rgba(0, 0, 0, 0.36)",
+  overlay: "rgba(0, 0, 0, 0.6)",
 };

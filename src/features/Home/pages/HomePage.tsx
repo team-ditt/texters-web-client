@@ -13,7 +13,7 @@ export default function HomePage() {
   const {mutate: signOut} = useSignOut();
 
   return (
-    <div className="page-container gap-[16px] items-stretch">
+    <div className="mobile-view">
       홈 화면
       {profile ? (
         <>
