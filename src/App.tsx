@@ -40,12 +40,7 @@ function MobileViewBackground({type}: {type: "left" | "right"}) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return (
-    <div
-      className={`absolute ${position} right-auto h-full bg-[#ECEDED] z-[9999]`}
-      style={{width}}
-    />
-  );
+  return <div className={`absolute ${position} h-full bg-[#ECEDED] z-[9999]`} style={{width}} />;
 }
 
 function RouterContainer({children}: {children: React.ReactNode}) {

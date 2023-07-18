@@ -1,6 +1,8 @@
 import {SizedBox, SpinningLoader} from "@/components";
 import {useOauthSignIn} from "@/features/Auth/hooks";
 import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
+import {ReactComponent as LogoPositive} from "assets/logo/logo-positive.svg";
+import {ReactComponent as LogoSymbol} from "assets/logo/logo-symbol.svg";
 import {motion} from "framer-motion";
 import {Link, useNavigate} from "react-router-dom";
 
@@ -22,9 +24,9 @@ export default function SignInPage() {
       </button>
 
       <div className="w-full max-w-[336px] flex flex-col">
-        <img className="w-[112px] self-center" src="assets/logo/logo-symbol.png" />
+        <LogoSymbol className="self-center" width={112} />
         <SizedBox height={16} />
-        <img className="w-[146px] self-center" src="assets/logo/logo-positive.png" />
+        <LogoPositive className="self-center" width={146} />
         <SizedBox height={72} />
         <Link
           className="h-12 flex justify-center items-center rounded-[10px] shadow-[0_2px_3px_rgba(0,0,0,0.168)] text-black-500"

@@ -6,6 +6,7 @@ import {useQuery} from "@tanstack/react-query";
 import {ReactComponent as SignInIcon} from "assets/icons/sign-in.svg";
 import {ReactComponent as SignOutIcon} from "assets/icons/sign-out.svg";
 import {ReactComponent as ToDashboardIcon} from "assets/icons/to-dashboard.svg";
+import {ReactComponent as LogoPositive} from "assets/logo/logo-positive.svg";
 import {Link} from "react-router-dom";
 
 export default function MobileAppBar() {
@@ -18,7 +19,7 @@ export default function MobileAppBar() {
   return (
     <nav className="w-full max-w-[850px] h-16 px-6 flex justify-between items-center">
       <Link to="/">
-        <img className="w-[108px] h-5" src="assets/logo/logo-positive.png" />
+        <LogoPositive width={108} />
       </Link>
       <li className="list-none flex items-center gap-[12px]">
         <Link to={`/members/${profile?.id}/books`}>
