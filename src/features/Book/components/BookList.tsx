@@ -3,16 +3,16 @@ import BookCoverImage from "@/features/Book/components/BookCoverImage";
 import {Book} from "@/types/book";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
-import {useMemo} from "react";
+import {HTMLAttributes, useMemo} from "react";
 import {Link} from "react-router-dom";
 
-type ListProps = {
+type ListProps = HTMLAttributes<HTMLDivElement> & {
   books: Book[];
 };
 
-export default function BookList({books}: ListProps) {
+export default function BookList({books, className, ...props}: ListProps) {
   return (
-    <div className="self-stretch flex flex-col gap-[8px]">
+    <div className={`self-stretch flex flex-col gap-[8px] ${className}`} {...props}>
       {books.map(book => (
         <BookListItem key={book.id} book={book} />
       ))}

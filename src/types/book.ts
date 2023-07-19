@@ -21,5 +21,7 @@ export type WeeklyMostViewedBook = Book & {
 
 export type BookQuery = {
   query?: string;
-  order: "viewed" | "liked" | "published-date";
+  order: BookQueryOrderType;
 };
+
+export type BookQueryOrderType = "viewed" | "liked" | "published-date";
