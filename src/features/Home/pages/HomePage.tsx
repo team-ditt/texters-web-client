@@ -1,32 +1,33 @@
 import {api} from "@/api";
+import {MobileFooter, SizedBox} from "@/components";
 import {keys} from "@/constants";
-import {useSignOut} from "@/features/Auth/hooks";
-import {useAuthStore} from "@/stores";
+import {BookList} from "@/features/Book/components";
+import {WeeklyMostViewedCarousel} from "@/features/Home/components";
 import {useQuery} from "@tanstack/react-query";
 import {Link} from "react-router-dom";
 
 export default function HomePage() {
-  const {accessToken} = useAuthStore();
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE_QUERY], api.members.fetchProfile, {
-    enabled: !!accessToken,
-  });
-  const {mutate: signOut} = useSignOut();
+  const {data: paginatedBooks} = useQuery(
+    [keys.GET_BOOKS, {page: 1, limit: 10, order: "published-date"}],
+    () => api.books.fetchBooks({page: 1, limit: 10, order: "published-date"}),
+  );
 
   return (
     <div className="mobile-view">
-      홈 화면
-      {profile ? (
-        <>
-          <span>로그인 사용자 : {profile.penName}</span>
-          <button className="px-4 py-2 rounded-md bg-black-200" onClick={signOut as () => void}>
-            로그아웃
-          </button>
-        </>
-      ) : (
-        <Link className="px-4 py-2 bg-blue-primary text-white rounded-md self-center" to="/login">
-          로그인 페이지 이동
-        </Link>
-      )}
+      <WeeklyMostViewedCarousel />
+      {paginatedBooks ? (
+        <div className="flex-1 px-6 py-8 flex-col items-stretch">
+          <div className="flex px-2 justify-between items-end">
+            <span className="font-bold text-[24px]">최근 올라온 작품</span>
+            <Link className="font-bold text-[13px] text-[#818181]" to="/books">
+              모두 보기
+            </Link>
+          </div>
+          <SizedBox height={8} />
+          <BookList books={paginatedBooks.data} />
+        </div>
+      ) : null}
+      <MobileFooter />
     </div>
   );
 }

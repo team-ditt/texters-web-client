@@ -1,15 +1,5 @@
 import {axiosAuthenticated, axiosPublic} from "@/api/config";
-
-type MemberRole = "ROLE_USER" | "ROLE_ADMIN";
-
-type Profile = {
-  id: number;
-  oauthId: string;
-  penName: string;
-  role: MemberRole;
-  createdAt: Date;
-  modifiedAt: Date;
-};
+import {Profile} from "@/types/member";
 
 export function isUniquePenName(penName: string) {
   return axiosPublic.get<void>(`/members/pen-name/${penName}/unique`);

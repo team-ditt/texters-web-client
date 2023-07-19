@@ -39,9 +39,10 @@ body,
   min-height: 640px;
   display: flex;
   justify-content: center;
-  background-color: #ededed;
+  background-color: white;
 }
 
+/* Modal */
 .ReactModal__Overlay {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
@@ -55,6 +56,19 @@ body,
   opacity: 0;
 }
 
+/* Swiper */
+.swiper {
+  overflow: visible !important;
+}
+
+.swiper-pagination {
+  --swiper-pagination-bottom: auto;
+  --swiper-pagination-top: -24px;
+  --swiper-pagination-color: black;
+  text-align: left !important;
+  padding-left: 24px;
+}
+
 @layer base {
   button,
   input,
@@ -66,11 +80,11 @@ body,
 @layer components {
   /* Layout */
   .mobile-view {
-    @apply w-full max-w-[850px] h-full bg-white flex flex-col justify-start items-stretch;
+    @apply flex-1 w-full max-w-[850px] bg-white flex flex-col justify-start items-stretch;
   }
 
   .desktop-view {
-    @apply w-full h-full bg-white flex flex-col justify-start items-center;
+    @apply flex-1 w-full bg-white flex flex-col justify-start items-center;
   }
 
   /* Scroll Bar */
