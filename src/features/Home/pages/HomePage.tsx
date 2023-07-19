@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {SizedBox} from "@/components";
+import {MobileFooter, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookList} from "@/features/Book/components";
 import {WeeklyMostViewedCarousel} from "@/features/Home/components";
@@ -27,6 +27,7 @@ export default function HomePage() {
           <BookList books={paginatedBooks.data} />
         </div>
       ) : null}
+      <MobileFooter />
     </div>
   );
 }
