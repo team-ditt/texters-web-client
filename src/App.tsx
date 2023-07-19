@@ -45,7 +45,7 @@ function MobileViewBackground({type}: {type: "left" | "right"}) {
 
 function RouterContainer({children}: {children: React.ReactNode}) {
   return (
-    <div className="absolute left-0 top-0 w-full h-full flex flex-col items-center">{children}</div>
+    <div className="absolute left-0 top-0 w-full h-auto flex flex-col items-center">{children}</div>
   );
 }
 

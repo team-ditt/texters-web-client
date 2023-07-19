@@ -18,3 +18,8 @@ export type Book = {
 export type WeeklyMostViewedBook = Book & {
   weeklyViewed: number;
 };
+
+export type BookQuery = {
+  query?: string;
+  order: "viewed" | "liked" | "published-date";
+};

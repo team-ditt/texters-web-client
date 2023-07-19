@@ -9,3 +9,8 @@ export type Paginated<T> = {
   totalCount: number;
   data: T[];
 };
+
+export type PaginationQuery = {
+  page: number;
+  limit: number;
+};
