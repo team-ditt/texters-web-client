@@ -1,18 +1,5 @@
 import {axiosAuthenticated, axiosPublic} from "@/api/config";
-
-type SignInResponse = {
-  responseType: "signIn" | "signUp";
-  oauthId?: string;
-  tokens?: {
-    accessToken: string;
-    refreshToken: string;
-  };
-};
-
-type SignUpForm = {
-  oauthId: string;
-  penName: string;
-};
+import {SignInResponse, SignUpForm} from "@/types/auth";
 
 export function signIn(provider: "KAKAO" | "NAVER" | "GOOGLE", authorizationCode: string) {
   return axiosPublic.post<SignInResponse>("/auth/sign-in", {provider, authorizationCode});

@@ -1,4 +1,5 @@
 import {SignInPage} from "@/features/Auth/pages";
+import {BookInfoPage} from "@/features/Book/pages";
 import {HomePage} from "@/features/Home/pages";
 import {SignUpPage} from "@/features/SignUp/pages";
 import {useAuthStore} from "@/stores";
@@ -25,6 +26,7 @@ export default function Router() {
         <Route index element={<HomePage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/books/:bookId" element={<BookInfoPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </AnimatePresence>
