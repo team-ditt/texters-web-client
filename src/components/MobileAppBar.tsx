@@ -18,7 +18,7 @@ export default function MobileAppBar() {
   const {mutate: signOut} = useSignOut();
 
   return (
-    <nav className="w-full max-w-[850px] h-16 ps-6 pe-4 flex justify-between items-center">
+    <nav className="fixed top-0 left-0 w-full max-w-[850px] h-16 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
       <Link to="/">
         <LogoPositive width={108} />
       </Link>

@@ -48,7 +48,7 @@ export default function BookSearchPage() {
   }, [searchParams]);
 
   return (
-    <div className="mobile-view p-6">
+    <div className="mobile-view p-6 pt-[72px]">
       <div className="flex flex-row justify-end gap-[12px]">
         <button
           className={classNames("font-semibold text-[14px]", {

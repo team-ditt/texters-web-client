@@ -57,7 +57,7 @@ export default function SignUpPage() {
 
   return (
     <motion.div
-      className="mobile-view fixed left-auto right-auto h-full px-6 pt-20 pb-10 justify-center items-center"
+      className="mobile-view fixed left-auto right-auto h-full px-6 pt-20 pb-10 justify-center items-center z-[2000]"
       initial={pageHiddenAnimationProps}
       animate={pageIdleAnimationProps}
       exit={pageHiddenAnimationProps}>

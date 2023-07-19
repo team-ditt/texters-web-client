@@ -13,7 +13,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="mobile-view">
+    <div className="mobile-view pt-16">
       <WeeklyMostViewedCarousel />
       {paginatedBooks ? (
         <div className="flex-1 px-6 py-8 flex-col items-stretch">
