@@ -10,7 +10,7 @@ export default function useSignOut() {
   return useMutation({
     mutationFn: api.auth.signOut,
     onSuccess: () => {
-      navigate("/");
+      navigate("/", {replace: true});
       removeToken();
       window.location.reload();
     },

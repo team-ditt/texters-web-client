@@ -1,17 +1,24 @@
 import {SizedBox, SpinningLoader} from "@/components";
 import {useOauthSignIn} from "@/features/Auth/hooks";
+import {useAuthStore} from "@/stores";
 import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
 import {ReactComponent as LogoPositive} from "assets/logo/logo-positive.svg";
 import {ReactComponent as LogoSymbol} from "assets/logo/logo-symbol.svg";
 import {motion} from "framer-motion";
+import {useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 
 export default function SignInPage() {
   const navigate = useNavigate();
+  const didSignIn = useAuthStore(state => !!state.accessToken);
 
   const {KAKAO_LOGIN_URI, NAVER_LOGIN_URI, GOOGLE_LOGIN_URI, isSigningIn} = useOauthSignIn();
 
-  const onClose = () => navigate("/");
+  const onClose = () => navigate(-1);
+
+  useEffect(() => {
+    if (didSignIn) navigate("/", {replace: true});
+  }, [didSignIn]);
 
   return (
     <motion.div

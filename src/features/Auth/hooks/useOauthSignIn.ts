@@ -1,5 +1,5 @@
 import useSignIn from "@/features/Auth/hooks/useSignIn";
-import {useEffect, useMemo} from "react";
+import {useEffect} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 
 const KAKAO_LOGIN_URI =
@@ -27,7 +27,7 @@ const GOOGLE_LOGIN_URI =
 
 export default function useOauthSignIn() {
   const [searchParams] = useSearchParams();
-  const oauthProvider = useMemo(() => searchParams.get("oauth"), [searchParams]);
+  const oauthProvider = searchParams.get("oauth");
 
   const navigate = useNavigate();
   const {mutate: signIn} = useSignIn(oauthProvider?.toUpperCase() as "KAKAO" | "NAVER" | "GOOGLE");
