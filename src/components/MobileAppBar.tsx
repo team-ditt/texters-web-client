@@ -18,7 +18,7 @@ export default function MobileAppBar() {
   const {mutate: signOut} = useSignOut();
 
   return (
-    <nav className="fixed top-0 left-0 w-full max-w-[850px] h-16 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
+    <nav className="fixed top-0 left-auto w-full max-w-[850px] h-16 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
       <Link to="/">
         <LogoPositive width={108} />
       </Link>
@@ -30,7 +30,7 @@ export default function MobileAppBar() {
           <SearchIcon />
         </Link>
         {didSignIn ? (
-          <button onClick={signOut as () => void}>
+          <button className="p-1.5" onClick={signOut as () => void}>
             <SignOutIcon />
           </button>
         ) : (

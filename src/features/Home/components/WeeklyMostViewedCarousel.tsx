@@ -1,10 +1,9 @@
 import {api} from "@/api";
 import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
+import {useBookTitleRef} from "@/features/Book/hooks";
 import {Book} from "@/types/book";
-import {toBalancedTwoLines} from "@/utils/formatter";
 import {useQuery} from "@tanstack/react-query";
-import {useEffect, useRef} from "react";
 import {Link} from "react-router-dom";
 import "swiper/css";
 
@@ -39,15 +38,7 @@ export default function WeeklyMostViewedCarousel() {
 }
 
 function CarouselSlide({book}: {book: Book}) {
-  const titleRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (!titleRef.current) return;
-
-    const SINGLE_LINE_HEIGHT = 30;
-    const isOverflowed = titleRef.current.clientHeight > SINGLE_LINE_HEIGHT;
-    titleRef.current.innerText = isOverflowed ? toBalancedTwoLines(book.title) : book.title;
-  }, [titleRef.current]);
+  const {titleRef} = useBookTitleRef(book.title);
 
   return (
     <Link className="relative" to={`/books/${book.id}`}>

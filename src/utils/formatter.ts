@@ -7,3 +7,7 @@ export function toBalancedTwoLines(text: string) {
   const secondHalf = text.slice(splitIndex).trim();
   return `${firstHalf}\n${secondHalf}`;
 }
+
+export function toCompactNumber(n: number) {
+  return Intl.NumberFormat("en", {notation: "compact"}).format(n);
+}
