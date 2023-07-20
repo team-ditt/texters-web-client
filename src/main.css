@@ -56,16 +56,12 @@ body,
 }
 
 /* Swiper */
-.swiper {
-  overflow: visible !important;
-}
-
 .swiper-pagination {
   --swiper-pagination-bottom: auto;
-  --swiper-pagination-top: -24px;
-  --swiper-pagination-color: black;
+  --swiper-pagination-top: 8px;
+  --swiper-pagination-color: white;
   text-align: left !important;
-  padding-left: 24px;
+  padding-left: 16px;
 }
 
 @layer base {
