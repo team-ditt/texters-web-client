@@ -1,18 +1,19 @@
 import {SizedBox} from "@/components";
 import BookCoverImage from "@/features/Book/components/BookCoverImage";
 import {Book} from "@/types/book";
+import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
-import {useMemo} from "react";
+import {HTMLAttributes, useMemo} from "react";
 import {Link} from "react-router-dom";
 
-type ListProps = {
+type ListProps = HTMLAttributes<HTMLDivElement> & {
   books: Book[];
 };
 
-export default function BookList({books}: ListProps) {
+export default function BookList({books, className, ...props}: ListProps) {
   return (
-    <div className="self-stretch flex flex-col gap-[8px]">
+    <div className={`self-stretch flex flex-col gap-[8px] ${className}`} {...props}>
       {books.map(book => (
         <BookListItem key={book.id} book={book} />
       ))}
@@ -37,11 +38,13 @@ function BookListItem({book}: ListItemProps) {
             {book.title}
           </span>
           <div className="flex flex-row items-center">
-            <ViewedIcon />
-            <span className="ms-0.5 text-[12px] text-[#888888]">{book.viewed}</span>
+            <ViewedIcon fill="#999999" />
+            <span className="ms-0.5 text-[12px] text-[#999999]">
+              {toCompactNumber(book.viewed)}
+            </span>
             <SizedBox width={12} />
-            <LikedIcon />
-            <span className="ms-0.5 text-[12px] text-[#888888]">{book.liked}</span>
+            <LikedIcon fill="#999999" />
+            <span className="ms-0.5 text-[12px] text-[#999999]">{toCompactNumber(book.liked)}</span>
           </div>
           <span className="font-semibold text-[14px] text-[#1A202C]">{book.author.penName}</span>
           <span className="text-[14px] text-[#717D96] text-ellipsis line-clamp-1">

@@ -32,11 +32,10 @@ body,
 }
 
 .main {
-  position: relative;
   width: 100%;
   min-width: 320px;
-  height: 100%;
-  min-height: 640px;
+  height: auto;
+  min-height: max(640px, 100%);
   display: flex;
   justify-content: center;
   background-color: white;
@@ -57,16 +56,12 @@ body,
 }
 
 /* Swiper */
-.swiper {
-  overflow: visible !important;
-}
-
 .swiper-pagination {
   --swiper-pagination-bottom: auto;
-  --swiper-pagination-top: -24px;
-  --swiper-pagination-color: black;
+  --swiper-pagination-top: 8px;
+  --swiper-pagination-color: white;
   text-align: left !important;
-  padding-left: 24px;
+  padding-left: 16px;
 }
 
 @layer base {

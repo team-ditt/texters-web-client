@@ -40,7 +40,7 @@ axiosAuthenticated.interceptors.request.use(
 
 axiosAuthenticated.interceptors.response.use(
   response => {
-    if (response.config.url?.includes("auth/refresh-token")) {
+    if (response.config.url?.includes("auth/token-refresh")) {
       const accessToken = response.data;
       const {saveToken} = useAuthStore.getState();
       saveToken(`Bearer ${accessToken}`);
