@@ -32,11 +32,10 @@ body,
 }
 
 .main {
-  position: relative;
   width: 100%;
   min-width: 320px;
-  height: 100%;
-  min-height: 640px;
+  height: auto;
+  min-height: max(640px, 100%);
   display: flex;
   justify-content: center;
   background-color: white;

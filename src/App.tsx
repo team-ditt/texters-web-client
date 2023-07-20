@@ -14,12 +14,12 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <div className="main">
-            <MobileViewBackground type="left" />
+            <MobileViewBackground />
             <RouterContainer>
               <MobileAppBar />
               <Router />
             </RouterContainer>
-            <MobileViewBackground type="right" />
+            <MobileViewBackground />
           </div>
         </BrowserRouter>
       </QueryClientProvider>
@@ -27,9 +27,8 @@ function App() {
   );
 }
 
-function MobileViewBackground({type}: {type: "left" | "right"}) {
+function MobileViewBackground() {
   const [width, setWidth] = React.useState(Math.max((window.innerWidth - 850) / 2, 0));
-  const position = type === "left" ? "left-0" : "right-0";
 
   React.useEffect(() => {
     function handleResize() {
@@ -40,15 +39,11 @@ function MobileViewBackground({type}: {type: "left" | "right"}) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return <div className={`absolute ${position} h-full bg-[#ECEDED] z-[9999]`} style={{width}} />;
+  return <div className={`bg-[#ECEDED] z-[9999]`} style={{width}} />;
 }
 
 function RouterContainer({children}: {children: React.ReactNode}) {
-  return (
-    <div className="absolute left-0 top-0 w-full h-auto min-h-full flex flex-col items-center">
-      {children}
-    </div>
-  );
+  return <div className="w-full max-w-[850px] flex flex-col items-center">{children}</div>;
 }
 
 export default App;
