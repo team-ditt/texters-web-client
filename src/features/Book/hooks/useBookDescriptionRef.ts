@@ -1,7 +1,11 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useState} from "react";
 
-export default function useBookDescriptionRef(maxLines: number) {
-  const descriptionRef = useRef<HTMLParagraphElement>(null);
+export default function useBookDescriptionRef() {
+  const descriptionRef = useCallback((node: HTMLParagraphElement) => {
+    if (!node) return;
+    const isOverflowed = node.scrollHeight > node.clientHeight;
+    setHasEllipsis(isOverflowed);
+  }, []);
   const [hasEllipsis, setHasEllipsis] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -9,13 +13,6 @@ export default function useBookDescriptionRef(maxLines: number) {
     const toBe = !isExpanded;
     setIsExpanded(toBe);
   };
-
-  useEffect(() => {
-    if (!descriptionRef.current) return;
-
-    const isOverflowed = descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight;
-    setHasEllipsis(isOverflowed);
-  }, [descriptionRef.current]);
 
   return {
     descriptionRef,

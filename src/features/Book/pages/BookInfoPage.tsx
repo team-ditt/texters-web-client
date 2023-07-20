@@ -22,7 +22,7 @@ export default function BookInfoPage() {
   });
   const {titleRef} = useBookTitleRef(book?.title);
   const {isLiked, toggleLike} = useBookLike(book?.id);
-  const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef(10);
+  const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
 
   const onGoBack = () => navigate(-1);
 
