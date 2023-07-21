@@ -3,8 +3,8 @@ import * as React from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {BrowserRouter} from "react-router-dom";
 
-import Router from "@/Router";
 import {MobileAppBar} from "@/components";
+import {Router} from "@/Router";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +43,11 @@ function MobileViewBackground() {
 }
 
 function RouterContainer({children}: {children: React.ReactNode}) {
-  return <div className="w-full max-w-[850px] flex flex-col items-center">{children}</div>;
+  return (
+    <div className="w-full max-w-[850px] flex flex-col items-center overflow-x-auto">
+      {children}
+    </div>
+  );
 }
 
 export default App;

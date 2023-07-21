@@ -15,6 +15,7 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  overflow-x: auto;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -36,6 +37,7 @@ body,
   min-width: 320px;
   height: auto;
   min-height: max(640px, 100%);
+  overflow-x: auto;
   display: flex;
   justify-content: center;
   background-color: white;
@@ -79,18 +81,24 @@ body,
   }
 
   .desktop-view {
-    @apply flex-1 w-full bg-white flex flex-col justify-start items-center;
+    @apply absolute left-0 top-0 w-auto min-w-full h-auto min-h-full pt-20 bg-white flex justify-center z-[10000];
+  }
+
+  .desktop-view-content {
+    @apply w-[1280px] h-auto min-h-full mx-auto flex flex-col justify-start items-stretch;
   }
 
   /* Scroll Bar */
   ::-webkit-scrollbar {
-    @apply w-1;
+    @apply w-1.5 h-1.5;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-black-100;
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-track:horizontal {
+    @apply bg-transparent;
   }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-black-300;
+  ::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-thumb:horizontal {
+    @apply bg-black-300 rounded-[8px];
   }
 
   /* Loader */
