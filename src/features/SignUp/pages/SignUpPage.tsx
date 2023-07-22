@@ -48,10 +48,16 @@ export default function SignUpPage() {
       setPageIdleAnimationProps(VERTICAL_IDLE_ANIMATION_PROPS);
       navigate("/", {replace: true});
     },
-    onError: () => navigate("/sign-in", {replace: true}),
+    onError: () => {
+      navigate("/");
+      navigate("/sign-in");
+    },
   });
 
-  const onGoBack = () => navigate("/sign-in");
+  const onGoBack = () => {
+    navigate("/");
+    navigate("/sign-in");
+  };
 
   usePreventDirectSignUp();
 

@@ -4,4 +4,5 @@ export const keys = {
   GET_BOOKS: "/books",
   GET_BOOK: "/books/info",
   GET_BOOK_LIKED: "/members/books/liked",
+  GET_MY_BOOKS: "/studio/dashboard",
 };

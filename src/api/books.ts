@@ -1,4 +1,4 @@
-import {axiosPublic} from "@/api/config";
+import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {Book, BookQuery, WeeklyMostViewedBook} from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
 
@@ -14,4 +14,10 @@ export function fetchBooks({query, order, page, limit}: BookQuery & PaginationQu
 
 export function fetchBook(id: number) {
   return axiosPublic.get<Book>(`/books/${id}`);
+}
+
+export function fetchMyBooks({memberId, page, limit}: {memberId: number} & PaginationQuery) {
+  return axiosAuthenticated.get<Paginated<Book>>(`/members/${memberId}/books`, {
+    params: {page, limit},
+  });
 }

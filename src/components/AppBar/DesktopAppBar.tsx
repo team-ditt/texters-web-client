@@ -1,5 +1,4 @@
 import AppBarDashboardButton from "@/components/AppBar/AppBarDashboardButton";
-import AppBarSearchButton from "@/components/AppBar/AppBarSearchButton";
 import AppBarSignInOutButton from "@/components/AppBar/AppBarSignInOutButton";
 import {ReactComponent as LogoPositive} from "assets/logo/logo-positive.svg";
 import {Link} from "react-router-dom";
@@ -12,7 +11,6 @@ export default function DesktopAppBar() {
       </Link>
       <li className="list-none flex items-center">
         <AppBarDashboardButton />
-        <AppBarSearchButton />
         <AppBarSignInOutButton />
       </li>
     </nav>

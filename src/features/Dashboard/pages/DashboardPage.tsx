@@ -1,7 +1,8 @@
 import {api} from "@/api";
-import {DesktopAppBar, FlatButton} from "@/components";
+import {DesktopAppBar, FlatButton, SizedBox} from "@/components";
 import {keys} from "@/constants";
-import {useAuthGuard} from "@/hooks";
+import {DashboardBookList} from "@/features/Dashboard/components";
+import {useAuthGuard, useMobileViewGuard} from "@/hooks";
 import {useAuthStore} from "@/stores";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const onCreateBook = () => navigate("/studio/books/info");
 
   useAuthGuard();
+  useMobileViewGuard(didSignIn);
 
   return (
     <div className="desktop-view">
@@ -28,6 +30,8 @@ export default function DashboardPage() {
           </FlatButton>
         </div>
         <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
+        <SizedBox height={24} />
+        {profile ? <DashboardBookList memberId={profile.id} /> : null}
       </div>
     </div>
   );

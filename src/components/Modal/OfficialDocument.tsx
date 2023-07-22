@@ -22,7 +22,7 @@ export default function OfficialDocument({type, onAgree, onRequestClose, ...prop
 
   return (
     <ReactModal
-      overlayClassName="fixed inset-0 bg-overlay"
+      overlayClassName="fixed inset-0 bg-overlay z-[2000]"
       className="absolute top-14 bottom-14 left-2 right-2 m-auto max-w-[400px] max-h-[800px] outline-none bg-white rounded-[12px] flex flex-col items-center"
       closeTimeoutMS={200}
       onRequestClose={onRequestClose}
