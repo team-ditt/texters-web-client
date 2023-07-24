@@ -1,5 +1,10 @@
 import {SignInPage} from "@/features/Auth/pages";
-import {BookInfoFormPage, BookInfoPage, BookSearchPage} from "@/features/Book/pages";
+import {
+  BookInfoEditPage,
+  BookInfoFormPage,
+  BookInfoPage,
+  BookSearchPage,
+} from "@/features/Book/pages";
 import {DashboardPage} from "@/features/Dashboard/pages";
 import {HomePage} from "@/features/Home/pages";
 import {SignUpPage} from "@/features/SignUp/pages";
@@ -30,7 +35,8 @@ export function Router() {
         <Route path="/books" element={<BookSearchPage />} />
         <Route path="/books/:bookId" element={<BookInfoPage />} />
         <Route path="/studio/dashboard" element={<DashboardPage />} />
-        <Route path="/studio/books/info" element={<BookInfoFormPage />} />
+        <Route path="/studio/books/form" element={<BookInfoFormPage />} />
+        <Route path="/studio/books/:bookId/edit" element={<BookInfoEditPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

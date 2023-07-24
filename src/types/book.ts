@@ -19,6 +19,11 @@ export type WeeklyMostViewedBook = Book & {
   weeklyViewed: number;
 };
 
+export type DashboardBook = Book & {
+  canPublish: boolean;
+  publishErrors: string[];
+};
+
 export type BookQuery = {
   query?: string;
   order: BookQueryOrderType;

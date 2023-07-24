@@ -1,5 +1,5 @@
 import {axiosAuthenticated, axiosPublic} from "@/api/config";
-import {Book, BookQuery, WeeklyMostViewedBook} from "@/types/book";
+import {Book, BookQuery, DashboardBook, WeeklyMostViewedBook} from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
 
 export function fetchWeeklyMostViewedBooks() {
@@ -17,7 +17,15 @@ export function fetchBook(id: number) {
 }
 
 export function fetchMyBooks({memberId, page, limit}: {memberId: number} & PaginationQuery) {
-  return axiosAuthenticated.get<Paginated<Book>>(`/members/${memberId}/books`, {
+  return axiosAuthenticated.get<Paginated<DashboardBook>>(`/members/${memberId}/books`, {
     params: {page, limit},
   });
+}
+
+export function publishBook(bookId: number) {
+  return axiosAuthenticated.put(`books/${bookId}/publish`);
+}
+
+export function deleteBook(bookId: number) {
+  return axiosAuthenticated.delete(`books/${bookId}`);
 }
