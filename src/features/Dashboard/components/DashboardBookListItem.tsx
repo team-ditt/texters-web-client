@@ -100,7 +100,7 @@ function MoreButton({book}: Props) {
 
   const onEdit = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    navigate(`/studio/books/${book.id}/edit`);
+    navigate(`/studio/books/${book.id}`);
   };
 
   const onDelete = (event: MouseEvent<HTMLButtonElement>) => {

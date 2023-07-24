@@ -35,8 +35,8 @@ export function Router() {
         <Route path="/books" element={<BookSearchPage />} />
         <Route path="/books/:bookId" element={<BookInfoPage />} />
         <Route path="/studio/dashboard" element={<DashboardPage />} />
-        <Route path="/studio/books/form" element={<BookInfoFormPage />} />
-        <Route path="/studio/books/:bookId/edit" element={<BookInfoEditPage />} />
+        <Route path="/studio/books/info" element={<BookInfoFormPage />} />
+        <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
