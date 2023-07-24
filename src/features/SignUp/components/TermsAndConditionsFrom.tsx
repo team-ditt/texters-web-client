@@ -13,7 +13,7 @@ type Props = {
 export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props) {
   const [agreedToTermsAndConditions, setAgreedToTermsAndConditions] = useState(false);
   const [agreedToCollectPersonalInfo, setAgreedToCollectPersonalInfo] = useState(false);
-  const [agreedToOutsourcePersonalInfo, setAgreedToOutsourcePersonalInfo] = useState(false);
+  const [agreedToOver14, setAgreedToOver14] = useState(false);
 
   const {isOpen, openModal, closeModal} = useModal();
   const [documentType, setDocumentType] = useState<OfficialDocumentType>("terms and conditions");
@@ -22,12 +22,11 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
     const toBe = !allAgreed;
     setAgreedToTermsAndConditions(toBe);
     setAgreedToCollectPersonalInfo(toBe);
-    setAgreedToOutsourcePersonalInfo(toBe);
+    setAgreedToOver14(toBe);
   };
   const onToggleAgreedToTermsAndConditions = () => setAgreedToTermsAndConditions(state => !state);
   const onToggleAgreedToCollectPersonalInfo = () => setAgreedToCollectPersonalInfo(state => !state);
-  const onToggleAgreedToOutsourcePersonalInfo = () =>
-    setAgreedToOutsourcePersonalInfo(state => !state);
+  const onToggleAgreedToOver14 = () => setAgreedToOver14(state => !state);
 
   const onOpenModal = (type: OfficialDocumentType) => {
     setDocumentType(type);
@@ -39,8 +38,6 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
         return setAgreedToTermsAndConditions(true);
       case "personal info collection":
         return setAgreedToCollectPersonalInfo(true);
-      case "personal info outsourcing":
-        return setAgreedToOutsourcePersonalInfo(true);
     }
   };
 
@@ -48,14 +45,12 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
     if (!allAgreed) return;
     setAgreedToTermsAndConditions(allAgreed);
     setAgreedToCollectPersonalInfo(allAgreed);
-    setAgreedToOutsourcePersonalInfo(allAgreed);
+    setAgreedToOver14(allAgreed);
   }, [allAgreed]);
 
   useEffect(() => {
-    setAllAgreed(
-      agreedToTermsAndConditions && agreedToCollectPersonalInfo && agreedToOutsourcePersonalInfo,
-    );
-  }, [agreedToTermsAndConditions, agreedToCollectPersonalInfo, agreedToOutsourcePersonalInfo]);
+    setAllAgreed(agreedToTermsAndConditions && agreedToCollectPersonalInfo && agreedToOver14);
+  }, [agreedToTermsAndConditions, agreedToCollectPersonalInfo, agreedToOver14]);
 
   return (
     <>
@@ -78,7 +73,7 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
           <SizedBox width={12} />
           <div className="flex flex-col items-start">
             <button className="text-[14px]" onClick={onToggleAgreedToTermsAndConditions}>
-              텍스터즈의 서비스 약관에 동의합니다.
+              (필수) 텍스터즈의 서비스 약관에 동의합니다.
             </button>
             <button
               className="flex items-center gap-1 text-[13px] text-[#C1C1C1]"
@@ -97,7 +92,7 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
           <SizedBox width={12} />
           <div className="flex flex-col">
             <button className="text-[14px]" onClick={onToggleAgreedToCollectPersonalInfo}>
-              텍스터즈의 개인정보 수집 및 이용에 동의합니다.
+              (필수) 텍스터즈의 개인정보 수집 및 이용에 동의합니다.
             </button>
             <button
               className="flex items-center gap-1 text-[13px] text-[#C1C1C1]"
@@ -109,20 +104,11 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
         </div>
         <SizedBox height={16} />
         <div className="flex items-start">
-          <CheckBox
-            isChecked={agreedToOutsourcePersonalInfo}
-            onToggle={onToggleAgreedToOutsourcePersonalInfo}
-          />
+          <CheckBox isChecked={agreedToOver14} onToggle={onToggleAgreedToOver14} />
           <SizedBox width={12} />
           <div className="flex flex-col">
-            <button className="text-[14px]" onClick={onToggleAgreedToOutsourcePersonalInfo}>
-              텍스터즈의 개인정보 위탁제공에 동의합니다.
-            </button>
-            <button
-              className="flex items-center gap-1 text-[13px] text-[#C1C1C1]"
-              onClick={() => onOpenModal("personal info outsourcing")}>
-              자세히보기
-              <RightArrowIcon />
+            <button className="text-[14px]" onClick={onToggleAgreedToOver14}>
+              (필수) 만 14세 이상입니다.
             </button>
           </div>
         </div>
