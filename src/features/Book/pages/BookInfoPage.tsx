@@ -3,6 +3,7 @@ import {FlatButton, MobileFooter, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
 import {useBookDescriptionRef, useBookLike, useBookTitleRef} from "@/features/Book/hooks";
+import {useAuthStore} from "@/stores";
 import {toCompactNumber} from "@/utils/formatter";
 import {useQuery} from "@tanstack/react-query";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
@@ -16,6 +17,7 @@ import {useNavigate, useParams} from "react-router-dom";
 export default function BookInfoPage() {
   const {bookId} = useParams();
   const navigate = useNavigate();
+  const didSignIn = useAuthStore(state => !!state.accessToken);
 
   const {data: book} = useQuery([keys.GET_BOOK, bookId], () => api.books.fetchBook(+bookId!), {
     enabled: !!bookId,
@@ -25,6 +27,11 @@ export default function BookInfoPage() {
   const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
 
   const onGoBack = () => navigate(-1);
+  const onToggleLike = () => {
+    if (didSignIn) return toggleLike();
+    if (confirm("좋아요 표시를 하기 위해서는 로그인을 해야 해요! 로그인하시겠어요?"))
+      navigate("/sign-in");
+  };
 
   if (!book) return <></>;
 
@@ -44,7 +51,7 @@ export default function BookInfoPage() {
           <span ref={titleRef} className="font-bold text-[20px] text-[#2D3648]">
             {book.title}
           </span>
-          <button className="flex flex-col items-center" onClick={() => toggleLike()}>
+          <button className="flex flex-col items-center" onClick={onToggleLike}>
             {isLiked ? (
               <LikedIcon width={24} height={24} />
             ) : (
