@@ -1,4 +1,5 @@
 export {default as DesktopAppBar} from "./AppBar/DesktopAppBar";
+export {default as FlowChartAppBar} from "./AppBar/FlowChartAppBar";
 export {default as MobileAppBar} from "./AppBar/MobileAppBar";
 export {default as FlatButton} from "./FlatButton";
 export {default as MobileFooter} from "./MobileFooter";

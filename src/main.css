@@ -88,6 +88,14 @@ body,
     @apply w-[1280px] h-auto min-h-full mx-auto flex flex-col justify-start items-stretch;
   }
 
+  .flow-chart-view {
+    @apply absolute left-0 top-0 w-auto min-w-full h-auto min-h-full pt-14 bg-white flex justify-center z-[10000];
+  }
+
+  .flow-chart-view-content {
+    @apply w-full h-auto min-h-full mx-auto flex flex-col justify-start items-stretch;
+  }
+
   /* Scroll Bar */
   ::-webkit-scrollbar {
     @apply w-1.5 h-1.5;

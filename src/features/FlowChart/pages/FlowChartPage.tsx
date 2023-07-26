@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {DesktopAppBar, SizedBox, SpinningLoader} from "@/components";
+import {FlowChartAppBar, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {useAuthGuard} from "@/hooks";
 import {useQuery} from "@tanstack/react-query";
@@ -19,35 +19,25 @@ export default function FlowChartPage() {
 
   if (!flowChart)
     return (
-      <div className="desktop-view">
-        <DesktopAppBar />
-        <div className="desktop-view-content p-6 relative">
-          <div className="flex flex-row justify-between items-center">
-            <span className="text-[28px] font-bold">플로우차트</span>
-          </div>
-          <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
-          <AnimatePresence mode="wait">
-            <motion.div
-              className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
-              initial={{opacity: 0}}
-              animate={{opacity: 0.5}}
-              exit={{opacity: 0}}>
-              <SpinningLoader color="#BDBDBD" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <div className="flow-chart-view">
+        <AnimatePresence mode="wait">
+          <motion.div
+            className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
+            initial={{opacity: 0}}
+            animate={{opacity: 0.5}}
+            exit={{opacity: 0}}>
+            <SpinningLoader color="#BDBDBD" />
+          </motion.div>
+        </AnimatePresence>
       </div>
     );
 
   return (
-    <div className="desktop-view">
-      <DesktopAppBar />
-      <div className="desktop-view-content p-6 relative">
-        <div className="flex flex-row justify-between items-center">
-          <span className="text-[28px] font-bold">『{flowChart.title}』 플로우차트</span>
-        </div>
-        <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
-        <SizedBox height={24} />
+    // FIXME: 플로우차트 배경에 맞춰 bg-[#EFEFEF] 수정
+    <div className="flow-chart-view bg-[#EFEFEF]">
+      <FlowChartAppBar title={flowChart.title} />
+      <div className="flow-chart-view-content px-6 py-0 relative">
+        {/* TODO: 여기에 플로우차트 컴포넌트 넣기 */}
       </div>
     </div>
   );
