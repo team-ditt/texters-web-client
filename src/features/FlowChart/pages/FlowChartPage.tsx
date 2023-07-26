@@ -4,7 +4,7 @@ import {keys} from "@/constants";
 import {useAuthGuard} from "@/hooks";
 import {useQuery} from "@tanstack/react-query";
 import {AnimatePresence, motion} from "framer-motion";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 export default function FlowChartPage() {
   const {bookId} = useParams();
@@ -36,8 +36,13 @@ export default function FlowChartPage() {
     // FIXME: 플로우차트 배경에 맞춰 bg-[#EFEFEF] 수정
     <div className="flow-chart-view bg-[#EFEFEF]">
       <FlowChartAppBar title={flowChart.title} />
-      <div className="flow-chart-view-content px-6 py-0 relative">
+      <div className="flow-chart-view-content px-6 py-0 relative flex justify-center items-center">
         {/* TODO: 여기에 플로우차트 컴포넌트 넣기 */}
+        <Link
+          className="px-4 py-1.5 border-2 border-black rounded-full font-medium text-black"
+          to="">
+          페이지 수정화면으로 이동
+        </Link>
       </div>
     </div>
   );
