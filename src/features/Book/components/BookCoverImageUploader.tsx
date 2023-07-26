@@ -4,12 +4,14 @@ import {ChangeEvent, useRef, useState} from "react";
 import BookCoverImage from "./BookCoverImage";
 
 type Props = {
+  coverImageUrl?: string;
   setCoverImage: (file: File) => void;
 };
 
-export default function BookCoverImageUploader({setCoverImage}: Props) {
+export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  console.log(coverImageUrl);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(coverImageUrl);
 
   const onOpenFileUploader = () => {
     inputRef.current?.click();

@@ -16,5 +16,5 @@ export default function useTextInput(validator: Validator = (text: string) => tr
     setIsValid(true);
   };
 
-  return {value, isValid, onInput, reset};
+  return {value, isValid, setValue, onInput, reset};
 }

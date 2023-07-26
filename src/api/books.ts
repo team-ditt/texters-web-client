@@ -2,13 +2,13 @@ import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {Book, BookQuery, DashboardBook, WeeklyMostViewedBook} from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
 
-type CreateBookForm = {
+type BookForm = {
   coverImage: File | null;
   title: string;
   description: string;
 };
 
-export async function createBook({coverImage, title, description}: CreateBookForm) {
+export async function createBook({coverImage, title, description}: BookForm) {
   if (!coverImage) return await axiosAuthenticated.post("/books", {title, description});
 
   const {coverImageId} = await uploadCoverImage(coverImage);
@@ -35,12 +35,19 @@ export function fetchMyBooks({memberId, page, limit}: {memberId: number} & Pagin
   });
 }
 
+export async function updateBookInfo(bookId: number, {coverImage, title, description}: BookForm) {
+  if (!coverImage) return await axiosAuthenticated.patch(`/books/${bookId}`, {title, description});
+
+  const {coverImageId} = await uploadCoverImage(coverImage);
+  return await axiosAuthenticated.patch(`/books/${bookId}`, {coverImageId, title, description});
+}
+
 export function publishBook(bookId: number) {
-  return axiosAuthenticated.put(`books/${bookId}/publish`);
+  return axiosAuthenticated.put(`/books/${bookId}/publish`);
 }
 
 export function deleteBook(bookId: number) {
-  return axiosAuthenticated.delete(`books/${bookId}`);
+  return axiosAuthenticated.delete(`/books/${bookId}`);
 }
 
 async function uploadCoverImage(coverImage: File) {
