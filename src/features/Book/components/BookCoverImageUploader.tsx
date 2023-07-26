@@ -10,7 +10,6 @@ type Props = {
 
 export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  console.log(coverImageUrl);
   const [imageUrl, setImageUrl] = useState<string | undefined>(coverImageUrl);
 
   const onOpenFileUploader = () => {
