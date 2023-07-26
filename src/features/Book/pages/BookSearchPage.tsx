@@ -32,7 +32,7 @@ export default function BookSearchPage() {
   };
 
   const onSearch = () => {
-    if (!searchInputRef.current || !searchInputRef.current.value) return;
+    if (!searchInputRef.current) return;
     searchParams.set("query", searchInputRef.current.value);
     setSearchParams(searchParams);
   };
