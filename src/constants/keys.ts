@@ -5,4 +5,5 @@ export const keys = {
   GET_BOOK: "/books/info",
   GET_BOOK_LIKED: "/members/books/liked",
   GET_MY_BOOKS: "/studio/dashboard",
+  GET_FLOW_CHART: "/books/flow-chart",
 };

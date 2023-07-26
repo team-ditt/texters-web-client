@@ -6,6 +6,7 @@ import {
   BookSearchPage,
 } from "@/features/Book/pages";
 import {DashboardPage} from "@/features/Dashboard/pages";
+import FlowChartPage from "@/features/FlowChart/pages/FlowChartPage";
 import {HomePage} from "@/features/Home/pages";
 import {SignUpPage} from "@/features/SignUp/pages";
 import {useAuthStore} from "@/stores";
@@ -37,6 +38,7 @@ export function Router() {
         <Route path="/studio/dashboard" element={<DashboardPage />} />
         <Route path="/studio/books/info" element={<BookInfoFormPage />} />
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
+        <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

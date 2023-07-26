@@ -1,6 +1,7 @@
 import {api} from "@/api";
 import {keys} from "@/constants";
 import {useInfiniteScroll} from "@/hooks";
+import {useAuthStore} from "@/stores";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import DashboardBookListItem from "./DashboardBookListItem";
 
@@ -9,10 +10,11 @@ type Props = {
 };
 
 export default function DashboardBookList({memberId}: Props) {
+  const didSignIn = useAuthStore(state => !!state.accessToken);
   const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
     [keys.GET_MY_BOOKS, memberId],
     ({pageParam = 0}) => api.books.fetchMyBooks({memberId, page: pageParam + 1, limit: 10}),
-    {getNextPageParam: lastPage => lastPage.hasNext},
+    {getNextPageParam: lastPage => lastPage?.hasNext, enabled: didSignIn},
   );
   const fetchNext = () => {
     if (hasNextPage) fetchNextPage();

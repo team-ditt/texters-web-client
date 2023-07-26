@@ -11,7 +11,7 @@ import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
-import {MouseEvent, memo, useState} from "react";
+import {MouseEvent, memo} from "react";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
@@ -20,13 +20,12 @@ type Props = {
 
 function DashboardBookListItem({book}: Props) {
   const navigate = useNavigate();
-  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
   const onNavigate = () => navigate(`/studio/books/${book.id}/flow-chart`);
 
   return (
-    <button
-      className="border border-black rounded-lg flex items-center hover:shadow-md transition-all duration-100"
+    <a
+      className="border border-black rounded-lg flex items-center hover:shadow-md transition-all duration-100 cursor-pointer"
       onClick={onNavigate}>
       <BookCoverImage
         className="h-full max-h-[112px] aspect-square rounded-s-lg"
@@ -56,7 +55,7 @@ function DashboardBookListItem({book}: Props) {
         <PublishButton book={book} />
         <DemoPlayButton book={book} />
       </div>
-    </button>
+    </a>
   );
 }
 
