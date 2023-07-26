@@ -2,6 +2,19 @@ import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {Book, BookQuery, DashboardBook, WeeklyMostViewedBook} from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
 
+type CreateBookForm = {
+  coverImage: File | null;
+  title: string;
+  description: string;
+};
+
+export async function createBook({coverImage, title, description}: CreateBookForm) {
+  if (!coverImage) return await axiosAuthenticated.post("/books", {title, description});
+
+  const {coverImageId} = await uploadCoverImage(coverImage);
+  return await axiosAuthenticated.post("/books", {coverImageId, title, description});
+}
+
 export function fetchWeeklyMostViewedBooks() {
   return axiosPublic.get<WeeklyMostViewedBook[]>("/books/weekly-most-viewed", {
     params: {limit: 5},
@@ -28,4 +41,10 @@ export function publishBook(bookId: number) {
 
 export function deleteBook(bookId: number) {
   return axiosAuthenticated.delete(`books/${bookId}`);
+}
+
+async function uploadCoverImage(coverImage: File) {
+  const form = new FormData();
+  form.set("image", coverImage);
+  return await axiosAuthenticated.post("/files/books/cover", form);
 }

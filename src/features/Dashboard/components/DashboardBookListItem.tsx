@@ -25,8 +25,8 @@ function DashboardBookListItem({book}: Props) {
   const onNavigate = () => navigate(`/studio/books/${book.id}/flow-chart`);
 
   return (
-    <button
-      className="border border-black rounded-lg flex items-center hover:shadow-md transition-all duration-100"
+    <a
+      className="border border-black rounded-lg flex items-center hover:shadow-md transition-all duration-100 cursor-pointer"
       onClick={onNavigate}>
       <BookCoverImage
         className="h-full max-h-[112px] aspect-square rounded-s-lg"
@@ -56,7 +56,7 @@ function DashboardBookListItem({book}: Props) {
         <PublishButton book={book} />
         <DemoPlayButton book={book} />
       </div>
-    </button>
+    </a>
   );
 }
 
