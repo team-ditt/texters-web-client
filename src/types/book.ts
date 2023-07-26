@@ -30,3 +30,38 @@ export type BookQuery = {
 };
 
 export type BookQueryOrderType = "viewed" | "liked" | "published-date";
+
+export type BookForm = {
+  coverImage: File | null;
+  title: string;
+  description: string;
+};
+
+export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {lanes: Lane[]};
+
+export type Lane = {
+  id: number;
+  bookId: number;
+  order: number;
+  pages: Page[];
+};
+
+export type Page = {
+  id: number;
+  bookId: number;
+  laneId: number;
+  order: number;
+  title: string;
+  content: string | null;
+  createdAt: string;
+  updatedAt: string;
+  choices: Choice[];
+};
+
+export type Choice = {
+  id: number;
+  sourcePageId: number;
+  destinationPageId: number | null;
+  order: number;
+  content: string;
+};

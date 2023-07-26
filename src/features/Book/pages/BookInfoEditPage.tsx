@@ -58,14 +58,24 @@ export default function BookInfoEditPage() {
 
   if (!book)
     return (
-      <AnimatePresence mode="wait">
-        <motion.div
-          className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
-          initial={{opacity: 0}}
-          animate={{opacity: 50}}>
-          <SpinningLoader color="#BDBDBD" />
-        </motion.div>
-      </AnimatePresence>
+      <div className="desktop-view">
+        <DesktopAppBar />
+        <div className="desktop-view-content p-6 relative">
+          <div className="flex flex-row justify-between items-center">
+            <span className="text-[28px] font-bold">작품 개요 수정하기</span>
+          </div>
+          <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
+          <AnimatePresence mode="wait">
+            <motion.div
+              className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
+              initial={{opacity: 0}}
+              animate={{opacity: 0.5}}
+              exit={{opacity: 0}}>
+              <SpinningLoader color="#BDBDBD" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
     );
 
   return (

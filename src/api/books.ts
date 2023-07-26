@@ -1,12 +1,13 @@
 import {axiosAuthenticated, axiosPublic} from "@/api/config";
-import {Book, BookQuery, DashboardBook, WeeklyMostViewedBook} from "@/types/book";
+import {
+  Book,
+  BookForm,
+  BookQuery,
+  DashboardBook,
+  FlowChart,
+  WeeklyMostViewedBook,
+} from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
-
-type BookForm = {
-  coverImage: File | null;
-  title: string;
-  description: string;
-};
 
 export async function createBook({coverImage, title, description}: BookForm) {
   if (!coverImage) return await axiosAuthenticated.post("/books", {title, description});
@@ -33,6 +34,10 @@ export function fetchMyBooks({memberId, page, limit}: {memberId: number} & Pagin
   return axiosAuthenticated.get<Paginated<DashboardBook>>(`/members/${memberId}/books`, {
     params: {page, limit},
   });
+}
+
+export function fetchFlowChart(bookId: number) {
+  return axiosAuthenticated.get<FlowChart>(`/books/${bookId}/flow-chart`);
 }
 
 export async function updateBookInfo(bookId: number, {coverImage, title, description}: BookForm) {
