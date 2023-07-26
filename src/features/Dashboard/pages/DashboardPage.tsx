@@ -22,7 +22,7 @@ export default function DashboardPage() {
       <div className="desktop-view-content p-6">
         <div className="flex flex-row justify-between items-center">
           <span className="text-[28px] font-bold">{profile?.penName ?? "작가"}님의 작품들</span>
-          <FlatButton className="w-fit px-[20px]" onClick={openModal}>
+          <FlatButton className="!w-fit px-[20px]" onClick={openModal}>
             새 작품 만들기 +
           </FlatButton>
         </div>

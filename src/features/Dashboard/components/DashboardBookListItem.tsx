@@ -175,7 +175,7 @@ function PublishButton({book}: Props) {
         borderColor,
       }}
       onClick={onClick}
-      disabled={!book.canPublish || book.status === "PUBLISHED"}>
+      disabled={!book.canPublish || book.status === "PUBLISHED" || isPublishing}>
       {message}
     </button>
   );
@@ -188,7 +188,7 @@ function DemoPlayButton({book}: Props) {
   };
 
   return (
-    <FlatButton className="h-9" onClick={onClick}>
+    <FlatButton className="!h-9" onClick={onClick}>
       미리 플레이 해보기
     </FlatButton>
   );

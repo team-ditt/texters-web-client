@@ -24,7 +24,7 @@ export default function WeeklyMostViewedCarousel() {
       <Swiper
         className="w-full aspect-[3/2]"
         modules={[Pagination, Autoplay]}
-        // autoplay={{delay: 5000, disableOnInteraction: false}}
+        autoplay={{delay: 5000, disableOnInteraction: false}}
         loop={true}
         pagination={{clickable: true}}>
         {books.map(book => (
