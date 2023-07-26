@@ -52,7 +52,8 @@ axiosAuthenticated.interceptors.response.use(
     const {expireSession} = useAuthStore.getState();
 
     if (error.config.url.includes("auth/token-refresh")) {
-      return expireSession();
+      expireSession();
+      return Promise.reject(error);
     }
 
     if (error.response.status === 401) {
