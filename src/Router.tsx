@@ -1,10 +1,10 @@
+import SignInPage from "@/features/Auth/pages/SignInPage";
+import HomePage from "@/features/Home/pages/HomePage";
 import {useAuthStore} from "@/stores";
 import {AnimatePresence} from "framer-motion";
 import {lazy, useEffect} from "react";
 import {Navigate, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 
-const HomePage = lazy(() => import("@/features/Home/pages/HomePage"));
-const SignInPage = lazy(() => import("@/features/Auth/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/features/SignUp/pages/SignUpPage"));
 const BookSearchPage = lazy(() => import("@/features/Book/pages/BookSearchPage"));
 const BookInfoPage = lazy(() => import("@/features/Book/pages/BookInfoPage"));

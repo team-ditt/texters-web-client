@@ -10,11 +10,13 @@ import {useAuthGuard} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {ReactComponent as DownArrowCircleIcon} from "assets/icons/down-arrow-circle.svg";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
+import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
-import {FormEventHandler, useEffect} from "react";
+import {FormEventHandler, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
@@ -117,10 +119,26 @@ function ChoiceForm({choice}: {choice: Choice}) {
         onInput={onInputContent}
         maxLength={100}
       />
-      <div className="flex items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg">
-        연결 페이지
-      </div>
+      <DestinationPageSelect choice={choice} />
     </div>
+  );
+}
+
+function DestinationPageSelect({choice}: {choice: Choice}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const onToggleExpand = () => setIsExpanded(state => !state);
+
+  return (
+    <button
+      className="relative flex justify-between items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg"
+      onClick={onToggleExpand}>
+      {choice.destinationPageId ? "연결된 페이지 없음" : ""}
+      <DownArrowCircleIcon
+        className={classNames({"rotate-180": isExpanded})}
+        fill={isExpanded ? "#A5A5A5" : "#2D2D2D"}
+      />
+    </button>
   );
 }
 

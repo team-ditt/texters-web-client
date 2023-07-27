@@ -13,8 +13,8 @@ export default function FlowChartAppBar() {
   const {bookId} = useParams();
   const navigate = useNavigate();
   const {
+    flowChart,
     isSaving,
-    isLocked,
     updatedAt,
     error: flowChartError,
     resetError,
@@ -34,6 +34,10 @@ export default function FlowChartAppBar() {
   const onGoBack = () => navigate(-1);
 
   useEffect(() => {
+    if (!flowChart) loadFlowChart(+bookId!);
+  }, [flowChart]);
+
+  useEffect(() => {
     if (!isError) return;
     if (
       (error as AxiosError<TextersError>).response?.data.code ===
@@ -45,10 +49,15 @@ export default function FlowChartAppBar() {
   }, [isError, error]);
 
   useEffect(() => {
-    if (!flowChartError || isLocked) return;
-    resetError();
-    loadFlowChart(+bookId!);
-  }, [flowChartError, isLocked]);
+    if (!flowChartError) return;
+    if (
+      confirm(
+        "잠깐, 여러 창을 띄워 두고 작업 중이신가요? 텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요? 취소하면 홈 화면으로 이동할게요.",
+      )
+    )
+      return window.location.reload();
+    window.location.href = "/";
+  }, [flowChartError]);
 
   return (
     <nav className="fixed inset-0 mx-auto my-0 h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">

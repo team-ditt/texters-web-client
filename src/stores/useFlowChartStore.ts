@@ -12,7 +12,7 @@ import {create} from "zustand";
 
 type FlowChartStoreState = {
   isSaving: boolean;
-  isLocked: boolean;
+  isLoading: boolean;
   updatedAt: string;
   flowChartLockKey: string | null;
   flowChart: FlowChart | null;
@@ -29,17 +29,19 @@ type FlowChartStoreAction = {
   resetError: () => void;
 };
 
-const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()(set => ({
+const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
   isSaving: false,
-  isLocked: false,
+  isLoading: false,
   updatedAt: new Date().toISOString(),
   flowChartLockKey: null,
   flowChart: null,
   error: null,
   loadFlowChart: async bookId => {
-    set({isLocked: true});
+    if (get().isLoading) return;
+
+    set({isLoading: true});
     const flowChart = await api.books.fetchFlowChart(bookId);
-    set({flowChart, isLocked: false});
+    set({flowChart, isLoading: false});
   },
   saveFlowChartLockKey: key => set({flowChartLockKey: key}),
   updatePageInfo: async form => {
