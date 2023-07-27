@@ -5,7 +5,7 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
 export default function useBookLike(bookId?: number) {
   const didSignIn = useAuthStore(state => !!state.accessToken);
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE_QUERY], api.members.fetchProfile, {
+  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
     enabled: didSignIn,
   });
   const {data: likedResult} = useQuery(
@@ -27,7 +27,7 @@ export default function useBookLike(bookId?: number) {
         queryClient.invalidateQueries([keys.GET_BOOK_LIKED]);
         queryClient.invalidateQueries([keys.GET_BOOK]);
         queryClient.invalidateQueries([keys.GET_BOOKS], {type: "all"});
-        queryClient.invalidateQueries([keys.GET_WEEKLY_MOST_VIEWED_BOOKS_QUERY], {type: "all"});
+        queryClient.invalidateQueries([keys.GET_WEEKLY_MOST_VIEWED_BOOKS], {type: "all"});
       },
     },
   );

@@ -36,6 +36,10 @@ export function fetchMyBooks({memberId, page, limit}: {memberId: number} & Pagin
   });
 }
 
+export function fetchMyBook(memberId: number, bookId: number) {
+  return axiosAuthenticated.get<Book>(`/members/${memberId}/books/${bookId}`);
+}
+
 export function fetchFlowChart(bookId: number) {
   return axiosAuthenticated.get<FlowChart>(`/books/${bookId}/flow-chart`);
 }
