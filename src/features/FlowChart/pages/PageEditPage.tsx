@@ -1,26 +1,30 @@
 import {api} from "@/api";
 import {FlowChartAppBar, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
-import {useAuthGuard, useTextInput} from "@/hooks";
+import {usePageContentTextArea, usePageTitleInput} from "@/features/FlowChart/hooks";
+import {useAuthGuard} from "@/hooks";
 import {useQuery} from "@tanstack/react-query";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {AnimatePresence, motion} from "framer-motion";
-import {FormEventHandler} from "react";
+import {FormEventHandler, useEffect} from "react";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
   const {bookId, pageId} = useParams();
-  const {value: title, onInput: onInputTitle} = useTextInput();
-  const {value: content, onInput: onInputContent} = useTextInput();
+  const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
+  const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
 
-  const {
-    data: page,
-    isLoading,
-    isError,
-  } = useQuery([keys.GET_FLOW_CHART_PAGE, pageId], () => api.pages.fetchPage(+bookId!, +pageId!));
+  const {data: page} = useQuery([keys.GET_FLOW_CHART_PAGE, pageId], () =>
+    api.pages.fetchPage(+bookId!, +pageId!),
+  );
 
   useAuthGuard();
+  useEffect(() => {
+    if (!page) return;
+    setTitle(page.title);
+    setContent(page.content ?? "");
+  }, [page]);
 
   if (!page)
     return (
@@ -54,12 +58,12 @@ export default function PageEditPage() {
             <textarea
               className="min-h-[600px] flex-1 border-y-2 border-[#BDBDBD] placeholder:text-[#BDBDBD] resize-none leading-7 px-6 py-3"
               placeholder="페이지 본문"
-              value={content}
+              value={content ?? undefined}
               onInput={onInputContent as FormEventHandler}
               maxLength={20000}
             />
             <p className="flex self-end items-center px-6 py-3">
-              <span className="font-bold text-[14px] me-1">{content.length.toLocaleString()}</span>
+              <span className="font-bold text-[14px] me-1">{content?.length.toLocaleString()}</span>
               <span className="font-bold text-[14px] text-[#D1D1D1]">/ 20,000자</span>
             </p>
           </div>
@@ -68,7 +72,7 @@ export default function PageEditPage() {
         <div className="flex flex-col gap-2 pt-4">
           <span className="font-bold text-[18px] mb-2">선택지 만들기</span>
           {page.choices.map(choice => (
-            <ChoiceForm />
+            <ChoiceForm key={choice.id} />
           ))}
           {page.choices.length < 5 ? <AddChoiceButton /> : null}
         </div>

@@ -1,35 +1,19 @@
-import {api} from "@/api";
 import {FlowChartAppBar, SpinningLoader} from "@/components";
-import {keys} from "@/constants";
 import {useAuthGuard} from "@/hooks";
-import {TextersError} from "@/types/error";
-import {useQuery} from "@tanstack/react-query";
-import {AxiosError} from "axios";
+import {useFlowChartStore} from "@/stores";
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 export default function FlowChartPage() {
   const {bookId} = useParams();
-  const navigate = useNavigate();
-
-  const {
-    data: flowChart,
-    isLoading,
-    error,
-    isError,
-  } = useQuery([keys.GET_FLOW_CHART, bookId], () => api.books.fetchFlowChart(+bookId!), {
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const {flowChart, loadFlowChart} = useFlowChartStore();
 
   useAuthGuard();
 
   useEffect(() => {
-    if (!isError) return;
-    alert((error as AxiosError<TextersError>).response?.data.message);
-    navigate("/studio/dashboard", {replace: true});
-  }, [isError, error]);
+    if (!flowChart) loadFlowChart(+bookId!);
+  }, [flowChart]);
 
   if (!flowChart)
     return (

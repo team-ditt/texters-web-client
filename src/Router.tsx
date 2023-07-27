@@ -22,7 +22,7 @@ export function Router() {
   useEffect(() => {
     if (isSessionExpired) {
       resolveExpiredSession();
-      alert("세션이 만료되었습니다.");
+      alert("세션이 만료되었어요. 다시 로그인하시겠어요?");
       navigate("/sign-in");
     }
   }, [isSessionExpired]);

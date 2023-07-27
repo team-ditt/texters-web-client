@@ -1,15 +1,26 @@
+import {TextersError} from "@/types/error";
 import {toAutoSaveTimestamp} from "@/utils/formatter";
 import {ReactComponent as CheckCircleIcon} from "assets/icons/check-circle.svg";
 
 type Props = {
   isSaving?: boolean;
   updatedAt?: string;
+  error?: TextersError | null;
 };
 
 export default function AutoSaveMarker({
   isSaving = false,
   updatedAt = new Date().toISOString(),
+  error,
 }: Props) {
+  if (error)
+    return (
+      <div className="flex items-center gap-1.5">
+        <CheckCircleIcon stroke="#E86767" />
+        <span className="font-medium text-[12px] text-[#E86767]">자동 저장 실패!</span>
+      </div>
+    );
+
   if (isSaving)
     return (
       <div className="flex items-center gap-1.5">
