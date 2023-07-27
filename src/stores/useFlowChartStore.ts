@@ -1,11 +1,18 @@
 import {api} from "@/api";
-import {FlowChart, UpdateChoiceForm, UpdatePageForm} from "@/types/book";
+import {
+  CreateChoiceForm,
+  DeleteChoiceForm,
+  FlowChart,
+  UpdateChoiceForm,
+  UpdatePageForm,
+} from "@/types/book";
 import {TextersError} from "@/types/error";
 import {AxiosError} from "axios";
 import {create} from "zustand";
 
 type FlowChartStoreState = {
   isSaving: boolean;
+  isLocked: boolean;
   updatedAt: string;
   flowChartLockKey: string | null;
   flowChart: FlowChart | null;
@@ -16,19 +23,23 @@ type FlowChartStoreAction = {
   loadFlowChart: (bookId: number) => Promise<void>;
   saveFlowChartLockKey: (key: string) => void;
   updatePageInfo: (form: UpdatePageForm) => Promise<void>;
-  createChoice: (form: UpdateChoiceForm) => Promise<void>;
+  createChoice: (form: CreateChoiceForm) => Promise<void>;
+  updateChoiceContent: (form: UpdateChoiceForm) => Promise<void>;
+  deleteChoice: (form: DeleteChoiceForm, onSuccess: () => Promise<void>) => Promise<void>;
   resetError: () => void;
 };
 
 const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()(set => ({
   isSaving: false,
+  isLocked: false,
   updatedAt: new Date().toISOString(),
   flowChartLockKey: null,
   flowChart: null,
   error: null,
   loadFlowChart: async bookId => {
+    set({isLocked: true});
     const flowChart = await api.books.fetchFlowChart(bookId);
-    set({flowChart});
+    set({flowChart, isLocked: false});
   },
   saveFlowChartLockKey: key => set({flowChartLockKey: key}),
   updatePageInfo: async form => {
@@ -46,6 +57,25 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()(set =>
     try {
       await api.choices.createChoice(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
+    } catch (error) {
+      set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
+    }
+  },
+  updateChoiceContent: async form => {
+    set({isSaving: true});
+    try {
+      await api.choices.updateChoice(form);
+      set({isSaving: false, updatedAt: new Date().toISOString()});
+    } catch (error) {
+      set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
+    }
+  },
+  deleteChoice: async (form, onSuccess) => {
+    set({isSaving: true});
+    try {
+      await api.choices.deleteChoice(form);
+      set({isSaving: false, updatedAt: new Date().toISOString()});
+      onSuccess();
     } catch (error) {
       set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
     }

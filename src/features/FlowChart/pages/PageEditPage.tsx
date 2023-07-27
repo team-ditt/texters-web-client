@@ -1,11 +1,15 @@
 import {api} from "@/api";
 import {FlowChartAppBar, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
-import {usePageContentTextArea, usePageTitleInput} from "@/features/FlowChart/hooks";
+import {
+  useChoiceContentInput,
+  usePageContentTextArea,
+  usePageTitleInput,
+} from "@/features/FlowChart/hooks";
 import {useAuthGuard} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
@@ -86,15 +90,15 @@ export default function PageEditPage() {
 
 function ChoiceForm({choice}: {choice: Choice}) {
   const {bookId, pageId} = useParams();
+  const {content, onInputContent} = useChoiceContentInput(+bookId!, +pageId!, choice);
 
+  const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
-  const {mutate: deleteChoice} = useMutation(
-    () => api.choices.deleteChoice(+bookId!, +pageId!, choice.id),
-    {onSuccess: () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE])},
-  );
+  const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE], {});
 
   const onDelete = () => {
-    if (confirm("정말로 선택지를 삭제하시겠어요?")) deleteChoice();
+    if (confirm("정말로 선택지를 삭제하시겠어요?"))
+      deleteChoice({bookId: +bookId!, pageId: +pageId!, choiceId: choice.id}, onSuccessToDelete);
   };
 
   return (
@@ -109,6 +113,8 @@ function ChoiceForm({choice}: {choice: Choice}) {
       <input
         className="flex-1 px-4 border-2 border-black rounded-lg"
         placeholder="선택지를 추가해주세요! (최대 100자)"
+        value={content}
+        onInput={onInputContent}
         maxLength={100}
       />
       <div className="flex items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg">

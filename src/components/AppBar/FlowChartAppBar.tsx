@@ -14,6 +14,7 @@ export default function FlowChartAppBar() {
   const navigate = useNavigate();
   const {
     isSaving,
+    isLocked,
     updatedAt,
     error: flowChartError,
     resetError,
@@ -44,13 +45,10 @@ export default function FlowChartAppBar() {
   }, [isError, error]);
 
   useEffect(() => {
-    if (!flowChartError) return;
-    alert(
-      "잠깐, 여러 창을 띄워놓고 작업중이신가요? 아쉽게도 텍스터즈는 작품 동시 수정을 지원하지 않아요. 작품을 다시 불러올게요!",
-    );
+    if (!flowChartError || isLocked) return;
     resetError();
     loadFlowChart(+bookId!);
-  }, [flowChartError]);
+  }, [flowChartError, isLocked]);
 
   return (
     <nav className="fixed inset-0 mx-auto my-0 h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">

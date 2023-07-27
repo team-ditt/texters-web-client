@@ -73,8 +73,12 @@ export type Choice = {
   content: string;
 };
 
-export type UpdateChoiceForm = {
+export type CreateChoiceForm = {
   bookId: number;
   pageId: number;
   content: string;
 };
+
+export type UpdateChoiceForm = CreateChoiceForm & {choiceId: number};
+
+export type DeleteChoiceForm = {bookId: number; pageId: number; choiceId: number};
