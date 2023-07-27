@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {FlowChart, UpdatePageForm} from "@/types/book";
+import {FlowChart, UpdateChoiceForm, UpdatePageForm} from "@/types/book";
 import {TextersError} from "@/types/error";
 import {AxiosError} from "axios";
 import {create} from "zustand";
@@ -16,6 +16,7 @@ type FlowChartStoreAction = {
   loadFlowChart: (bookId: number) => Promise<void>;
   saveFlowChartLockKey: (key: string) => void;
   updatePageInfo: (form: UpdatePageForm) => Promise<void>;
+  createChoice: (form: UpdateChoiceForm) => Promise<void>;
   resetError: () => void;
 };
 
@@ -36,6 +37,15 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()(set =>
     try {
       const page = await api.pages.updatePageInfo(form);
       set({isSaving: false, updatedAt: page.updatedAt});
+    } catch (error) {
+      set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
+    }
+  },
+  createChoice: async form => {
+    set({isSaving: true});
+    try {
+      await api.choices.createChoice(form);
+      set({isSaving: false, updatedAt: new Date().toISOString()});
     } catch (error) {
       set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
     }

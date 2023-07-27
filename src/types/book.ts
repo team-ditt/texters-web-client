@@ -72,3 +72,9 @@ export type Choice = {
   order: number;
   content: string;
 };
+
+export type UpdateChoiceForm = {
+  bookId: number;
+  pageId: number;
+  content: string;
+};

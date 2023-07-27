@@ -3,9 +3,12 @@ import {FlowChartAppBar, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {usePageContentTextArea, usePageTitleInput} from "@/features/FlowChart/hooks";
 import {useAuthGuard} from "@/hooks";
-import {useQuery} from "@tanstack/react-query";
+import {useFlowChartStore} from "@/stores";
+import {Choice} from "@/types/book";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
+import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import {AnimatePresence, motion} from "framer-motion";
 import {FormEventHandler, useEffect} from "react";
 import {useParams} from "react-router-dom";
@@ -72,7 +75,7 @@ export default function PageEditPage() {
         <div className="flex flex-col gap-2 pt-4">
           <span className="font-bold text-[18px] mb-2">선택지 만들기</span>
           {page.choices.map(choice => (
-            <ChoiceForm key={choice.id} />
+            <ChoiceForm key={choice.id} choice={choice} />
           ))}
           {page.choices.length < 5 ? <AddChoiceButton /> : null}
         </div>
@@ -81,9 +84,26 @@ export default function PageEditPage() {
   );
 }
 
-function ChoiceForm() {
+function ChoiceForm({choice}: {choice: Choice}) {
+  const {bookId, pageId} = useParams();
+
+  const queryClient = useQueryClient();
+  const {mutate: deleteChoice} = useMutation(
+    () => api.choices.deleteChoice(+bookId!, +pageId!, choice.id),
+    {onSuccess: () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE])},
+  );
+
+  const onDelete = () => {
+    if (confirm("정말로 선택지를 삭제하시겠어요?")) deleteChoice();
+  };
+
   return (
     <div className="h-12 flex gap-1">
+      <button
+        className="h-12 px-1 rounded-lg hover:bg-[#EFEFEF] transition-colors flex justify-center items-center gap-1 text-[#BBB]"
+        onClick={onDelete}>
+        <TrashIcon width={28} height={28} stroke="#CBD2E0" />
+      </button>
       <DragHandleIcon className="self-center" />
       <SizedBox width={4} />
       <input
@@ -99,8 +119,21 @@ function ChoiceForm() {
 }
 
 function AddChoiceButton() {
+  const {bookId, pageId} = useParams();
+  const {isSaving, createChoice} = useFlowChartStore();
+
+  const queryClient = useQueryClient();
+  const onClick = async () => {
+    const DEFAULT_CONTENT = "다음";
+    await createChoice({bookId: +bookId!, pageId: +pageId!, content: DEFAULT_CONTENT});
+    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+  };
+
   return (
-    <button className="self-center flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#EFEFEF] transition-colors font-medium text-[#858585]">
+    <button
+      className="self-center flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#EFEFEF] transition-colors font-medium text-[#858585]"
+      onClick={onClick}
+      disabled={isSaving}>
       <PlusCircleIcon /> 선택지 추가하기
     </button>
   );

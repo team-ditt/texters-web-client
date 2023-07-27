@@ -125,7 +125,7 @@ function MoreButton({book}: Props) {
             onClick={onDelete}
             disabled={isDeleting}>
             이 작품 삭제하기
-            <TrashIcon />
+            <TrashIcon stroke="#FF0000" />
           </button>
         </div>
       ) : null}
