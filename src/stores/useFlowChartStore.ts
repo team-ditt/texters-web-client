@@ -3,6 +3,7 @@ import {
   CreateChoiceForm,
   DeleteChoiceForm,
   FlowChart,
+  UpdateChoiceDestinationForm,
   UpdateChoiceForm,
   UpdatePageForm,
 } from "@/types/book";
@@ -25,8 +26,8 @@ type FlowChartStoreAction = {
   updatePageInfo: (form: UpdatePageForm) => Promise<void>;
   createChoice: (form: CreateChoiceForm) => Promise<void>;
   updateChoiceContent: (form: UpdateChoiceForm) => Promise<void>;
+  updateChoiceDestinationPageId: (form: UpdateChoiceDestinationForm) => Promise<void>;
   deleteChoice: (form: DeleteChoiceForm, onSuccess: () => Promise<void>) => Promise<void>;
-  resetError: () => void;
 };
 
 const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
@@ -64,9 +65,20 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, 
     }
   },
   updateChoiceContent: async form => {
+    if (!form.content) return;
+
     set({isSaving: true});
     try {
       await api.choices.updateChoice(form);
+      set({isSaving: false, updatedAt: new Date().toISOString()});
+    } catch (error) {
+      set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
+    }
+  },
+  updateChoiceDestinationPageId: async form => {
+    set({isSaving: true});
+    try {
+      await api.choices.updateChoiceDestination(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
     } catch (error) {
       set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
@@ -82,7 +94,6 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, 
       set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
     }
   },
-  resetError: () => set({error: null}),
 }));
 
 export default useAuthStore;

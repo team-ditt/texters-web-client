@@ -81,4 +81,11 @@ export type CreateChoiceForm = {
 
 export type UpdateChoiceForm = CreateChoiceForm & {choiceId: number};
 
+export type UpdateChoiceDestinationForm = {
+  bookId: number;
+  pageId: number;
+  choiceId: number;
+  destinationPageId: number | null;
+};
+
 export type DeleteChoiceForm = {bookId: number; pageId: number; choiceId: number};

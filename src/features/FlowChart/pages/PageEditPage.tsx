@@ -3,11 +3,12 @@ import {FlowChartAppBar, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {
   useChoiceContentInput,
+  useDestinationPages,
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
 import {useAuthGuard} from "@/hooks";
-import {useFlowChartStore} from "@/stores";
+import {useAuthStore, useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DownArrowCircleIcon} from "assets/icons/down-arrow-circle.svg";
@@ -20,12 +21,15 @@ import {FormEventHandler, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
+  const didSignIn = useAuthStore(state => !!state.accessToken);
   const {bookId, pageId} = useParams();
   const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
   const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
 
-  const {data: page} = useQuery([keys.GET_FLOW_CHART_PAGE, pageId], () =>
-    api.pages.fetchPage(+bookId!, +pageId!),
+  const {data: page} = useQuery(
+    [keys.GET_FLOW_CHART_PAGE, pageId],
+    () => api.pages.fetchPage(+bookId!, +pageId!),
+    {enabled: didSignIn},
   );
 
   useAuthGuard();
@@ -125,19 +129,60 @@ function ChoiceForm({choice}: {choice: Choice}) {
 }
 
 function DestinationPageSelect({choice}: {choice: Choice}) {
+  const {bookId, pageId} = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
+  const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
+  const {updateChoiceDestinationPageId} = useFlowChartStore();
+  const queryClient = useQueryClient();
 
   const onToggleExpand = () => setIsExpanded(state => !state);
+  const onUpdateDestinationPageId = async (id: number | null) => {
+    await updateChoiceDestinationPageId({
+      bookId: +bookId!,
+      pageId: +pageId!,
+      choiceId: choice.id,
+      destinationPageId: id,
+    });
+    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+  };
+  const getPageTitle = (pageId: number | null) => {
+    if (!pageId) return "";
+    return allPossibleDestinationPages.find(page => page.id === pageId)?.title;
+  };
+  const isSelected = (pageId: number) => choice.destinationPageId === pageId;
 
   return (
     <button
       className="relative flex justify-between items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg"
       onClick={onToggleExpand}>
-      {choice.destinationPageId ? "연결된 페이지 없음" : ""}
+      {choice.destinationPageId ? getPageTitle(choice.destinationPageId) : "연결된 페이지 없음"}
       <DownArrowCircleIcon
         className={classNames({"rotate-180": isExpanded})}
         fill={isExpanded ? "#A5A5A5" : "#2D2D2D"}
       />
+      {isExpanded ? (
+        <ul className="absolute top-12 left-0 w-[298px] max-h-[208px] border-2 border-t-0 border-[#D9D9D9] flex flex-col items-stretch bg-white z-10 overflow-auto">
+          <li
+            className="min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] text-[#FF0000] hover:bg-[#F9F9F9]"
+            onClick={() => onUpdateDestinationPageId(null)}>
+            페이지 연결 해제
+          </li>
+          {allPossibleDestinationPages.map(page => (
+            <li
+              key={page.id}
+              className={classNames(
+                "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9]",
+                {
+                  "bg-[#EFEFEF]": isSelected(page.id),
+                  "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
+                },
+              )}
+              onClick={() => onUpdateDestinationPageId(page.id)}>
+              {page.title}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </button>
   );
 }

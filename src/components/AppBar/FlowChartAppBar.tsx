@@ -1,7 +1,7 @@
 import {api} from "@/api";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
 import {keys} from "@/constants";
-import {useFlowChartStore} from "@/stores";
+import {useAuthStore, useFlowChartStore} from "@/stores";
 import {TextersError, TextersErrorCode} from "@/types/error";
 import {useQuery} from "@tanstack/react-query";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
@@ -10,6 +10,7 @@ import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function FlowChartAppBar() {
+  const didSignIn = useAuthStore(state => !!state.accessToken);
   const {bookId} = useParams();
   const navigate = useNavigate();
   const {
@@ -17,11 +18,12 @@ export default function FlowChartAppBar() {
     isSaving,
     updatedAt,
     error: flowChartError,
-    resetError,
     loadFlowChart,
   } = useFlowChartStore();
 
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile);
+  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
+    enabled: didSignIn,
+  });
   const {
     data: book,
     error,
