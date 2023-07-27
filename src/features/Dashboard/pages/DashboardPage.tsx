@@ -9,7 +9,7 @@ import {useQuery} from "@tanstack/react-query";
 export default function DashboardPage() {
   const {isOpen, openModal, closeModal} = useModal();
   const didSignIn = useAuthStore(state => !!state.accessToken);
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE_QUERY], api.members.fetchProfile, {
+  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
     enabled: didSignIn,
   });
 

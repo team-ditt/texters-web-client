@@ -3,6 +3,7 @@ import {FlatButton, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
 import {useModal} from "@/hooks";
+import {useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -20,8 +21,12 @@ type Props = {
 
 function DashboardBookListItem({book}: Props) {
   const navigate = useNavigate();
+  const {loadFlowChart} = useFlowChartStore();
 
-  const onNavigate = () => navigate(`/studio/books/${book.id}/flow-chart`);
+  const onNavigate = () => {
+    loadFlowChart(book.id);
+    navigate(`/studio/books/${book.id}/flow-chart`);
+  };
 
   return (
     <a
@@ -125,7 +130,7 @@ function MoreButton({book}: Props) {
             onClick={onDelete}
             disabled={isDeleting}>
             이 작품 삭제하기
-            <TrashIcon />
+            <TrashIcon stroke="#FF0000" />
           </button>
         </div>
       ) : null}

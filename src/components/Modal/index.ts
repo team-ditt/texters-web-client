@@ -1,5 +1,6 @@
-import Alert from "./Alert";
-import CreateBookAgreement from "./CreateBookAgreement";
-import OfficialDocument from "./OfficialDocument";
+import {lazy} from "react";
 
-export const Modal = {Alert, CreateBookAgreement, OfficialDocument};
+const CreateBookAgreement = lazy(() => import("./CreateBookAgreement"));
+const OfficialDocument = lazy(() => import("./OfficialDocument"));
+
+export const Modal = {CreateBookAgreement, OfficialDocument};

@@ -13,7 +13,7 @@ import {Swiper, SwiperSlide} from "swiper/react";
 
 export default function WeeklyMostViewedCarousel() {
   const {data: books} = useQuery(
-    [keys.GET_WEEKLY_MOST_VIEWED_BOOKS_QUERY],
+    [keys.GET_WEEKLY_MOST_VIEWED_BOOKS],
     api.books.fetchWeeklyMostViewedBooks,
   );
 

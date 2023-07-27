@@ -21,7 +21,9 @@ export default function MobileFooter() {
             </Link>
           </ul>
         </div>
-        <DiscordLogoIcon />
+        <a href="https://discord.gg/wVmrzRfJ" target="_blank">
+          <DiscordLogoIcon />
+        </a>
       </div>
       <span className="py-6 border-t border-[#757575] bg-[#2D2D2D] flex justify-center items-center font-bold text-[12px] text-[#A5A5A5]">
         Copyright © Texters 2023. All Rights Reserved.

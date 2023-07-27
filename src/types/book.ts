@@ -58,6 +58,13 @@ export type Page = {
   choices: Choice[];
 };
 
+export type UpdatePageForm = {
+  bookId: number;
+  pageId: number;
+  title?: string;
+  content?: string | null;
+};
+
 export type Choice = {
   id: number;
   sourcePageId: number;
@@ -65,3 +72,20 @@ export type Choice = {
   order: number;
   content: string;
 };
+
+export type CreateChoiceForm = {
+  bookId: number;
+  pageId: number;
+  content: string;
+};
+
+export type UpdateChoiceForm = CreateChoiceForm & {choiceId: number};
+
+export type UpdateChoiceDestinationForm = {
+  bookId: number;
+  pageId: number;
+  choiceId: number;
+  destinationPageId: number | null;
+};
+
+export type DeleteChoiceForm = {bookId: number; pageId: number; choiceId: number};

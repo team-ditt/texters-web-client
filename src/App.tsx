@@ -10,20 +10,18 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <div className="main">
-            <MobileViewBackground />
-            <RouterContainer>
-              <MobileAppBar />
-              <Router />
-            </RouterContainer>
-            <MobileViewBackground />
-          </div>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <div className="main">
+          <MobileViewBackground />
+          <RouterContainer>
+            <MobileAppBar />
+            <Router />
+          </RouterContainer>
+          <MobileViewBackground />
+        </div>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

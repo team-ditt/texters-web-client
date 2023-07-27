@@ -2,6 +2,9 @@ import {SizedBox, SpinningLoader} from "@/components";
 import {useOauthSignIn} from "@/features/Auth/hooks";
 import {useAuthStore} from "@/stores";
 import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
+import googleLogo from "assets/icons/google-logo.png";
+import kakaoLogo from "assets/icons/kakao-logo.png";
+import naverLogo from "assets/icons/naver-logo.png";
 import {ReactComponent as LogoPositive} from "assets/logo/logo-positive.svg";
 import {ReactComponent as LogoSymbol} from "assets/logo/logo-symbol.svg";
 import {motion} from "framer-motion";
@@ -38,7 +41,7 @@ export default function SignInPage() {
         <Link
           className="h-12 flex justify-center items-center rounded-[10px] shadow-[0_2px_3px_rgba(0,0,0,0.168)] text-black-500"
           to={GOOGLE_LOGIN_URI}>
-          <img className="w-5 h-5" src="assets/icons/google-logo.png" />
+          <img className="w-5 h-5" src={googleLogo} />
           <SizedBox width={12} />
           구글로 로그인 하기
         </Link>
@@ -46,7 +49,7 @@ export default function SignInPage() {
         <Link
           className="h-12 flex justify-center items-center rounded-[10px] bg-[#03C75A] shadow-[0_2px_3px_rgba(0,0,0,0.168)] text-white"
           to={NAVER_LOGIN_URI}>
-          <img className="w-4 h-4" src="assets/icons/naver-logo.png" />
+          <img className="w-4 h-4" src={naverLogo} />
           <SizedBox width={12} />
           네이버로 로그인 하기
         </Link>
@@ -54,7 +57,7 @@ export default function SignInPage() {
         <Link
           className="h-12 flex justify-center items-center rounded-[10px] bg-[#FFE500] shadow-[0_2px_3px_rgba(0,0,0,0.168)]"
           to={KAKAO_LOGIN_URI}>
-          <img className="w-5 h-5" src="assets/icons/kakao-logo.png" />
+          <img className="w-5 h-5" src={kakaoLogo} />
           <SizedBox width={12} />
           카카오로 로그인 하기
         </Link>

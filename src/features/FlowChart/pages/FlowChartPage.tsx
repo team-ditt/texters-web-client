@@ -1,25 +1,24 @@
-import {api} from "@/api";
 import {FlowChartAppBar, SpinningLoader} from "@/components";
-import {keys} from "@/constants";
 import {useAuthGuard} from "@/hooks";
-import {useQuery} from "@tanstack/react-query";
+import {useFlowChartStore} from "@/stores";
 import {AnimatePresence, motion} from "framer-motion";
-import {useParams} from "react-router-dom";
+import {useEffect} from "react";
+import {Link, useParams} from "react-router-dom";
 
 export default function FlowChartPage() {
   const {bookId} = useParams();
-
-  const {data: flowChart, isLoading} = useQuery(
-    [keys.GET_FLOW_CHART, bookId],
-    () => api.books.fetchFlowChart(+bookId!),
-    {refetchOnWindowFocus: false},
-  );
+  const {flowChart, loadFlowChart} = useFlowChartStore();
 
   useAuthGuard();
 
+  useEffect(() => {
+    if (!flowChart) loadFlowChart(+bookId!);
+  }, [flowChart]);
+
   if (!flowChart)
     return (
-      <div className="flow-chart-view">
+      // FIXME: 플로우차트 배경에 맞춰 bg-[#EFEFEF] 수정
+      <div className="flow-chart-view bg-[#EFEFEF]">
         <AnimatePresence mode="wait">
           <motion.div
             className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
@@ -35,9 +34,14 @@ export default function FlowChartPage() {
   return (
     // FIXME: 플로우차트 배경에 맞춰 bg-[#EFEFEF] 수정
     <div className="flow-chart-view bg-[#EFEFEF]">
-      <FlowChartAppBar title={flowChart.title} />
-      <div className="flow-chart-view-content px-6 py-0 relative">
+      <FlowChartAppBar />
+      <div className="flow-chart-view-content px-6 py-0 relative flex justify-center items-center">
         {/* TODO: 여기에 플로우차트 컴포넌트 넣기 */}
+        <Link
+          className="px-4 py-1.5 border-2 border-black rounded-full font-medium text-black"
+          to={`/studio/books/${bookId}/flow-chart/pages/${flowChart.lanes[0].pages[0].id}`}>
+          페이지 수정화면으로 이동
+        </Link>
       </div>
     </div>
   );
