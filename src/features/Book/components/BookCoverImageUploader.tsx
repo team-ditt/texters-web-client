@@ -1,4 +1,5 @@
-import {SizedBox} from "@/components";
+import {Modal, SizedBox} from "@/components";
+import {useModal} from "@/hooks";
 import {ReactComponent as AddPhotoIcon} from "assets/icons/add-photo.svg";
 import {ChangeEvent, useRef, useState} from "react";
 import BookCoverImage from "./BookCoverImage";
@@ -11,6 +12,7 @@ type Props = {
 export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | undefined>(coverImageUrl);
+  const {isOpen, openModal, closeModal} = useModal();
 
   const onOpenFileUploader = () => {
     inputRef.current?.click();
@@ -24,7 +26,7 @@ export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: P
 
     if (file.size > 5 * 1024 * 1024) {
       event.target.value = "";
-      return alert("5MB가 넘는 표지는 등록할 수 없어요!");
+      return openModal();
     }
 
     setCoverImage(file);
@@ -51,6 +53,13 @@ export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: P
         accept=".jpg,.jpeg,.png,.webp"
         onChange={onFileSelect}
         hidden
+      />
+
+      <Modal.Alert
+        isOpen={isOpen}
+        title="이미지 크기를 줄여주세요"
+        message="5MB가 넘는 이미지는 표지로 등록할 수 없어요!"
+        onRequestClose={closeModal}
       />
     </button>
   );

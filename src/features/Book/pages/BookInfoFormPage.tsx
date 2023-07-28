@@ -6,7 +6,7 @@ import {
   BookDescriptionTextarea,
   BookTitleInput,
 } from "@/features/Book/components";
-import {useAuthGuard, useTextInput} from "@/hooks";
+import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {motion} from "framer-motion";
@@ -31,7 +31,8 @@ export default function BookInfoFormPage() {
   const onSubmit = () => submitBookInfo({title, description, coverImage});
   const onCancel = () => navigate(-1);
 
-  useAuthGuard();
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
 
   return (
     <div className="desktop-view">
@@ -76,6 +77,9 @@ export default function BookInfoFormPage() {
           <SpinningLoader color="#BDBDBD" />
         </motion.div>
       ) : null}
+
+      <MobileViewAlert />
+      <RequestSignInDialog />
     </div>
   );
 }

@@ -1,24 +1,22 @@
-import {FlowChartAppBar, SpinningLoader} from "@/components";
-import {useAuthGuard} from "@/hooks";
+import {SpinningLoader} from "@/components";
+import {FlowChartAppBar} from "@/features/FlowChart/components";
+import {useAuthGuard, useMobileViewGuard} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {AnimatePresence, motion} from "framer-motion";
-import {useEffect} from "react";
 import {Link, useParams} from "react-router-dom";
 
 export default function FlowChartPage() {
   const {bookId} = useParams();
-  const {flowChart, loadFlowChart} = useFlowChartStore();
+  const {flowChart} = useFlowChartStore();
 
-  useAuthGuard();
-
-  useEffect(() => {
-    if (!flowChart) loadFlowChart(+bookId!);
-  }, [flowChart]);
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
 
   if (!flowChart)
     return (
       // FIXME: 플로우차트 배경에 맞춰 bg-[#EFEFEF] 수정
       <div className="flow-chart-view bg-[#EFEFEF]">
+        <FlowChartAppBar />
         <AnimatePresence mode="wait">
           <motion.div
             className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
@@ -28,6 +26,9 @@ export default function FlowChartPage() {
             <SpinningLoader color="#BDBDBD" />
           </motion.div>
         </AnimatePresence>
+
+        <MobileViewAlert />
+        <RequestSignInDialog />
       </div>
     );
 
@@ -43,6 +44,9 @@ export default function FlowChartPage() {
           페이지 수정화면으로 이동
         </Link>
       </div>
+
+      <MobileViewAlert />
+      <RequestSignInDialog />
     </div>
   );
 }

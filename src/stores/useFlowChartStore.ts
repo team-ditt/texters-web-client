@@ -41,8 +41,12 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, 
     if (get().isLoading) return;
 
     set({isLoading: true});
-    const flowChart = await api.books.fetchFlowChart(bookId);
-    set({flowChart, isLoading: false});
+    try {
+      const flowChart = await api.books.fetchFlowChart(bookId);
+      set({flowChart, isLoading: false});
+    } catch (error) {
+      set({isLoading: false, error: (error as AxiosError<TextersError>).response?.data});
+    }
   },
   saveFlowChartLockKey: key => set({flowChartLockKey: key}),
   updatePageInfo: async form => {

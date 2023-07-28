@@ -1,13 +1,14 @@
 import {api} from "@/api";
-import {FlowChartAppBar, SizedBox, SpinningLoader} from "@/components";
+import {Modal, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
+import {FlowChartAppBar} from "@/features/FlowChart/components";
 import {
   useChoiceContentInput,
   useDestinationPages,
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
-import {useAuthGuard} from "@/hooks";
+import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useAuthStore, useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -32,7 +33,8 @@ export default function PageEditPage() {
     {enabled: didSignIn()},
   );
 
-  useAuthGuard();
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!page) return;
     setTitle(page.title);
@@ -52,6 +54,9 @@ export default function PageEditPage() {
             <SpinningLoader color="#BDBDBD" />
           </motion.div>
         </AnimatePresence>
+
+        <MobileViewAlert />
+        <RequestSignInDialog />
       </div>
     );
 
@@ -90,6 +95,9 @@ export default function PageEditPage() {
           {page.choices.length < 5 ? <AddChoiceButton /> : null}
         </div>
       </div>
+
+      <MobileViewAlert />
+      <RequestSignInDialog />
     </div>
   );
 }
@@ -97,21 +105,25 @@ export default function PageEditPage() {
 function ChoiceForm({choice}: {choice: Choice}) {
   const {bookId, pageId} = useParams();
   const {content, onInputContent} = useChoiceContentInput(+bookId!, +pageId!, choice);
+  const {isOpen, openModal, closeModal} = useModal();
 
   const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
   const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE], {});
 
-  const onDelete = () => {
-    if (confirm("정말로 선택지를 삭제하시겠어요?"))
-      deleteChoice({bookId: +bookId!, pageId: +pageId!, choiceId: choice.id}, onSuccessToDelete);
+  const onConfirm = async () => {
+    await deleteChoice(
+      {bookId: +bookId!, pageId: +pageId!, choiceId: choice.id},
+      onSuccessToDelete,
+    );
+    closeModal();
   };
 
   return (
     <div className="h-12 flex gap-1">
       <button
         className="h-12 px-1 rounded-lg hover:bg-[#EFEFEF] transition-colors flex justify-center items-center gap-1 text-[#BBB]"
-        onClick={onDelete}>
+        onClick={openModal}>
         <TrashIcon width={28} height={28} stroke="#CBD2E0" />
       </button>
       <DragHandleIcon className="self-center" />
@@ -124,6 +136,15 @@ function ChoiceForm({choice}: {choice: Choice}) {
         maxLength={100}
       />
       <DestinationPageSelect choice={choice} />
+
+      <Modal.Dialog
+        isOpen={isOpen}
+        title="선택지 삭제"
+        message="정말로 선택지를 삭제하시겠어요?"
+        confirmMessage="삭제하기"
+        onConfirm={onConfirm}
+        onCancel={closeModal}
+      />
     </div>
   );
 }

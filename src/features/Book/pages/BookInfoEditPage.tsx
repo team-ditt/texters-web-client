@@ -6,9 +6,10 @@ import {
   BookDescriptionTextarea,
   BookTitleInput,
 } from "@/features/Book/components";
-import {useAuthGuard, useTextInput} from "@/hooks";
+import {useMyBookInfo} from "@/features/FlowChart/hooks";
+import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
 import {Validator} from "@/utils";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AnimatePresence, motion} from "framer-motion";
 import {ChangeEventHandler, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -29,11 +30,7 @@ export default function BookInfoEditPage() {
   } = useTextInput();
   const canSubmit = title && description;
 
-  const {data: book, isLoading: isBookInfoLoading} = useQuery(
-    [keys.GET_BOOK, bookId],
-    () => api.books.fetchBook(+bookId!),
-    {refetchOnWindowFocus: false},
-  );
+  const {book, NotAuthorAlert, PublishedBookAlert} = useMyBookInfo(+bookId!);
   const {mutate: updateBookInfo, isLoading: isUpdating} = useMutation(
     () => api.books.updateBookInfo(book!.id, {coverImage, title, description}),
     {
@@ -49,7 +46,8 @@ export default function BookInfoEditPage() {
   const onSubmit = () => updateBookInfo();
   const onCancel = () => navigate(-1);
 
-  useAuthGuard();
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!book) return;
     setTitle(book.title);
@@ -75,6 +73,11 @@ export default function BookInfoEditPage() {
             </motion.div>
           </AnimatePresence>
         </div>
+
+        <MobileViewAlert />
+        <RequestSignInDialog />
+        <NotAuthorAlert />
+        <PublishedBookAlert />
       </div>
     );
 
@@ -124,6 +127,11 @@ export default function BookInfoEditPage() {
           </motion.div>
         ) : null}
       </div>
+
+      <MobileViewAlert />
+      <RequestSignInDialog />
+      <NotAuthorAlert />
+      <PublishedBookAlert />
     </div>
   );
 }

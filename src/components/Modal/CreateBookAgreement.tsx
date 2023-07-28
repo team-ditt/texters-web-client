@@ -1,4 +1,3 @@
-import FlatButton from "@/components/FlatButton";
 import SizedBox from "@/components/SizedBox";
 import {ReactComponent as CloseModalIcon} from "assets/icons/close-modal.svg";
 import ReactModal from "react-modal";
@@ -14,18 +13,17 @@ export default function CreateBookAgreement({onRequestClose, ...props}: Props) {
   return (
     <ReactModal
       overlayClassName="fixed inset-0 bg-overlay z-[12000]"
-      className="absolute top-14 bottom-14 left-2 right-2 m-auto max-w-[650px] h-fit max-h-[600px] outline-none bg-white rounded-[12px] flex flex-col items-center"
+      className="absolute top-14 bottom-14 left-2 right-2 m-auto max-w-[650px] h-fit max-h-[600px] border-[3px] border-black outline-none bg-white rounded-[12px] flex flex-col items-center overflow-hidden"
       closeTimeoutMS={200}
       onRequestClose={onRequestClose}
       appElement={document.getElementById("root") as HTMLElement}
       {...props}>
-      <button className="self-end mt-4 mr-4" onClick={onRequestClose}>
-        <CloseModalIcon />
+      <button className="absolute top-2 right-2 p-1" onClick={onRequestClose}>
+        <CloseModalIcon width={28} height={28} />
       </button>
 
-      <SizedBox height={12} />
-      <div className="w-full flex flex-col items-start gap-[6px] px-8 pb-8">
-        <span className="text-[30px] font-bold text-[#494949]">작품 제작 전 동의사항</span>
+      <div className="w-full flex flex-col items-start gap-[6px] px-8 py-4">
+        <span className="text-[30px] font-bold">작품 제작 전 동의사항</span>
       </div>
       <div className="w-full border-t border-[#D9D9D9]" />
 
@@ -59,11 +57,9 @@ export default function CreateBookAgreement({onRequestClose, ...props}: Props) {
         </ul>
       </div>
 
-      <div className="w-full px-8 pt-4 pb-8">
-        <FlatButton className="!h-12" onClick={onAgree}>
-          <span>동의하고 계속하기</span>
-        </FlatButton>
-      </div>
+      <button className="w-full h-12 bg-[#242424] text-white" onClick={onAgree}>
+        <span>동의하고 계속하기</span>
+      </button>
     </ReactModal>
   );
 }

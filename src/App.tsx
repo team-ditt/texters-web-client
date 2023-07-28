@@ -3,12 +3,21 @@ import * as React from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {BrowserRouter} from "react-router-dom";
 
-import {MobileAppBar} from "@/components";
+import {MobileAppBar, Modal} from "@/components";
 import {Router} from "@/Router";
+import {useAuthStore} from "@/stores";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const {isSessionExpired, removeToken, resolveExpiredSession} = useAuthStore();
+
+  const onRequestSignIn = () => {
+    removeToken();
+    resolveExpiredSession();
+    window.location.href = "/sign-in";
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -19,6 +28,14 @@ function App() {
             <Router />
           </RouterContainer>
           <MobileViewBackground />
+          <Modal.Alert
+            isOpen={isSessionExpired}
+            title="세션이 만료되었어요"
+            message="로그인 페이지로 이동할게요!"
+            onRequestClose={onRequestSignIn}
+            shouldCloseOnOverlayClick={false}
+            shouldCloseOnEsc={false}
+          />
         </div>
       </BrowserRouter>
     </QueryClientProvider>

@@ -13,8 +13,8 @@ export default function DashboardPage() {
     enabled: didSignIn(),
   });
 
-  useAuthGuard();
-  useMobileViewGuard(didSignIn());
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
 
   return (
     <div className="desktop-view">
@@ -30,7 +30,10 @@ export default function DashboardPage() {
         <SizedBox height={24} />
         {profile ? <DashboardBookList memberId={profile.id} /> : null}
       </div>
+
       <Modal.CreateBookAgreement isOpen={isOpen} onRequestClose={closeModal} />
+      <MobileViewAlert />
+      <RequestSignInDialog />
     </div>
   );
 }

@@ -68,27 +68,17 @@ axiosAuthenticated.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    const {saveToken, removeToken} = useAuthStore.getState();
-
-    if (error.response.data.code === TextersErrorCode.LOCKED_FLOW_CHART) {
-      if (
-        confirm(
-          "잠깐, 여러 창을 띄워 두고 작업 중이신가요? 텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요? 취소하면 홈 화면으로 이동할게요.",
-        )
-      )
-        window.location.reload();
-      window.location.href = "/";
-    }
+    const {isSessionExpired, saveToken, expireSession} = useAuthStore.getState();
 
     if (error.response.data.code === TextersErrorCode.INVALID_REFRESH_TOKEN) {
-      alert(error.response.data.message);
-      removeToken();
-      window.location.href = "/sign-in";
+      expireSession();
+      return Promise.resolve(error);
     }
 
     if (
       error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isSessionExpired
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
