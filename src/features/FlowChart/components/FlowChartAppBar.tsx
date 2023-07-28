@@ -52,10 +52,10 @@ export default function FlowChartAppBar() {
       <Modal.Dialog
         isOpen={isLockedFlowChart}
         title="잠깐, 여러 창을 띄워 두고 작업 중이신가요?"
-        message="텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요? 취소하면 홈 화면으로 이동해요."
+        message="텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요?"
         confirmMessage="새로고침하기"
         onConfirm={onRefresh}
-        cancelMessage="홈으로 하기"
+        cancelMessage="홈으로 가기"
         onCancel={onGoHome}
       />
     </nav>
