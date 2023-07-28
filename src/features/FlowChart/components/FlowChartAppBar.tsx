@@ -44,7 +44,7 @@ export default function FlowChartAppBar() {
         <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
         {/* TODO: 미리 플레이 버튼 활성화 */}
         <button className="border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold">
-          미리 플레이 해보기
+          미리 읽어보기
         </button>
       </div>
       <NotAuthorAlert />
