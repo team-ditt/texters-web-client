@@ -69,7 +69,7 @@ export default function BookInfoPage() {
           <SizedBox height={12} />
           <p
             ref={descriptionRef}
-            className={classNames("text-[#2D3648] overflow-hidden text-ellipsis", {
+            className={classNames("text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem]", {
               "line-clamp-none": isExpanded,
               "line-clamp-[10]": !isExpanded,
             })}>
