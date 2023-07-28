@@ -17,7 +17,7 @@ import {useNavigate, useParams} from "react-router-dom";
 export default function BookInfoPage() {
   const {bookId} = useParams();
   const navigate = useNavigate();
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
 
   const {data: book} = useQuery([keys.GET_BOOK, bookId], () => api.books.fetchBook(+bookId!), {
     enabled: !!bookId,
@@ -28,7 +28,7 @@ export default function BookInfoPage() {
 
   const onGoBack = () => navigate(-1);
   const onToggleLike = () => {
-    if (didSignIn) return toggleLike();
+    if (didSignIn()) return toggleLike();
     if (confirm("좋아요 표시를 하기 위해서는 로그인을 해야 해요! 로그인하시겠어요?"))
       navigate("/sign-in");
   };

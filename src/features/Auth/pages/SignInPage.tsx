@@ -13,15 +13,15 @@ import {Link, useNavigate} from "react-router-dom";
 
 export default function SignInPage() {
   const navigate = useNavigate();
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
 
   const {KAKAO_LOGIN_URI, NAVER_LOGIN_URI, GOOGLE_LOGIN_URI, isSigningIn} = useOauthSignIn();
 
   const onClose = () => navigate(-1);
 
   useEffect(() => {
-    if (didSignIn) navigate("/", {replace: true});
-  }, [didSignIn]);
+    if (didSignIn()) navigate("/", {replace: true});
+  }, [didSignIn()]);
 
   return (
     <motion.div

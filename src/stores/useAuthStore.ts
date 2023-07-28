@@ -3,25 +3,22 @@ import {createJSONStorage, persist} from "zustand/middleware";
 
 type AuthStoreState = {
   accessToken: string | null;
-  isSessionExpired: boolean;
 };
 
 type AuthStoreAction = {
+  didSignIn: () => boolean;
   saveToken: (accessToken: string) => void;
   removeToken: () => void;
-  expireSession: () => void;
-  resolveExpiredSession: () => void;
 };
 
 const useAuthStore = create<AuthStoreState & AuthStoreAction>()(
   persist(
-    set => ({
+    (set, get) => ({
       accessToken: null,
       isSessionExpired: false,
+      didSignIn: () => Boolean(get().accessToken),
       saveToken: accessToken => set({accessToken}),
       removeToken: () => set({accessToken: null}),
-      expireSession: () => set({accessToken: null, isSessionExpired: true}),
-      resolveExpiredSession: () => set({isSessionExpired: false}),
     }),
     {
       name: "auth-storage",

@@ -10,7 +10,7 @@ import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function FlowChartAppBar() {
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
   const {bookId} = useParams();
   const navigate = useNavigate();
   const {
@@ -22,7 +22,7 @@ export default function FlowChartAppBar() {
   } = useFlowChartStore();
 
   const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
+    enabled: didSignIn(),
   });
   const {
     data: book,

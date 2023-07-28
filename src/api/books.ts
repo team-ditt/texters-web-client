@@ -1,4 +1,4 @@
-import {axiosAuthenticated, axiosFlowChart, axiosPublic} from "@/api/config";
+import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {
   Book,
   BookForm,
@@ -41,7 +41,7 @@ export function fetchMyBook(memberId: number, bookId: number) {
 }
 
 export function fetchFlowChart(bookId: number) {
-  return axiosFlowChart.get<FlowChart>(`/books/${bookId}/flow-chart`);
+  return axiosAuthenticated.get<FlowChart>(`/books/${bookId}/flow-chart`);
 }
 
 export async function updateBookInfo(bookId: number, {coverImage, title, description}: BookForm) {

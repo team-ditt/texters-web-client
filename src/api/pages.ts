@@ -1,4 +1,4 @@
-import {axiosFlowChart, axiosPublic} from "@/api/config";
+import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {Page, UpdatePageForm} from "@/types/book";
 
 export function fetchPage(bookId: number, pageId: number) {
@@ -6,5 +6,5 @@ export function fetchPage(bookId: number, pageId: number) {
 }
 
 export function updatePageInfo({bookId, pageId, ...form}: UpdatePageForm) {
-  return axiosFlowChart.patch<Page>(`/books/${bookId}/pages/${pageId}`, form);
+  return axiosAuthenticated.patch<Page>(`/books/${bookId}/pages/${pageId}`, form);
 }

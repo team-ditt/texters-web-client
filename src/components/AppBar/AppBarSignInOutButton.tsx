@@ -5,14 +5,14 @@ import {ReactComponent as SignOutIcon} from "assets/icons/sign-out.svg";
 import {Link} from "react-router-dom";
 
 export default function AppBarSignInOutButton() {
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
   const {mutate: signOut} = useSignOut();
 
   const onSignOut = () => {
     if (confirm("로그아웃하시겠어요?")) signOut();
   };
 
-  if (didSignIn)
+  if (didSignIn())
     return (
       <button className="p-1.5" onClick={onSignOut}>
         <SignOutIcon />

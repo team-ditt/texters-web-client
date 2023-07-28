@@ -1,6 +1,6 @@
 import {useAuthStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 const SECONDS_IN_MILLISECONDS = 1000;
 const DEFAULT_OPTIONS = {
@@ -31,51 +31,6 @@ export const axiosAuthenticated = axios.create({...DEFAULT_OPTIONS, withCredenti
 axiosAuthenticated.interceptors.request.use(
   request => {
     const {accessToken} = useAuthStore.getState();
-    if (accessToken) {
-      request.headers.Authorization = accessToken;
-    }
-    return request;
-  },
-  error => Promise.reject(error),
-);
-
-axiosAuthenticated.interceptors.response.use(
-  response => {
-    if (response.config.url?.includes("auth/token-refresh")) {
-      const accessToken = response.data;
-      const {saveToken} = useAuthStore.getState();
-      saveToken(`Bearer ${accessToken}`);
-    }
-
-    return response.data;
-  },
-  async error => {
-    const {expireSession} = useAuthStore.getState();
-
-    if (error.config.url?.includes("auth/token-refresh")) {
-      expireSession();
-      return Promise.reject(error);
-    }
-
-    if (error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN) {
-      return axiosAuthenticated
-        .request({
-          url: "/auth/token-refresh",
-        })
-        .then(response => {
-          if (!!response) return axiosAuthenticated.request(error.config);
-        });
-    }
-
-    return Promise.reject(error);
-  },
-);
-
-export const axiosFlowChart = axios.create({...DEFAULT_OPTIONS, withCredentials: true});
-
-axiosFlowChart.interceptors.request.use(
-  request => {
-    const {accessToken} = useAuthStore.getState();
     const {flowChartLockKey} = useFlowChartStore.getState();
     if (accessToken) {
       request.headers.Authorization = accessToken;
@@ -88,7 +43,20 @@ axiosFlowChart.interceptors.request.use(
   error => Promise.reject(error),
 );
 
-axiosFlowChart.interceptors.response.use(
+let isRefreshing = false;
+let failedQueue: {resolve: (token: string) => void; reject: (error: AxiosError) => void}[] = [];
+
+function resolveQueue(token: string) {
+  failedQueue.forEach(promise => promise.resolve(token));
+  failedQueue = [];
+}
+
+function rejectQueue(error: AxiosError) {
+  failedQueue.forEach(promise => promise.reject(error));
+  failedQueue = [];
+}
+
+axiosAuthenticated.interceptors.response.use(
   response => {
     if (response.config.url?.endsWith("flow-chart")) {
       const flowChartLockKey = response.headers["flow-chart-lock-key"];
@@ -99,14 +67,61 @@ axiosFlowChart.interceptors.response.use(
     return response.data;
   },
   async error => {
-    if (error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN) {
-      return axiosAuthenticated
-        .request({
-          url: "/auth/token-refresh",
+    const originalRequest = error.config;
+    const {saveToken, removeToken} = useAuthStore.getState();
+
+    if (error.response.data.code === TextersErrorCode.LOCKED_FLOW_CHART) {
+      if (
+        confirm(
+          "잠깐, 여러 창을 띄워 두고 작업 중이신가요? 텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요? 취소하면 홈 화면으로 이동할게요.",
+        )
+      )
+        window.location.reload();
+      window.location.href = "/";
+    }
+
+    if (error.response.data.code === TextersErrorCode.INVALID_REFRESH_TOKEN) {
+      alert(error.response.data.message);
+      removeToken();
+      window.location.href = "/sign-in";
+    }
+
+    if (
+      error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({resolve, reject});
         })
-        .then(response => {
-          if (!!response) return axiosFlowChart.request(error.config);
-        });
+          .then(token => {
+            originalRequest.headers.Authorization = token;
+            return axiosAuthenticated(originalRequest);
+          })
+          .catch(error => Promise.reject(error));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      return new Promise((resolve, reject) => {
+        axiosAuthenticated
+          .get("/auth/token-refresh")
+          .then(response => {
+            const accessToken = `Bearer ${response}`;
+            originalRequest.headers.Authorization = accessToken;
+            saveToken(accessToken);
+            resolveQueue(accessToken);
+            resolve(axiosAuthenticated(originalRequest));
+          })
+          .catch(error => {
+            rejectQueue(error);
+            reject(error);
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
+      });
     }
 
     return Promise.reject(error);

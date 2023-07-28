@@ -4,9 +4,9 @@ import {useAuthStore} from "@/stores";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
 export default function useBookLike(bookId?: number) {
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
   const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
+    enabled: didSignIn(),
   });
   const {data: likedResult} = useQuery(
     [keys.GET_BOOK_LIKED, profile?.id],

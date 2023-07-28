@@ -8,13 +8,13 @@ import {useQuery} from "@tanstack/react-query";
 
 export default function DashboardPage() {
   const {isOpen, openModal, closeModal} = useModal();
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
   const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
+    enabled: didSignIn(),
   });
 
   useAuthGuard();
-  useMobileViewGuard(didSignIn);
+  useMobileViewGuard(didSignIn());
 
   return (
     <div className="desktop-view">

@@ -1,4 +1,4 @@
-import {axiosFlowChart} from "@/api/config";
+import {axiosAuthenticated} from "@/api/config";
 import {
   CreateChoiceForm,
   DeleteChoiceForm,
@@ -7,11 +7,13 @@ import {
 } from "@/types/book";
 
 export function createChoice({bookId, pageId, content}: CreateChoiceForm) {
-  return axiosFlowChart.post(`/books/${bookId}/pages/${pageId}/choices`, {content});
+  return axiosAuthenticated.post(`/books/${bookId}/pages/${pageId}/choices`, {content});
 }
 
 export function updateChoice({bookId, pageId, choiceId, content}: UpdateChoiceForm) {
-  return axiosFlowChart.patch(`/books/${bookId}/pages/${pageId}/choices/${choiceId}`, {content});
+  return axiosAuthenticated.patch(`/books/${bookId}/pages/${pageId}/choices/${choiceId}`, {
+    content,
+  });
 }
 
 export function updateChoiceDestination({
@@ -20,11 +22,14 @@ export function updateChoiceDestination({
   choiceId,
   destinationPageId,
 }: UpdateChoiceDestinationForm) {
-  return axiosFlowChart.patch(`/books/${bookId}/pages/${pageId}/choices/${choiceId}/destination`, {
-    destinationPageId,
-  });
+  return axiosAuthenticated.patch(
+    `/books/${bookId}/pages/${pageId}/choices/${choiceId}/destination`,
+    {
+      destinationPageId,
+    },
+  );
 }
 
 export function deleteChoice({bookId, pageId, choiceId}: DeleteChoiceForm) {
-  return axiosFlowChart.delete(`/books/${bookId}/pages/${pageId}/choices/${choiceId}`);
+  return axiosAuthenticated.delete(`/books/${bookId}/pages/${pageId}/choices/${choiceId}`);
 }

@@ -21,7 +21,7 @@ import {FormEventHandler, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
-  const didSignIn = useAuthStore(state => !!state.accessToken);
+  const {didSignIn} = useAuthStore();
   const {bookId, pageId} = useParams();
   const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
   const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
@@ -29,7 +29,7 @@ export default function PageEditPage() {
   const {data: page} = useQuery(
     [keys.GET_FLOW_CHART_PAGE, pageId],
     () => api.pages.fetchPage(+bookId!, +pageId!),
-    {enabled: didSignIn},
+    {enabled: didSignIn()},
   );
 
   useAuthGuard();
