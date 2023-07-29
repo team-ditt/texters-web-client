@@ -58,6 +58,11 @@ export type Page = {
   choices: Choice[];
 };
 
+export type PageView = Page & {
+  isIntro: boolean;
+  isEnding: boolean;
+};
+
 export type UpdatePageForm = {
   bookId: number;
   pageId: number;

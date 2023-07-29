@@ -12,6 +12,7 @@ const BookInfoFormPage = lazy(() => import("@/features/Book/pages/BookInfoFormPa
 const BookInfoEditPage = lazy(() => import("@/features/Book/pages/BookInfoEditPage"));
 const FlowChartPage = lazy(() => import("@/features/FlowChart/pages/FlowChartPage"));
 const PageEditPage = lazy(() => import("@/features/FlowChart/pages/PageEditPage"));
+const BookReaderPage = lazy(() => import("@/features/Book/pages/BookReaderPage"));
 
 export function Router() {
   const location = useLocation();
@@ -29,6 +30,7 @@ export function Router() {
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
         <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
         <Route path="/studio/books/:bookId/flow-chart/pages/:pageId" element={<PageEditPage />} />
+        <Route path="/books/:bookId/read" element={<BookReaderPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
