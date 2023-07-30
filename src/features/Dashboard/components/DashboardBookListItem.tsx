@@ -2,6 +2,7 @@ import {api} from "@/api";
 import {FlatButton, Modal, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useModal} from "@/hooks";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
@@ -22,6 +23,7 @@ type Props = {
 function DashboardBookListItem({book}: Props) {
   const navigate = useNavigate();
   const {loadFlowChart} = useFlowChartStore();
+  const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
   const {isOpen, openModal, closeModal} = useModal();
 
   const onNavigate = (event: MouseEvent) => {
@@ -29,6 +31,7 @@ function DashboardBookListItem({book}: Props) {
     if (overlay?.contains(event.target as Node)) return;
     if (book.status === "PUBLISHED") return openModal();
 
+    clearFlowChart();
     loadFlowChart(book.id);
     navigate(`/studio/books/${book.id}/flow-chart`);
   };

@@ -8,6 +8,7 @@ import {
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useAuthStore, useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
@@ -154,6 +155,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
   const {updateChoiceDestinationPageId} = useFlowChartStore();
+  const loadChoiceDestination = useFlowChartEditorStore(state => state.loadChoiceDestination);
   const queryClient = useQueryClient();
 
   const onToggleExpand = () => setIsExpanded(state => !state);
@@ -164,6 +166,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
       choiceId: choice.id,
       destinationPageId: id,
     });
+    loadChoiceDestination(choice.id, id);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
   };
   const getPageTitle = (pageId: number | null) => {
