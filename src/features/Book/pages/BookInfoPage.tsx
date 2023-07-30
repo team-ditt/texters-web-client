@@ -1,6 +1,6 @@
 import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
-import {useBook, useBookDescriptionRef, useBookTitleRef} from "@/features/Book/hooks";
+import {useBookDescriptionRef, useBookInfo, useBookTitleRef} from "@/features/Book/hooks";
 import {useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
@@ -13,7 +13,7 @@ export default function BookInfoPage() {
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {book, BookNotFoundAlert} = useBook(+bookId!);
+  const {book} = useBookInfo(+bookId!);
   const {hasHistory, removeLastVisitedPageId} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title);
@@ -38,7 +38,6 @@ export default function BookInfoPage() {
     return (
       <div className="mobile-view justify-center items-center">
         <SpinningLoader color="#BBBBBB" />
-        <BookNotFoundAlert />
       </div>
     );
 

@@ -13,6 +13,8 @@ const BookInfoEditPage = lazy(() => import("@/features/Book/pages/BookInfoEditPa
 const FlowChartPage = lazy(() => import("@/features/FlowChart/pages/FlowChartPage"));
 const PageEditPage = lazy(() => import("@/features/FlowChart/pages/PageEditPage"));
 const BookReaderPage = lazy(() => import("@/features/Book/pages/BookReaderPage"));
+const BookDemoReaderPage = lazy(() => import("@/features/Book/pages/BookDemoReaderPage"));
+const NotFoundPage = lazy(() => import("@/features/Error/pages/NotFoundPage"));
 
 export function Router() {
   const location = useLocation();
@@ -25,13 +27,15 @@ export function Router() {
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/books" element={<BookSearchPage />} />
         <Route path="/books/:bookId" element={<BookInfoPage />} />
+        <Route path="/books/:bookId/read" element={<BookReaderPage />} />
         <Route path="/studio/dashboard" element={<DashboardPage />} />
         <Route path="/studio/books/info" element={<BookInfoFormPage />} />
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
         <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
         <Route path="/studio/books/:bookId/flow-chart/pages/:pageId" element={<PageEditPage />} />
-        <Route path="/books/:bookId/read" element={<BookReaderPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/studio/books/:bookId/read" element={<BookDemoReaderPage />} />
+        <Route path="/error/not-found" element={<NotFoundPage />} />
+        <Route path="*" element={<Navigate to="/error/not-found" replace />} />
       </Routes>
     </AnimatePresence>
   );

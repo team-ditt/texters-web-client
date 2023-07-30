@@ -1,15 +1,16 @@
-import {Modal} from "@/components";
+import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
-import {useFlowChartStore} from "@/stores";
+import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
 import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function FlowChartAppBar() {
-  const {bookId} = useParams();
+  const {bookId, pageId} = useParams();
   const navigate = useNavigate();
+  const {recordLastVisitedPageId, removeLastVisitedPageId} = useBookReaderStore();
   const {
     flowChart,
     isSaving,
@@ -27,26 +28,44 @@ export default function FlowChartAppBar() {
   const onGoHome = () => {
     window.location.href = "/";
   };
+  const onDemoRead = () => {
+    removeLastVisitedPageId(bookId!);
+    navigate(`/studio/books/${bookId}/read`);
+  };
+  const onDemoReadFromThisPage = () => {
+    recordLastVisitedPageId(bookId!, +pageId!);
+    navigate(`/studio/books/${bookId}/read`);
+  };
 
   useEffect(() => {
     if (!flowChart && book?.status !== "PUBLISHED") loadFlowChart(+bookId!);
   }, [flowChart, book]);
 
   return (
-    <nav className="fixed inset-0 mx-auto my-0 h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
+    <nav className="fixed inset-0 mx-auto my-0 min-w-[800px] h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
       <div className="flex items-center gap-2">
         <button onClick={onGoBack}>
           <LeftArrowIcon fill="#939393" />
         </button>
-        <h1 className="font-bold">{book?.title}</h1>
+        <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1">
         <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
-        {/* TODO: 미리 플레이 버튼 활성화 */}
-        <button className="border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold">
-          미리 읽어보기
+        <SizedBox width={12} />
+        <button
+          className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
+          onClick={onDemoRead}>
+          처음부터 미리 읽어보기
         </button>
+        {pageId ? (
+          <button
+            className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
+            onClick={onDemoReadFromThisPage}>
+            이 페이지부터 미리 읽어보기
+          </button>
+        ) : null}
       </div>
+
       <NotAuthorAlert />
       <PublishedBookAlert />
       <Modal.Dialog

@@ -3,7 +3,7 @@ import {FlatButton, Modal, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
 import {useModal} from "@/hooks";
-import {useFlowChartStore} from "@/stores";
+import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -66,7 +66,7 @@ function DashboardBookListItem({book}: Props) {
 
         <div className="px-4 w-[200px] flex flex-col gap-1">
           <PublishButton book={book} />
-          {book.status === "DRAFT" ? <DemoPlayButton book={book} /> : null}
+          {book.status === "DRAFT" ? <DemoReadButton book={book} /> : null}
         </div>
       </a>
 
@@ -235,10 +235,14 @@ function PublishButton({book}: Props) {
   );
 }
 
-function DemoPlayButton({book}: Props) {
+function DemoReadButton({book}: Props) {
+  const navigate = useNavigate();
+  const {removeLastVisitedPageId} = useBookReaderStore();
+
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    // TODO: 플레이 화면 구현 시 추가
+    removeLastVisitedPageId(book.id.toString());
+    navigate(`/studio/books/${book.id}/read`);
   };
 
   return (

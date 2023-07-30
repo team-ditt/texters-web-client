@@ -55,7 +55,7 @@ export default function MobileAppBar({book}: Props) {
         <LeftArrowIcon />
       </button>
       <h1 className="flex-1 px-3 text-center font-bold line-clamp-1 text-ellipsis">{book.title}</h1>
-      <BookLikeButton book={book} />
+      {book.status === "PUBLISHED" ? <BookLikeButton book={book} /> : null}
     </motion.nav>
   );
 }

@@ -2,14 +2,15 @@ import {api} from "@/api";
 import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
-import {useBookInfo} from "@/features/Book/hooks";
+import {useMyBookInfo} from "@/features/FlowChart/hooks";
+import {useAuthGuard, useMobileViewGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
 import {useQuery} from "@tanstack/react-query";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-export default function BookReaderPage() {
+export default function BookDemoReaderPage() {
   const {bookId} = useParams();
   const [currentPage, setCurrentPage] = useState<PageView | null>(null);
   const [currentPageId, setCurrentPageId] = useState<number | undefined>(undefined);
@@ -17,7 +18,7 @@ export default function BookReaderPage() {
 
   const {recordLastVisitedPageId, findLastVisitedPageId, removeLastVisitedPageId} =
     useBookReaderStore();
-  const {book} = useBookInfo(+bookId!);
+  const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
   const {data: introPage} = useQuery(
     [keys.GET_INTRO_PAGE],
     () => api.pages.fetchIntroPage(book!.id),
@@ -42,8 +43,10 @@ export default function BookReaderPage() {
   const onGoBackToIntro = () => {
     setCurrentPageId(undefined);
   };
-  const onGoBack = () => navigate(`/books/${bookId}`);
+  const onGoBack = () => navigate(`/studio/books/${bookId}/flow-chart`, {replace: true});
 
+  const {RequestSignInDialog} = useAuthGuard();
+  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     setCurrentPageId(findLastVisitedPageId(bookId!));
   }, []);
@@ -59,6 +62,8 @@ export default function BookReaderPage() {
     return (
       <div className="mobile-view justify-center items-center">
         <SpinningLoader color="#888888" />
+        <MobileViewAlert />
+        <RequestSignInDialog />
       </div>
     );
 
@@ -101,12 +106,16 @@ export default function BookReaderPage() {
               <button
                 className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]"
                 onClick={onGoBack}>
-                작품 소개로 돌아가기
+                플로우차트로 돌아가기
               </button>
             </>
           ) : null}
         </div>
       </div>
+
+      <MobileViewAlert />
+      <RequestSignInDialog />
+      <NotAuthorAlert />
     </div>
   );
 }
