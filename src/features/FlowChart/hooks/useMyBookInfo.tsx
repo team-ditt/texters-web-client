@@ -3,7 +3,9 @@ import {Modal} from "@/components";
 import {keys} from "@/constants";
 import {useModal} from "@/hooks";
 import {useAuthStore} from "@/stores";
+import {TextersError, TextersErrorCode} from "@/types/error";
 import {useQuery} from "@tanstack/react-query";
+import {AxiosError} from "axios";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -15,14 +17,14 @@ export default function useMyBookInfo(bookId: number) {
   const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
     enabled: didSignIn(),
   });
-  const {data: book, isError} = useQuery(
-    [keys.GET_MY_BOOK, bookId],
-    () => api.books.fetchMyBook(profile!.id, +bookId!),
-    {
-      enabled: !!profile?.id,
-      retry: false,
-    },
-  );
+  const {
+    data: book,
+    error,
+    isError,
+  } = useQuery([keys.GET_MY_BOOK, bookId], () => api.books.fetchMyBook(profile!.id, +bookId!), {
+    enabled: !!profile?.id,
+    retry: false,
+  });
 
   const onClose = () => {
     window.location.href = "/studio/dashboard";
@@ -54,6 +56,12 @@ export default function useMyBookInfo(bookId: number) {
   useEffect(() => {
     if (book?.status === "PUBLISHED") openModal();
   }, [book]);
+  useEffect(() => {
+    if (
+      (error as AxiosError<TextersError>)?.response?.data.code === TextersErrorCode.BOOK_NOT_FOUND
+    )
+      navigate("/error/not-found");
+  }, [error]);
 
   return {book, NotAuthorAlert, PublishedBookAlert};
 }
