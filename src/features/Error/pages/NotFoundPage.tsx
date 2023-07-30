@@ -15,7 +15,7 @@ export default function NotFoundPage() {
       <SizedBox height={32} />
       <p className="leading-[1.4rem] whitespace-pre text-center">
         찾으려는 페이지의 주소가 잘못 입력되었거나,{"\n"}
-        이미 삭제된 페이지에요.{"\n"}
+        주소의 변경 혹은 삭제로 인해 찾을 수 없는 페이지에요.{"\n"}
         주소가 정확한지 다시 한 번 확인해 주세요!
       </p>
       <SizedBox height={24} />
