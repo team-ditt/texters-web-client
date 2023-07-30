@@ -9,7 +9,7 @@ type Props = {
   book: Book;
 };
 
-export default function MobileAppBar({book}: Props) {
+export default function BookReaderAppBar({book}: Props) {
   const navigate = useNavigate();
   const lastScrollPositionRef = useRef(0);
   const [hidden, setHidden] = useState(false);

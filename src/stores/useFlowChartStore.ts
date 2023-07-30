@@ -30,7 +30,7 @@ type FlowChartStoreAction = {
   deleteChoice: (form: DeleteChoiceForm, onSuccess: () => Promise<void>) => Promise<void>;
 };
 
-const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
+const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
   isSaving: false,
   isLoading: false,
   updatedAt: new Date().toISOString(),
@@ -100,4 +100,4 @@ const useAuthStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, 
   },
 }));
 
-export default useAuthStore;
+export default useFlowChartStore;
