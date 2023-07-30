@@ -1,33 +1,49 @@
-import {api} from "@/api";
-import {FlatButton, MobileFooter, SizedBox} from "@/components";
-import {keys} from "@/constants";
+import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
-import {useBookDescriptionRef, useBookTitleRef} from "@/features/Book/hooks";
-import {useQuery} from "@tanstack/react-query";
+import {useBook, useBookDescriptionRef, useBookTitleRef} from "@/features/Book/hooks";
+import {useModal} from "@/hooks";
+import {useBookReaderStore} from "@/stores";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
 import classNames from "classnames";
-import {motion} from "framer-motion";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function BookInfoPage() {
   const {bookId} = useParams();
   const navigate = useNavigate();
+  const {isOpen, openModal, closeModal} = useModal();
 
-  const {data: book} = useQuery([keys.GET_BOOK, bookId], () => api.books.fetchBook(+bookId!), {
-    enabled: !!bookId,
-  });
+  const {book, BookNotFoundAlert} = useBook(+bookId!);
+  const {hasHistory, removeLastVisitedPageId} = useBookReaderStore();
+
   const {titleRef} = useBookTitleRef(book?.title);
   const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
 
   const onGoBack = () => navigate(-1);
+  const onGoReader = () => {
+    if (hasHistory(bookId!)) return openModal();
+    navigate(`/books/${bookId}/read`);
+  };
+  const onGoIntroPage = () => {
+    removeLastVisitedPageId(bookId!);
+    closeModal();
+    navigate(`/books/${bookId}/read`);
+  };
+  const onGoLastVisitedPage = () => {
+    closeModal();
+    navigate(`/books/${bookId}/read`);
+  };
 
-  const onGoReader = () => navigate(`/books/${bookId}/read`);
-
-  if (!book) return <></>;
+  if (!book)
+    return (
+      <div className="mobile-view justify-center items-center">
+        <SpinningLoader color="#BBBBBB" />
+        <BookNotFoundAlert />
+      </div>
+    );
 
   return (
-    <motion.div className="mobile-view pt-16">
+    <div className="mobile-view pt-16">
       <div className="flex-1 flex flex-col px-6 pt-0 pb-8">
         <button onClick={onGoBack}>
           <LeftArrowIcon fill="#939393" />
@@ -56,16 +72,14 @@ export default function BookInfoPage() {
           <>
             <SizedBox height={12} />
             <button
-              className="h-8 flex justify-center items-center gap-1 rounded-md border-2 border-[#BBBBBB] font-semibold text-[#797979]"
+              className="h-8 w-full max-w-[400px] self-center flex justify-center items-center gap-1 rounded-md border-2 border-[#BBBBBB] font-semibold text-[#797979]"
               onClick={toggleExpand}>
               {isExpanded ? "접기" : "펼쳐보기"}
-              <motion.div>
-                <DownArrowIcon
-                  className={classNames({
-                    "rotate-180": isExpanded,
-                  })}
-                />
-              </motion.div>
+              <DownArrowIcon
+                className={classNames({
+                  "rotate-180": isExpanded,
+                })}
+              />
             </button>
           </>
         ) : null}
@@ -75,6 +89,18 @@ export default function BookInfoPage() {
         </FlatButton>
       </div>
       <MobileFooter />
-    </motion.div>
+
+      <Modal.Dialog
+        isOpen={isOpen}
+        title="읽던 부분이 있어요"
+        message="이어서 읽으실래요?"
+        confirmMessage="이어서 읽기"
+        onConfirm={onGoLastVisitedPage}
+        cancelMessage="처음부터 읽기"
+        onCancel={onGoIntroPage}
+        onRequestClose={closeModal}
+        showClose
+      />
+    </div>
   );
 }

@@ -8,4 +8,6 @@ export const keys = {
   GET_MY_BOOK: "/studio/dashboard/books",
   GET_FLOW_CHART: "/studio/books/flow-chart",
   GET_FLOW_CHART_PAGE: "/studio/books/flow-chart/pages",
+  GET_INTRO_PAGE: "/books/pages/intro",
+  GET_PAGE: "/books/pages",
 };
