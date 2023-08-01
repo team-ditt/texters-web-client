@@ -1,5 +1,5 @@
 import {Modal, SizedBox} from "@/components";
-import {OfficialDocumentType} from "@/components/Modal/OfficialDocument";
+import {OfficialDocumentType} from "@/constants";
 import {useModal} from "@/hooks";
 import {ReactComponent as CheckboxIcon} from "assets/icons/checkbox.svg";
 import {ReactComponent as RightArrowIcon} from "assets/icons/right-arrow.svg";
@@ -12,7 +12,7 @@ type Props = {
 
 export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props) {
   const [agreedToTermsAndConditions, setAgreedToTermsAndConditions] = useState(false);
-  const [agreedToCollectPersonalInfo, setAgreedToCollectPersonalInfo] = useState(false);
+  const [agreedToPrivacyPolicy, setAgreedToPrivacyPolicy] = useState(false);
   const [agreedToOver14, setAgreedToOver14] = useState(false);
 
   const {isOpen, openModal, closeModal} = useModal();
@@ -21,11 +21,11 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
   const onToggleAllGreed = () => {
     const toBe = !allAgreed;
     setAgreedToTermsAndConditions(toBe);
-    setAgreedToCollectPersonalInfo(toBe);
+    setAgreedToPrivacyPolicy(toBe);
     setAgreedToOver14(toBe);
   };
   const onToggleAgreedToTermsAndConditions = () => setAgreedToTermsAndConditions(state => !state);
-  const onToggleAgreedToCollectPersonalInfo = () => setAgreedToCollectPersonalInfo(state => !state);
+  const onToggleAgreedToPrivacyPolicy = () => setAgreedToPrivacyPolicy(state => !state);
   const onToggleAgreedToOver14 = () => setAgreedToOver14(state => !state);
 
   const onOpenModal = (type: OfficialDocumentType) => {
@@ -36,21 +36,21 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
     switch (documentType) {
       case "terms and conditions":
         return setAgreedToTermsAndConditions(true);
-      case "personal info collection":
-        return setAgreedToCollectPersonalInfo(true);
+      case "privacy policy":
+        return setAgreedToPrivacyPolicy(true);
     }
   };
 
   useEffect(() => {
     if (!allAgreed) return;
     setAgreedToTermsAndConditions(allAgreed);
-    setAgreedToCollectPersonalInfo(allAgreed);
+    setAgreedToPrivacyPolicy(allAgreed);
     setAgreedToOver14(allAgreed);
   }, [allAgreed]);
 
   useEffect(() => {
-    setAllAgreed(agreedToTermsAndConditions && agreedToCollectPersonalInfo && agreedToOver14);
-  }, [agreedToTermsAndConditions, agreedToCollectPersonalInfo, agreedToOver14]);
+    setAllAgreed(agreedToTermsAndConditions && agreedToPrivacyPolicy && agreedToOver14);
+  }, [agreedToTermsAndConditions, agreedToPrivacyPolicy, agreedToOver14]);
 
   return (
     <>
@@ -85,18 +85,15 @@ export default function TermsAndConditionsForm({allAgreed, setAllAgreed}: Props)
         </div>
         <SizedBox height={16} />
         <div className="flex items-start">
-          <CheckBox
-            isChecked={agreedToCollectPersonalInfo}
-            onToggle={onToggleAgreedToCollectPersonalInfo}
-          />
+          <CheckBox isChecked={agreedToPrivacyPolicy} onToggle={onToggleAgreedToPrivacyPolicy} />
           <SizedBox width={12} />
           <div className="flex flex-col">
-            <button className="text-[14px]" onClick={onToggleAgreedToCollectPersonalInfo}>
+            <button className="text-[14px]" onClick={onToggleAgreedToPrivacyPolicy}>
               (필수) 텍스터즈의 개인정보 수집 및 이용에 동의합니다.
             </button>
             <button
               className="flex items-center gap-1 text-[13px] text-[#C1C1C1]"
-              onClick={() => onOpenModal("personal info collection")}>
+              onClick={() => onOpenModal("privacy policy")}>
               자세히보기
               <RightArrowIcon />
             </button>
