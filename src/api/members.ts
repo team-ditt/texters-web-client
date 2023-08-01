@@ -8,3 +8,7 @@ export function isUniquePenName(penName: string) {
 export function fetchProfile() {
   return axiosAuthenticated.get<Profile>("/members/profile");
 }
+
+export function withdraw(memberId: number) {
+  return axiosAuthenticated.delete(`/members/${memberId}`);
+}

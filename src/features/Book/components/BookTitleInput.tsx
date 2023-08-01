@@ -27,7 +27,7 @@ export default function BookTitleInput({title, isValid, onInput}: Props) {
         />
       </div>
       <span className="m-2 h-6 self-center text-[#FF0000]">
-        {isValid ? null : "제목에 사용할 수 없는 특수문자가 포함되어 있어요!"}
+        {isValid ? null : "사용할 수 없는 제목이에요!"}
       </span>
     </>
   );

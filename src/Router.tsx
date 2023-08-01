@@ -1,5 +1,6 @@
 import SignInPage from "@/features/Auth/pages/SignInPage";
 import HomePage from "@/features/Home/pages/HomePage";
+import OfficialDocumentPage from "@/features/OfficialDocuments/pages/OfficialDocumentPage";
 import {AnimatePresence} from "framer-motion";
 import {lazy} from "react";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
@@ -34,6 +35,11 @@ export function Router() {
         <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
         <Route path="/studio/books/:bookId/flow-chart/pages/:pageId" element={<PageEditPage />} />
         <Route path="/studio/books/:bookId/read" element={<BookDemoReaderPage />} />
+        <Route
+          path="/terms-and-conditions"
+          element={<OfficialDocumentPage type="terms and conditions" />}
+        />
+        <Route path="/privacy-policy" element={<OfficialDocumentPage type="privacy policy" />} />
         <Route path="/error/not-found" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/error/not-found" replace />} />
       </Routes>

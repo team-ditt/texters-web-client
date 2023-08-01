@@ -1,8 +1,10 @@
 import {api} from "@/api";
+import {SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {useInfiniteScroll} from "@/hooks";
 import {useAuthStore} from "@/stores";
 import {useInfiniteQuery} from "@tanstack/react-query";
+import {ReactComponent as BookOpenIcon} from "assets/icons/book-open.svg";
 import DashboardBookListItem from "./DashboardBookListItem";
 
 type Props = {
@@ -25,7 +27,9 @@ export default function DashboardBookList({memberId}: Props) {
 
   if (!books.length)
     return (
-      <div className="flex-1 flex justify-center items-center">
+      <div className="flex-1 flex flex-col justify-center items-center">
+        <BookOpenIcon width={100} height={100} />
+        <SizedBox height={8} />
         <span className="font-bold text-[36px] text-[#CCCCCC]">
           당신만의 새 작품을 만들어 주세요!
         </span>
