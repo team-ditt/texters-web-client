@@ -1,4 +1,4 @@
-import {useAuthStore, useFlowChartStore} from "@/stores";
+import {useAuthStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
 import axios, {AxiosError} from "axios";
 
@@ -31,12 +31,8 @@ export const axiosAuthenticated = axios.create({...DEFAULT_OPTIONS, withCredenti
 axiosAuthenticated.interceptors.request.use(
   request => {
     const {accessToken} = useAuthStore.getState();
-    const {flowChartLockKey} = useFlowChartStore.getState();
     if (accessToken) {
       request.headers.Authorization = accessToken;
-    }
-    if (flowChartLockKey) {
-      request.headers["flow-chart-lock-key"] = flowChartLockKey;
     }
     return request;
   },
@@ -57,15 +53,7 @@ function rejectQueue(error: AxiosError) {
 }
 
 axiosAuthenticated.interceptors.response.use(
-  response => {
-    if (response.config.url?.endsWith("flow-chart")) {
-      const flowChartLockKey = response.headers["flow-chart-lock-key"];
-      const {saveFlowChartLockKey} = useFlowChartStore.getState();
-      saveFlowChartLockKey(flowChartLockKey);
-    }
-
-    return response.data;
-  },
+  response => response.data,
   async error => {
     const originalRequest = error.config;
     const {isSessionExpired, saveToken, expireSession} = useAuthStore.getState();

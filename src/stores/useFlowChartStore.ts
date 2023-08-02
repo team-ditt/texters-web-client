@@ -25,14 +25,12 @@ type FlowChartStoreState = {
   isSaving: boolean;
   isLoading: boolean;
   updatedAt: string;
-  flowChartLockKey: string | null;
   flowChart: FlowChart | null;
   error: TextersError | null;
 };
 
 type FlowChartStoreAction = {
   loadFlowChart: (bookId: number) => Promise<void>;
-  saveFlowChartLockKey: (key: string) => void;
   createLane: (form: CreateLaneForm) => Promise<Lane>;
   deleteLane: (form: DeleteLaneForm) => Promise<void>;
   createPage: (form: CreatePageForm) => Promise<Page>;
@@ -50,7 +48,6 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   isSaving: false,
   isLoading: false,
   updatedAt: new Date().toISOString(),
-  flowChartLockKey: null,
   flowChart: null,
   error: null,
   loadFlowChart: async bookId => {
@@ -65,7 +62,6 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
       set({isLoading: false, error: (error as AxiosError<TextersError>).response?.data});
     }
   },
-  saveFlowChartLockKey: key => set({flowChartLockKey: key}),
   createLane: async form => {
     set({isSaving: true});
     try {
