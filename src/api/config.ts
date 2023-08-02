@@ -11,18 +11,7 @@ const DEFAULT_OPTIONS = {
 export const axiosPublic = axios.create(DEFAULT_OPTIONS);
 
 axiosPublic.interceptors.response.use(
-  response => {
-    if (
-      response.config.url?.includes("auth/sign-in") ||
-      response.config.url?.includes("auth/sign-up")
-    ) {
-      const accessToken = response.data;
-      const {saveToken} = useAuthStore.getState();
-      saveToken(`Bearer ${accessToken}`);
-    }
-
-    return response.data;
-  },
+  response => response.data,
   error => Promise.reject(error),
 );
 
@@ -53,7 +42,18 @@ function rejectQueue(error: AxiosError) {
 }
 
 axiosAuthenticated.interceptors.response.use(
-  response => response.data,
+  response => {
+    if (
+      response.config.url?.includes("auth/sign-in") ||
+      response.config.url?.includes("auth/sign-up")
+    ) {
+      const accessToken = response.data;
+      const {saveToken} = useAuthStore.getState();
+      saveToken(`Bearer ${accessToken}`);
+    }
+
+    return response.data;
+  },
   async error => {
     const originalRequest = error.config;
     const {isSessionExpired, saveToken, expireSession} = useAuthStore.getState();
