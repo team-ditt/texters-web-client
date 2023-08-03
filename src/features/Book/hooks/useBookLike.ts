@@ -1,12 +1,12 @@
 import {api} from "@/api";
 import {keys} from "@/constants";
-import {useAuthStore} from "@/stores";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
 export default function useBookLike(bookId?: number) {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn(),
+    enabled: didSignIn,
   });
   const {data: likedResult} = useQuery(
     [keys.GET_BOOK_LIKED, profile?.id],

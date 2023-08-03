@@ -1,8 +1,8 @@
 import {api} from "@/api";
 import {SizedBox} from "@/components";
 import {keys} from "@/constants";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {useInfiniteScroll} from "@/hooks";
-import {useAuthStore} from "@/stores";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import {ReactComponent as BookOpenIcon} from "assets/icons/book-open.svg";
 import DashboardBookListItem from "./DashboardBookListItem";
@@ -12,14 +12,14 @@ type Props = {
 };
 
 export default function DashboardBookList({memberId}: Props) {
-  const {didSignIn} = useAuthStore();
-  const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
+  const didSignIn = useDidSignIn();
+  const {data, hasNextPage, fetchNextPage} = useInfiniteQuery(
     [keys.GET_MY_BOOKS, memberId],
     ({pageParam = 0}) => api.books.fetchMyBooks({memberId, page: pageParam + 1, limit: 10}),
-    {getNextPageParam: lastPage => lastPage?.hasNext},
+    {getNextPageParam: lastPage => lastPage?.hasNext, enabled: didSignIn},
   );
   const fetchNext = () => {
-    if (didSignIn() && hasNextPage) fetchNextPage();
+    if (didSignIn && hasNextPage) fetchNextPage();
   };
   const books = data?.pages.flatMap(page => page.data) ?? [];
 

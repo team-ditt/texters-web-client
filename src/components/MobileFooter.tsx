@@ -1,11 +1,11 @@
 import {Modal} from "@/components/Modal";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {useModal} from "@/hooks";
-import {useAuthStore} from "@/stores";
 import {ReactComponent as DiscordLogoIcon} from "assets/icons/discord-logo.svg";
 import {Link} from "react-router-dom";
 
 export default function MobileFooter() {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const {isOpen, openModal, closeModal} = useModal();
 
   return (
@@ -26,7 +26,7 @@ export default function MobileFooter() {
               support@texters.io
             </Link>
           </ul>
-          {didSignIn() ? (
+          {didSignIn ? (
             <ul className="flex flex-col gap-[12px] font-bold text-[12px] text-[#A5A5A5]">
               <button onClick={openModal}>회원탈퇴</button>
             </ul>

@@ -1,6 +1,6 @@
 import {useAuthStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 
 const SECONDS_IN_MILLISECONDS = 1000;
 const DEFAULT_OPTIONS = {
@@ -29,15 +29,10 @@ axiosAuthenticated.interceptors.request.use(
 );
 
 let isRefreshing = false;
-let failedQueue: {resolve: (token: string) => void; reject: (error: AxiosError) => void}[] = [];
+let failedQueue: {resolve: (token: string) => void}[] = [];
 
 function resolveQueue(token: string) {
   failedQueue.forEach(promise => promise.resolve(token));
-  failedQueue = [];
-}
-
-function rejectQueue(error: AxiosError) {
-  failedQueue.forEach(promise => promise.reject(error));
   failedQueue = [];
 }
 
@@ -56,27 +51,24 @@ axiosAuthenticated.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    const {isSessionExpired, saveToken, expireSession} = useAuthStore.getState();
+    const {saveToken, removeToken} = useAuthStore.getState();
 
     if (error.response.data.code === TextersErrorCode.INVALID_REFRESH_TOKEN) {
-      expireSession();
-      return Promise.resolve(error);
+      removeToken();
+      return Promise.reject(error);
     }
 
     if (
       error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN &&
-      !originalRequest._retry &&
-      !isSessionExpired
+      !originalRequest._retry
     ) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({resolve, reject});
-        })
-          .then(token => {
-            originalRequest.headers.Authorization = token;
-            return axiosAuthenticated(originalRequest);
-          })
-          .catch(error => Promise.reject(error));
+        return new Promise(resolve => {
+          failedQueue.push({resolve});
+        }).then(token => {
+          originalRequest.headers.Authorization = token;
+          return axiosAuthenticated(originalRequest);
+        });
       }
 
       originalRequest._retry = true;
@@ -93,7 +85,7 @@ axiosAuthenticated.interceptors.response.use(
             resolve(axiosAuthenticated(originalRequest));
           })
           .catch(error => {
-            rejectQueue(error);
+            failedQueue = [];
             reject(error);
           })
           .finally(() => {

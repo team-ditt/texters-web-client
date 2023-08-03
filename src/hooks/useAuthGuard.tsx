@@ -1,11 +1,11 @@
 import {Modal} from "@/components";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import useModal from "@/hooks/useModal";
-import {useAuthStore} from "@/stores";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
 export default function useAuthGuard() {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
@@ -30,9 +30,9 @@ export default function useAuthGuard() {
   );
 
   useEffect(() => {
-    if (didSignIn()) return;
+    if (didSignIn) return;
     openModal();
-  }, []);
+  }, [didSignIn]);
 
   return {RequestSignInDialog};
 }

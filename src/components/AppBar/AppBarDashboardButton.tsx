@@ -1,12 +1,12 @@
 import {Modal} from "@/components/Modal";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {useModal} from "@/hooks";
-import {useAuthStore} from "@/stores";
 import {Validator} from "@/utils";
 import {ReactComponent as ToDashboardIcon} from "assets/icons/to-dashboard.svg";
 import {useNavigate} from "react-router-dom";
 
 export default function AppBarDashboardButton() {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const navigate = useNavigate();
 
   const {
@@ -22,7 +22,7 @@ export default function AppBarDashboardButton() {
 
   const onNavigateToDashboard = () => {
     if (Validator.isMobileDevice(navigator.userAgent)) return openMobileGuardModal();
-    if (!didSignIn()) return openRequestSignInModal();
+    if (!didSignIn) return openRequestSignInModal();
     navigate("/studio/dashboard");
   };
   const onConfirmSignIn = () => {

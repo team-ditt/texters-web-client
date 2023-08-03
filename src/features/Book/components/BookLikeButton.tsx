@@ -1,7 +1,7 @@
 import {Modal} from "@/components";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {useBookLike} from "@/features/Book/hooks";
 import {useModal} from "@/hooks";
-import {useAuthStore} from "@/stores";
 import {Book} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
@@ -14,13 +14,13 @@ type Props = {
 };
 
 export default function BookLikeButton({book, showCount = false}: Props) {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
   const {isLiked, toggleLike} = useBookLike(book.id);
 
   const onToggleLike = () => {
-    if (!didSignIn()) return openModal();
+    if (!didSignIn) return openModal();
     toggleLike();
   };
   const onConfirmSignIn = () => {
