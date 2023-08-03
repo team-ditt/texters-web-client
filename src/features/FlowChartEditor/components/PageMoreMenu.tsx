@@ -107,8 +107,8 @@ export default function PageMoreMenu() {
       </DynamicElementLocator>
       <Modal.Dialog
         isOpen={isDeleteOpen}
-        title=""
-        message="페이지를 삭제하면 내용과 선택지가 모두 삭제 됩니다... 진짜 삭제하시겠어요?"
+        title="페이지 삭제"
+        message="페이지를 삭제하면 내용과 선택지가 모두 삭제되어요... 진짜 삭제하시겠어요?"
         confirmMessage="삭제하기"
         onConfirm={onConfirm}
         onCancel={closeDeleteModal}
