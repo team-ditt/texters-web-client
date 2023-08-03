@@ -1,17 +1,11 @@
-import {api} from "@/api";
 import {DesktopAppBar, FlatButton, Modal, SizedBox} from "@/components";
-import {keys} from "@/constants";
-import {useDidSignIn} from "@/features/Auth/hooks";
 import {DashboardBookList} from "@/features/Dashboard/components";
+import {useProfile} from "@/features/Member/hooks";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
-import {useQuery} from "@tanstack/react-query";
 
 export default function DashboardPage() {
   const {isOpen, openModal, closeModal} = useModal();
-  const didSignIn = useDidSignIn();
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
-  });
+  const {profile} = useProfile();
 
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();

@@ -32,7 +32,7 @@ export default function PageEditPage() {
   const {data: page} = useQuery(
     [keys.GET_FLOW_CHART_PAGE, pageId],
     () => api.pages.fetchPage(+bookId!, +pageId!),
-    {enabled: didSignIn},
+    {enabled: didSignIn, refetchOnWindowFocus: false, retry: false},
   );
 
   const {RequestSignInDialog} = useAuthGuard();

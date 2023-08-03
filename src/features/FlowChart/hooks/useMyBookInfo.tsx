@@ -1,7 +1,7 @@
 import {api} from "@/api";
 import {Modal} from "@/components";
 import {keys} from "@/constants";
-import {useDidSignIn} from "@/features/Auth/hooks";
+import {useProfile} from "@/features/Member/hooks";
 import {useModal} from "@/hooks";
 import {TextersError, TextersErrorCode} from "@/types/error";
 import {useQuery} from "@tanstack/react-query";
@@ -10,19 +10,17 @@ import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
 export default function useMyBookInfo(bookId: number) {
-  const didSignIn = useDidSignIn();
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
-  });
+  const {profile} = useProfile();
   const {
     data: book,
     error,
     isError,
   } = useQuery([keys.GET_MY_BOOK, bookId], () => api.books.fetchMyBook(profile!.id, +bookId!), {
     enabled: !!profile?.id,
+    refetchOnWindowFocus: false,
     retry: false,
   });
 

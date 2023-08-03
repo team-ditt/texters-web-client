@@ -1,18 +1,16 @@
 import {api} from "@/api";
 import {keys} from "@/constants";
-import {useDidSignIn} from "@/features/Auth/hooks";
+import {useProfile} from "@/features/Member/hooks";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 
 export default function useBookLike(bookId?: number) {
-  const didSignIn = useDidSignIn();
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn,
-  });
+  const {profile} = useProfile();
   const {data: likedResult} = useQuery(
     [keys.GET_BOOK_LIKED, profile?.id],
     () => api.bookLiked.checkBookLiked(profile!.id, bookId!),
     {
       enabled: !!profile && !!bookId,
+      refetchOnWindowFocus: false,
     },
   );
 

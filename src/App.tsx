@@ -3,8 +3,9 @@ import * as React from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {BrowserRouter} from "react-router-dom";
 
-import {MobileAppBar} from "@/components";
 import {Router} from "@/Router";
+import {MobileAppBar} from "@/components";
+import {SignInChecker} from "@/features/Member/components";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,8 @@ function App() {
           <MobileViewBackground />
         </div>
       </BrowserRouter>
+
+      <SignInChecker />
     </QueryClientProvider>
   );
 }
