@@ -1,6 +1,5 @@
 import {SizedBox, SpinningLoader} from "@/components";
-import {useOauthSignIn} from "@/features/Auth/hooks";
-import {useAuthStore} from "@/stores";
+import {useDidSignIn, useOauthSignIn} from "@/features/Auth/hooks";
 import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
 import googleLogo from "assets/icons/google-logo.png";
 import kakaoLogo from "assets/icons/kakao-logo.png";
@@ -13,15 +12,15 @@ import {Link, useNavigate} from "react-router-dom";
 
 export default function SignInPage() {
   const navigate = useNavigate();
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
 
   const {KAKAO_LOGIN_URI, NAVER_LOGIN_URI, GOOGLE_LOGIN_URI, isSigningIn} = useOauthSignIn();
 
   const onClose = () => navigate(-1);
 
   useEffect(() => {
-    if (didSignIn()) navigate("/", {replace: true});
-  }, [didSignIn()]);
+    if (didSignIn) navigate("/", {replace: true});
+  }, [didSignIn]);
 
   return (
     <motion.div

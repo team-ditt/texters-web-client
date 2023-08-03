@@ -1,3 +1,4 @@
+import {SizedBox} from "@/components";
 import BookLikeButton from "@/features/Book/components/BookLikeButton";
 import {Book} from "@/types/book";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
@@ -55,7 +56,7 @@ export default function BookReaderAppBar({book}: Props) {
         <LeftArrowIcon />
       </button>
       <h1 className="flex-1 px-3 text-center font-bold line-clamp-1 text-ellipsis">{book.title}</h1>
-      {book.status === "PUBLISHED" ? <BookLikeButton book={book} /> : null}
+      {book.status === "PUBLISHED" ? <BookLikeButton book={book} /> : <SizedBox width={36} />}
     </motion.nav>
   );
 }

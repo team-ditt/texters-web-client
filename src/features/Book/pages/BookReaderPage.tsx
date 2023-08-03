@@ -68,7 +68,10 @@ export default function BookReaderPage() {
       <div className="flex-1 p-6 flex flex-col items-stretch">
         {currentPage?.isIntro ? (
           <>
-            <BookCoverImage className="self-center w-full max-w-[400px] rounded-lg" />
+            <BookCoverImage
+              className="self-center w-full max-w-[400px] rounded-lg"
+              src={book.coverImageUrl ?? undefined}
+            />
             <SizedBox height={32} />
           </>
         ) : null}

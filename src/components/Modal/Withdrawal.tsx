@@ -1,18 +1,16 @@
 import {api} from "@/api";
 import Alert from "@/components/Modal/Alert";
 import SizedBox from "@/components/SizedBox";
-import {keys} from "@/constants";
+import {useProfile} from "@/features/Member/hooks";
 import {useAuthStore} from "@/stores";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation} from "@tanstack/react-query";
 import ReactModal from "react-modal";
 
 type Props = ReactModal.Props;
 
 export default function Withdrawal({onRequestClose, ...props}: Props) {
-  const {didSignIn, removeToken} = useAuthStore();
-  const {data: profile} = useQuery([keys.GET_MY_PROFILE], api.members.fetchProfile, {
-    enabled: didSignIn(),
-  });
+  const {removeToken} = useAuthStore();
+  const {profile} = useProfile();
   const {
     mutate: withdraw,
     isLoading,

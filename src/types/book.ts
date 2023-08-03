@@ -46,6 +46,16 @@ export type Lane = {
   pages: Page[];
 };
 
+export type CreateLaneForm = {
+  bookId: number;
+  order: number;
+};
+
+export type DeleteLaneForm = {
+  bookId: number;
+  laneId: number;
+};
+
 export type Page = {
   id: number;
   bookId: number;
@@ -63,11 +73,30 @@ export type PageView = Page & {
   isEnding: boolean;
 };
 
+export type CreatePageForm = {
+  bookId: number;
+  laneId: number;
+  title: string;
+  order: number;
+};
+
 export type UpdatePageForm = {
   bookId: number;
   pageId: number;
   title?: string;
   content?: string | null;
+};
+
+export type UpdatePageOrderForm = {
+  bookId: number;
+  pageId: number;
+  laneId: number;
+  order: number;
+};
+
+export type DeletePageForm = {
+  bookId: number;
+  pageId: number;
 };
 
 export type Choice = {
@@ -85,6 +114,13 @@ export type CreateChoiceForm = {
 };
 
 export type UpdateChoiceForm = CreateChoiceForm & {choiceId: number};
+
+export type UpdateChoiceOrderForm = {
+  bookId: number;
+  pageId: number;
+  choiceId: number;
+  order: number;
+};
 
 export type UpdateChoiceDestinationForm = {
   bookId: number;

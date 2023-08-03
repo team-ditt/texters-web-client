@@ -20,6 +20,7 @@ export default ({mode}) => {
         "/api/v1": {
           target: process.env.VITE_API_URL,
           changeOrigin: true,
+          rewrite: path => path.replace("/api/v1", ""),
         },
       },
     },

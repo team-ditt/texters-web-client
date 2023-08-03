@@ -1,16 +1,42 @@
-import {useAuthStore, useFlowChartStore} from "@/stores";
+import {useAuthStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 
 const SECONDS_IN_MILLISECONDS = 1000;
 const DEFAULT_OPTIONS = {
-  baseURL: "/api/v1",
+  baseURL: import.meta.env.MODE === "production" ? import.meta.env.VITE_API_URL : "/api/v1",
   timeout: 10 * SECONDS_IN_MILLISECONDS,
 };
 
 export const axiosPublic = axios.create(DEFAULT_OPTIONS);
 
 axiosPublic.interceptors.response.use(
+  response => response.data,
+  error => Promise.reject(error),
+);
+
+export const axiosAuthenticated = axios.create({...DEFAULT_OPTIONS, withCredentials: true});
+
+axiosAuthenticated.interceptors.request.use(
+  request => {
+    const {accessToken} = useAuthStore.getState();
+    if (accessToken) {
+      request.headers.Authorization = accessToken;
+    }
+    return request;
+  },
+  error => Promise.reject(error),
+);
+
+let isRefreshing = false;
+let failedQueue: {resolve: (token: string) => void}[] = [];
+
+function resolveQueue(token: string) {
+  failedQueue.forEach(promise => promise.resolve(token));
+  failedQueue = [];
+}
+
+axiosAuthenticated.interceptors.response.use(
   response => {
     if (
       response.config.url?.includes("auth/sign-in") ||
@@ -23,72 +49,26 @@ axiosPublic.interceptors.response.use(
 
     return response.data;
   },
-  error => Promise.reject(error),
-);
-
-export const axiosAuthenticated = axios.create({...DEFAULT_OPTIONS, withCredentials: true});
-
-axiosAuthenticated.interceptors.request.use(
-  request => {
-    const {accessToken} = useAuthStore.getState();
-    const {flowChartLockKey} = useFlowChartStore.getState();
-    if (accessToken) {
-      request.headers.Authorization = accessToken;
-    }
-    if (flowChartLockKey) {
-      request.headers["flow-chart-lock-key"] = flowChartLockKey;
-    }
-    return request;
-  },
-  error => Promise.reject(error),
-);
-
-let isRefreshing = false;
-let failedQueue: {resolve: (token: string) => void; reject: (error: AxiosError) => void}[] = [];
-
-function resolveQueue(token: string) {
-  failedQueue.forEach(promise => promise.resolve(token));
-  failedQueue = [];
-}
-
-function rejectQueue(error: AxiosError) {
-  failedQueue.forEach(promise => promise.reject(error));
-  failedQueue = [];
-}
-
-axiosAuthenticated.interceptors.response.use(
-  response => {
-    if (response.config.url?.endsWith("flow-chart")) {
-      const flowChartLockKey = response.headers["flow-chart-lock-key"];
-      const {saveFlowChartLockKey} = useFlowChartStore.getState();
-      saveFlowChartLockKey(flowChartLockKey);
-    }
-
-    return response.data;
-  },
   async error => {
     const originalRequest = error.config;
-    const {isSessionExpired, saveToken, expireSession} = useAuthStore.getState();
+    const {saveToken, removeToken} = useAuthStore.getState();
 
     if (error.response.data.code === TextersErrorCode.INVALID_REFRESH_TOKEN) {
-      expireSession();
-      return Promise.resolve(error);
+      removeToken();
+      return Promise.reject(error);
     }
 
     if (
       error.response.data.code === TextersErrorCode.INVALID_AUTH_TOKEN &&
-      !originalRequest._retry &&
-      !isSessionExpired
+      !originalRequest._retry
     ) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({resolve, reject});
-        })
-          .then(token => {
-            originalRequest.headers.Authorization = token;
-            return axiosAuthenticated(originalRequest);
-          })
-          .catch(error => Promise.reject(error));
+        return new Promise(resolve => {
+          failedQueue.push({resolve});
+        }).then(token => {
+          originalRequest.headers.Authorization = token;
+          return axiosAuthenticated(originalRequest);
+        });
       }
 
       originalRequest._retry = true;
@@ -105,7 +85,7 @@ axiosAuthenticated.interceptors.response.use(
             resolve(axiosAuthenticated(originalRequest));
           })
           .catch(error => {
-            rejectQueue(error);
+            failedQueue = [];
             reject(error);
           })
           .finally(() => {

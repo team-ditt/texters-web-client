@@ -1,22 +1,25 @@
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import useDebounce from "@/hooks/useDebounce";
 import {useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useState} from "react";
 
 export default function useChoiceContentInput(bookId: number, pageId: number, choice: Choice) {
   const {isSaving, updateChoiceContent} = useFlowChartStore();
+  const loadChoiceContent = useFlowChartEditorStore(state => state.loadChoiceContent);
   const [content, setContent] = useState<string>(choice.content);
 
   const onInputContent = (event: ChangeEvent<HTMLInputElement>) => setContent(event.target.value);
 
-  useEffect(() => {
-    function updateContent() {
-      updateChoiceContent({bookId, pageId, choiceId: choice.id, content});
-    }
-
-    if (isSaving) return;
-    const timeout = setTimeout(updateContent, 1500);
-    return () => clearTimeout(timeout);
-  }, [content]);
+  useDebounce(
+    currentContent => {
+      updateChoiceContent({bookId, pageId, choiceId: choice.id, content: currentContent});
+      loadChoiceContent(choice.id, currentContent);
+    },
+    1500,
+    content,
+    isSaving,
+  );
 
   return {content, setContent, onInputContent};
 }

@@ -1,6 +1,7 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
+import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
@@ -37,12 +38,13 @@ export default function FlowChartAppBar() {
     navigate(`/studio/books/${bookId}/read`);
   };
 
+  useFlowChartEditor();
   useEffect(() => {
     if (!flowChart && book?.status !== "PUBLISHED") loadFlowChart(+bookId!);
   }, [flowChart, book]);
 
   return (
-    <nav className="fixed inset-0 mx-auto my-0 min-w-[800px] h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000]">
+    <nav className="fixed inset-0 mx-auto my-0 min-w-[800px] h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000] drop-shadow-sm">
       <div className="flex items-center gap-2">
         <button onClick={onGoBack}>
           <LeftArrowIcon fill="#939393" />

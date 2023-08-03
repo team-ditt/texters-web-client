@@ -13,6 +13,7 @@ export default function useBookInfo(bookId: number) {
     () => api.books.fetchBook(+bookId!),
     {
       enabled: !!bookId,
+      refetchOnWindowFocus: false,
       retry: false,
     },
   );

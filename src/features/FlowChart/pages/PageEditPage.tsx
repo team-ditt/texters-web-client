@@ -1,6 +1,7 @@
 import {api} from "@/api";
 import {Modal, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
+import {useDidSignIn} from "@/features/Auth/hooks";
 import {FlowChartAppBar} from "@/features/FlowChart/components";
 import {
   useChoiceContentInput,
@@ -8,8 +9,9 @@ import {
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
-import {useAuthStore, useFlowChartStore} from "@/stores";
+import {useFlowChartStore} from "@/stores";
 import {Choice} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DownArrowCircleIcon} from "assets/icons/down-arrow-circle.svg";
@@ -22,7 +24,7 @@ import {FormEventHandler, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
-  const {didSignIn} = useAuthStore();
+  const didSignIn = useDidSignIn();
   const {bookId, pageId} = useParams();
   const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
   const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
@@ -30,7 +32,7 @@ export default function PageEditPage() {
   const {data: page} = useQuery(
     [keys.GET_FLOW_CHART_PAGE, pageId],
     () => api.pages.fetchPage(+bookId!, +pageId!),
-    {enabled: didSignIn()},
+    {enabled: didSignIn, refetchOnWindowFocus: false, retry: false},
   );
 
   const {RequestSignInDialog} = useAuthGuard();
@@ -154,6 +156,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
   const {updateChoiceDestinationPageId} = useFlowChartStore();
+  const loadChoiceDestination = useFlowChartEditorStore(state => state.loadChoiceDestination);
   const queryClient = useQueryClient();
 
   const onToggleExpand = () => setIsExpanded(state => !state);
@@ -164,6 +167,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
       choiceId: choice.id,
       destinationPageId: id,
     });
+    loadChoiceDestination(choice.id, id);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
   };
   const getPageTitle = (pageId: number | null) => {
