@@ -53,6 +53,7 @@ export default function BookReaderPage() {
   }, [introPage, page]);
   useEffect(() => {
     if (currentPage?.isIntro || currentPage?.isEnding) removeLastVisitedPageId(bookId!);
+    document.getElementById("root")?.scrollTo({top: 0});
   }, [currentPage]);
 
   if (!book)
