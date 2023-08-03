@@ -148,10 +148,10 @@ function MoreButton({book}: Props) {
           <MoreVerticalIcon />
         </button>
         {isOpen ? (
-          <div className="absolute top-12 right-[22px] w-[220px] flex flex-col border border-[#AFAFAF] rounded-[8px] bg-white overflow-hidden z-[3000]">
+          <div className="absolute top-12 right-[22px] w-[220px] flex flex-col border border-[#242424] rounded-[8px] bg-white overflow-hidden z-[3000]">
             {book.status === "DRAFT" ? (
               <button
-                className="px-4 py-2 border-b border-[#AFAFAF] flex justify-between items-center text-[#AFAFAF]"
+                className="px-4 py-2 border-b border-[#242424] flex justify-between items-center text-[#242424]"
                 onClick={onEdit}>
                 작품 기본정보 변경
                 <EditIcon />
@@ -182,7 +182,7 @@ function MoreButton({book}: Props) {
 function PublishButton({book}: Props) {
   const backgroundColor = (() => {
     if (book.status === "PUBLISHED") return "#D9D9D9";
-    if (book.canPublish) return "#383838";
+    if (book.canPublish) return "#242424";
     return "#FF9E9E";
   })();
   const textColor = (() => {
