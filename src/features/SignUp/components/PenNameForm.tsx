@@ -37,7 +37,7 @@ export default function PenNameForm({penName, isValidPenName, isDuplicatePenName
     <div className="grow-[3]">
       <div className={"relative w-full h-[34px]"}>
         <input
-          className="w-full h-full text-[20px] placeholder:text-[#BEBEBE] border-b-[1.5px]"
+          className="w-full h-full text-[20px] rounded-none placeholder:text-[#BEBEBE] border-b-[1.5px]"
           style={{borderColor: formColor}}
           value={penName}
           placeholder="필명"
