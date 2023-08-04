@@ -129,9 +129,9 @@ function MoreButton({book}: Props) {
     },
   );
 
-  const onToggle = (event: MouseEvent<HTMLButtonElement>) => {
+  const onOpenModal = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    isOpen ? closeModal() : openModal();
+    openModal();
   };
   const onCloseModal = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -155,7 +155,7 @@ function MoreButton({book}: Props) {
   return (
     <>
       <div className="relative">
-        <button ref={buttonRef} onClick={onToggle}>
+        <button ref={buttonRef} onClick={onOpenModal}>
           <MoreVerticalIcon />
         </button>
         {isOpen
@@ -163,7 +163,8 @@ function MoreButton({book}: Props) {
               <>
                 <div
                   className="fixed inset-0 w-full h-full bg-transparent z-[12000]"
-                  onClick={onCloseModal}></div>
+                  onClick={onCloseModal}
+                />
                 <div
                   className="absolute top-0 left-0 w-[220px] flex flex-col border border-[#242424] rounded-[8px] bg-white overflow-hidden z-[12000]"
                   style={{
