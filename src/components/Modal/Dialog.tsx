@@ -40,11 +40,11 @@ export default function Dialog({
         {message ? <p className="text-[#A5A5A5] text-center">{message}</p> : null}
       </div>
 
-      <div className="flex self-stretch border-t-[1.5px] border-black">
-        <button className="w-full h-12 bg-white text-[#171717]" onClick={onCancel}>
+      <div className="h-12 flex self-stretch border-t-[1.5px] border-black">
+        <button className="w-full h-full bg-white text-[#171717]" onClick={onCancel}>
           {cancelMessage}
         </button>
-        <button className="w-full h-12 bg-[#242424] text-white" onClick={onConfirm}>
+        <button className="w-full h-full bg-[#242424] text-white" onClick={onConfirm}>
           {confirmMessage}
         </button>
       </div>

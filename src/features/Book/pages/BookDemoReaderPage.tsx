@@ -56,6 +56,7 @@ export default function BookDemoReaderPage() {
   }, [introPage, page]);
   useEffect(() => {
     if (currentPage?.isIntro || currentPage?.isEnding) removeLastVisitedPageId(bookId!);
+    document.getElementById("root")?.scrollTo({top: 0});
   }, [currentPage]);
 
   if (!book)
@@ -82,7 +83,7 @@ export default function BookDemoReaderPage() {
         ) : null}
         <h1 className="self-center text-center font-medium text-[22px]">{currentPage?.title}</h1>
         <SizedBox height={24} />
-        <p className="flex-1 text-justify leading-[2.2rem]">
+        <p className="flex-1 text-justify leading-[2.2rem] whitespace-pre-wrap">
           {currentPage?.content}
           {currentPage?.isEnding ? <span className="font-bold">&nbsp;[ 완결 ]</span> : null}
         </p>

@@ -20,7 +20,8 @@ import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
-import {FormEventHandler, useEffect, useState} from "react";
+import {FormEventHandler, MouseEvent, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
@@ -152,14 +153,15 @@ function ChoiceForm({choice}: {choice: Choice}) {
 }
 
 function DestinationPageSelect({choice}: {choice: Choice}) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [offset, setOffset] = useState({x: 0, y: 0});
+  const {isOpen, openModal, closeModal} = useModal();
   const {bookId, pageId} = useParams();
-  const [isExpanded, setIsExpanded] = useState(false);
   const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
   const {updateChoiceDestinationPageId} = useFlowChartStore();
   const loadChoiceDestination = useFlowChartEditorStore(state => state.loadChoiceDestination);
-  const queryClient = useQueryClient();
 
-  const onToggleExpand = () => setIsExpanded(state => !state);
+  const queryClient = useQueryClient();
   const onUpdateDestinationPageId = async (id: number | null) => {
     await updateChoiceDestinationPageId({
       bookId: +bookId!,
@@ -169,45 +171,67 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
     });
     loadChoiceDestination(choice.id, id);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+    closeModal();
   };
   const getPageTitle = (pageId: number | null) => {
     if (!pageId) return "";
     return allPossibleDestinationPages.find(page => page.id === pageId)?.title;
   };
   const isSelected = (pageId: number) => choice.destinationPageId === pageId;
+  const onCloseModal = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    closeModal();
+  };
+
+  useEffect(() => {
+    if (!buttonRef.current) return;
+    setOffset(buttonRef.current.getBoundingClientRect());
+  }, [buttonRef]);
 
   return (
     <button
+      ref={buttonRef}
       className="relative flex justify-between items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg"
-      onClick={onToggleExpand}>
+      onClick={openModal}>
       {choice.destinationPageId ? getPageTitle(choice.destinationPageId) : "연결된 페이지 없음"}
       <DownArrowCircleIcon
-        className={classNames({"rotate-180": isExpanded})}
-        fill={isExpanded ? "#A5A5A5" : "#2D2D2D"}
+        className={classNames({"rotate-180": isOpen})}
+        fill={isOpen ? "#A5A5A5" : "#2D2D2D"}
       />
-      {isExpanded ? (
-        <ul className="absolute top-12 left-0 w-[298px] max-h-[208px] border-2 border-t-0 border-[#D9D9D9] flex flex-col items-stretch bg-white z-10 overflow-auto">
-          <li
-            className="min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] text-[#FF0000] hover:bg-[#F9F9F9]"
-            onClick={() => onUpdateDestinationPageId(null)}>
-            페이지 연결 해제
-          </li>
-          {allPossibleDestinationPages.map(page => (
-            <li
-              key={page.id}
-              className={classNames(
-                "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9]",
-                {
-                  "bg-[#EFEFEF]": isSelected(page.id),
-                  "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
-                },
-              )}
-              onClick={() => onUpdateDestinationPageId(page.id)}>
-              {page.title}
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {isOpen
+        ? createPortal(
+            <>
+              <div
+                className="fixed inset-0 w-full h-full bg-transparent z-[12000]"
+                onClick={onCloseModal}
+              />
+              <ul
+                className="absolute top-0 left-0 w-[298px] max-h-[208px] border-2 border-t-0 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]"
+                style={{transform: `translate(${offset.x + 1}px, ${offset.y + 52}px)`}}>
+                <li
+                  className="min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
+                  onClick={() => onUpdateDestinationPageId(null)}>
+                  페이지 연결 해제
+                </li>
+                {allPossibleDestinationPages.map(page => (
+                  <li
+                    key={page.id}
+                    className={classNames(
+                      "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] cursor-pointer",
+                      {
+                        "bg-[#EFEFEF]": isSelected(page.id),
+                        "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
+                      },
+                    )}
+                    onClick={() => onUpdateDestinationPageId(page.id)}>
+                    {page.title}
+                  </li>
+                ))}
+              </ul>
+            </>,
+            document.body,
+          )
+        : null}
     </button>
   );
 }

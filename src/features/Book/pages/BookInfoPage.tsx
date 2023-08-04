@@ -61,10 +61,13 @@ export default function BookInfoPage() {
         </div>
         <p
           ref={descriptionRef}
-          className={classNames("text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem]", {
-            "line-clamp-none": isExpanded,
-            "line-clamp-[10]": !isExpanded,
-          })}>
+          className={classNames(
+            "flex-1 text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem]",
+            {
+              "line-clamp-none": isExpanded,
+              "line-clamp-[10]": !isExpanded,
+            },
+          )}>
           {book.description}
         </p>
         {hasEllipsis ? (

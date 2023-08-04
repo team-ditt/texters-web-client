@@ -105,12 +105,12 @@ export default function BookInfoEditPage() {
 
         <div className="mt-6 flex justify-center gap-[20px]">
           <button
-            className="px-10 py-3 border-2 border-[#2D3648] rounded-lg font-bold text-[18px] text-[#2D3648]"
+            className="px-10 py-3 border-2 border-[#171717] rounded-lg font-bold text-[18px] text-[#171717]"
             onClick={onCancel}>
             취소
           </button>
           <button
-            className="px-10 py-3 bg-[#2D3648] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
+            className="px-10 py-3 bg-[#242424] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
             onClick={onSubmit}
             disabled={!canSubmit}>
             수정

@@ -13,7 +13,9 @@ import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
-import {MouseEvent, memo} from "react";
+import {motion} from "framer-motion";
+import {MouseEvent, memo, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
@@ -38,8 +40,9 @@ function DashboardBookListItem({book}: Props) {
 
   return (
     <>
-      <a
+      <motion.a
         className="border border-black rounded-lg flex items-center hover:shadow-md transition-all duration-100 cursor-pointer"
+        whileHover={{scale: 1.01}}
         onClick={onNavigate}>
         <BookCoverImage
           className="h-full max-h-[112px] aspect-square rounded-s-lg"
@@ -71,7 +74,7 @@ function DashboardBookListItem({book}: Props) {
           <PublishButton book={book} />
           {book.status === "DRAFT" ? <DemoReadButton book={book} /> : null}
         </div>
-      </a>
+      </motion.a>
 
       <Modal.Alert
         isOpen={isOpen}
@@ -105,6 +108,8 @@ function BookStatusChip({book}: Props) {
 }
 
 function MoreButton({book}: Props) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [offset, setOffset] = useState({x: 0, y: 0});
   const {isOpen, openModal, closeModal} = useModal();
   const {
     isOpen: isDeleteOpen,
@@ -124,9 +129,13 @@ function MoreButton({book}: Props) {
     },
   );
 
-  const onToggle = (event: MouseEvent<HTMLButtonElement>) => {
+  const onOpenModal = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    isOpen ? closeModal() : openModal();
+    openModal();
+  };
+  const onCloseModal = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    closeModal();
   };
   const onEdit = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -134,45 +143,61 @@ function MoreButton({book}: Props) {
   };
   const onDelete = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    closeModal();
     openDeleteModal();
   };
-  const onConfirm = () => {
-    deleteBook();
-    closeModal();
-  };
+
+  useEffect(() => {
+    if (!buttonRef.current) return;
+    setOffset(buttonRef.current.getBoundingClientRect());
+  }, [buttonRef]);
 
   return (
     <>
       <div className="relative">
-        <button onClick={onToggle}>
+        <button ref={buttonRef} onClick={onOpenModal}>
           <MoreVerticalIcon />
         </button>
-        {isOpen ? (
-          <div className="absolute top-12 right-[22px] w-[220px] flex flex-col border border-[#AFAFAF] rounded-[8px] bg-white overflow-hidden z-[3000]">
-            {book.status === "DRAFT" ? (
-              <button
-                className="px-4 py-2 border-b border-[#AFAFAF] flex justify-between items-center text-[#AFAFAF]"
-                onClick={onEdit}>
-                작품 기본정보 변경
-                <EditIcon />
-              </button>
-            ) : null}
-            <button
-              className="px-4 py-2 flex justify-between items-center text-[#FF0000]"
-              onClick={onDelete}
-              disabled={isDeleting}>
-              이 작품 삭제하기
-              <TrashIcon stroke="#FF0000" />
-            </button>
-          </div>
-        ) : null}
+        {isOpen
+          ? createPortal(
+              <>
+                <div
+                  className="fixed inset-0 w-full h-full bg-transparent z-[12000]"
+                  onClick={onCloseModal}
+                />
+                <div
+                  className="absolute top-0 left-0 w-[220px] flex flex-col border border-[#242424] rounded-[8px] bg-white overflow-hidden z-[12000]"
+                  style={{
+                    transform: `translate(${offset.x - 200}px, ${offset.y + 52}px)`,
+                  }}>
+                  {book.status === "DRAFT" ? (
+                    <button
+                      className="px-4 py-2 border-b border-[#242424] flex justify-between items-center text-[#242424]"
+                      onClick={onEdit}>
+                      작품 기본정보 변경
+                      <EditIcon />
+                    </button>
+                  ) : null}
+                  <button
+                    className="px-4 py-2 flex justify-between items-center text-[#FF0000]"
+                    onClick={onDelete}
+                    disabled={isDeleting}>
+                    이 작품 삭제하기
+                    <TrashIcon stroke="#FF0000" />
+                  </button>
+                </div>
+              </>,
+
+              document.body,
+            )
+          : null}
       </div>
       <Modal.Dialog
         isOpen={isDeleteOpen}
         title="작품 삭제"
         message="정말로 삭제하시겠어요? 한 번 삭제한 작품은 다시 복구할 수 없어요!"
         confirmMessage="삭제하기"
-        onConfirm={onConfirm}
+        onConfirm={deleteBook}
         onCancel={closeDeleteModal}
       />
     </>
@@ -182,7 +207,7 @@ function MoreButton({book}: Props) {
 function PublishButton({book}: Props) {
   const backgroundColor = (() => {
     if (book.status === "PUBLISHED") return "#D9D9D9";
-    if (book.canPublish) return "#383838";
+    if (book.canPublish) return "#242424";
     return "#FF9E9E";
   })();
   const textColor = (() => {

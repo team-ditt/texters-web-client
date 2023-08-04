@@ -19,7 +19,7 @@ export default function NotFoundPage() {
         주소가 정확한지 다시 한 번 확인해 주세요!
       </p>
       <SizedBox height={24} />
-      <button className="bg-[#171717] text-white px-4 py-2 rounded-md" onClick={onGoHome}>
+      <button className="bg-[#242424] text-white px-4 py-2 rounded-md" onClick={onGoHome}>
         홈으로 돌아가기
       </button>
     </div>

@@ -21,6 +21,6 @@ export default function FlatButton({className, disabled = false, children, ...pr
 }
 
 const variants = {
-  active: {backgroundColor: "#383838"},
+  active: {backgroundColor: "#242424"},
   inactive: {backgroundColor: "#CECECE", transition: {duration: 0.1}},
 };
