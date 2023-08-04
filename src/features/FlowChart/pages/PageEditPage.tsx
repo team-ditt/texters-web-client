@@ -106,11 +106,13 @@ export default function PageEditPage() {
 function ChoiceList({page}: {page: Page}) {
   const {bookId, pageId} = useParams();
   const {isSaving, updateChoiceOrder} = useFlowChartStore();
+  const loadChoiceOrder = useFlowChartEditorStore(state => state.loadChoiceOrder);
   const queryClient = useQueryClient();
   const [choiceDraggingState, setChoiceDraggingState] = useState({
     choiceId: -1,
     relativeOrder: 0,
   });
+
   const handleChoiceDrag = (choiceId: number, relativeOrder: number) => {
     setChoiceDraggingState({choiceId, relativeOrder});
   };
@@ -129,6 +131,7 @@ function ChoiceList({page}: {page: Page}) {
       choiceId,
       order: newOrder,
     });
+    loadChoiceOrder(choiceId, newOrder);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
     setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
   };
@@ -188,6 +191,7 @@ function ChoiceForm({
       {bookId: +bookId!, pageId: +pageId!, choiceId: choice.id},
       onSuccessToDelete,
     );
+    useFlowChartEditorStore.getState().unloadChoice(choice.id);
     closeModal();
   };
 
@@ -312,7 +316,6 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
   const {bookId, pageId} = useParams();
   const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
   const {updateChoiceDestinationPageId} = useFlowChartStore();
-  const loadChoiceDestination = useFlowChartEditorStore(state => state.loadChoiceDestination);
 
   const queryClient = useQueryClient();
   const onUpdateDestinationPageId = async (id: number | null) => {
@@ -322,7 +325,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
       choiceId: choice.id,
       destinationPageId: id,
     });
-    loadChoiceDestination(choice.id, id);
+    useFlowChartEditorStore.getState().loadChoiceDestination(choice.id, id);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
     closeModal();
   };
@@ -396,7 +399,14 @@ function AddChoiceButton() {
   const queryClient = useQueryClient();
   const onClick = async () => {
     const DEFAULT_CONTENT = "다음";
-    await createChoice({bookId: +bookId!, pageId: +pageId!, content: DEFAULT_CONTENT});
+    const choice = await createChoice({
+      bookId: +bookId!,
+      pageId: +pageId!,
+      content: DEFAULT_CONTENT,
+    });
+    useFlowChartEditorStore
+      .getState()
+      .loadNewChoice(choice.sourcePageId, choice.id, choice.content);
     queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
   };
 

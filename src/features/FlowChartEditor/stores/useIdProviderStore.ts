@@ -1,4 +1,4 @@
-import {Choice, Lane, Page} from "@/types/book";
+import {Lane} from "@/types/book";
 import {create} from "zustand";
 import {immer} from "zustand/middleware/immer";
 
@@ -14,7 +14,7 @@ type IdProviderAction = {
   generateNewFakeId: () => number;
   getRealId: (id: number) => number | undefined;
   getFakeId: (entityType: EntityType, id: number) => number | undefined;
-  register: (fakeId: number, runnable: Promise<Lane | Page | Choice>) => Promise<void>;
+  register: (fakeId: number, realId: number) => void;
 };
 
 const useIdProviderStore = create<IdProviderState & IdProviderAction>()(
@@ -82,10 +82,9 @@ const useIdProviderStore = create<IdProviderState & IdProviderAction>()(
     },
     getRealId: id => get().idMaps[id],
     getFakeId: (entityType, id) => get().revIdMaps[entityType][id],
-    register: async (fakeId, runnable) => {
-      const entity = await runnable;
+    register: (fakeId, realId) => {
       set(state => {
-        state.idMaps[fakeId] = entity.id;
+        state.idMaps[fakeId] = realId;
       });
     },
   })),

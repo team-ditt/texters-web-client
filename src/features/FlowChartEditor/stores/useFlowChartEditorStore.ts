@@ -67,8 +67,11 @@ type FlowChartStoreAction = {
   closePageMoreMenu: () => void;
   appendChoice: (pageId: number) => void;
   updateChoiceContent: (choiceId: number, content: string | null) => void;
+  loadNewChoice: (realPageId: number, realChoiceId: number, content: string) => void;
+  loadChoiceOrder: (realChoiceId: number, order: number) => void;
   loadChoiceContent: (realChoiceId: number, content: string) => void;
   loadChoiceDestination: (realChoiceId: number, destinationPageId: number | null) => void;
+  unloadChoice: (realChoiceId: number) => void;
   moveChoice: (choiceId: number, choiceOrder: number) => void;
   setChoiceDestination: (choiceId: number, destinationPageId: number | null) => void;
   deleteChoice: (choiceId: number) => void;
@@ -461,13 +464,13 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           if (!bookId) return;
           const newId = idProvider().generateNewFakeId();
           get().pushAction(() =>
-            idProvider().register(
-              newId,
-              useFlowChartStore.getState().createLane({
+            useFlowChartStore
+              .getState()
+              .createLane({
                 bookId,
                 order: laneOrder,
-              }),
-            ),
+              })
+              .then(lane => idProvider().register(newId, lane.id)),
           );
           const newLane: Lane = {
             bookId,
@@ -506,15 +509,15 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           const lane = get().modelLanes[laneOrder] ?? get().insertNewLane(laneOrder);
           const newId = idProvider().generateNewFakeId();
           get().pushAction(() =>
-            idProvider().register(
-              newId,
-              useFlowChartStore.getState().createPage({
+            useFlowChartStore
+              .getState()
+              .createPage({
                 bookId,
                 laneId: idProvider().getRealId(lane.id)!,
                 title: "페이지 제목을 입력해주세요",
                 order: pageOrder,
-              }),
-            ),
+              })
+              .then(lane => idProvider().register(newId, lane.id)),
           );
           const newPage: Page = {
             bookId,
@@ -675,14 +678,14 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           if (!page) return;
           const newId = idProvider().generateNewFakeId();
           get().pushAction(() =>
-            idProvider().register(
-              newId,
-              useFlowChartStore.getState().createChoice({
+            useFlowChartStore
+              .getState()
+              .createChoice({
                 bookId,
                 pageId: idProvider().getRealId(page.id)!,
                 content: "선택지를 작성해주세요",
-              }),
-            ),
+              })
+              .then(lane => idProvider().register(newId, lane.id)),
           );
           const newChoice: Choice = {
             id: newId,
@@ -723,6 +726,43 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }),
           );
         },
+        loadNewChoice: (realPageId, realChoiceId, content) => {
+          const newChoiceId = idProvider().generateNewFakeId();
+          idProvider().register(newChoiceId, realChoiceId);
+          const lanes = deepCopyLanes(get().modelLanes);
+          for (let lane of lanes) {
+            for (let page of lane.pages) {
+              if (realPageId === idProvider().getRealId(page.id)) {
+                page.choices.push({
+                  id: newChoiceId,
+                  order: page.choices.length,
+                  content,
+                  sourcePageId: page.id,
+                  destinationPageId: null,
+                });
+              }
+            }
+          }
+          get().setModelLanes(lanes);
+        },
+        loadChoiceOrder: (realChoiceId, order) => {
+          const lanes = deepCopyLanes(get().modelLanes);
+          for (let lane of lanes) {
+            for (let page of lane.pages) {
+              const choice = page.choices.find(
+                choice => realChoiceId === idProvider().getRealId(choice.id),
+              );
+              if (!choice) continue;
+              page.choices.splice(
+                page.choices.findIndex(c => c.id === choice.id),
+                1,
+              );
+              page.choices.splice(order, 0, choice);
+              page.choices = page.choices.map((c, i) => ({...c, order: i}));
+            }
+          }
+          get().setModelLanes(lanes);
+        },
         loadChoiceContent: (realChoiceId, content) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
@@ -747,6 +787,19 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
                     : null;
                 }
               }
+            }
+          }
+          get().setModelLanes(lanes);
+        },
+        unloadChoice: realChoiceId => {
+          const lanes = deepCopyLanes(get().modelLanes);
+          for (let lane of lanes) {
+            for (let page of lane.pages) {
+              const index = page.choices.findIndex(
+                choice => realChoiceId === idProvider().getRealId(choice.id),
+              );
+              if (index === -1) continue;
+              page.choices.splice(index, 1);
             }
           }
           get().setModelLanes(lanes);
