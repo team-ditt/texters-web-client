@@ -7,6 +7,7 @@ import {
   BookTitleInput,
 } from "@/features/Book/components";
 import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
+import {Book} from "@/types/book";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {motion} from "framer-motion";
@@ -20,9 +21,9 @@ export default function BookInfoFormPage() {
   const canSubmit = title && description;
 
   const {mutate: submitBookInfo, isLoading} = useMutation(api.books.createBook, {
-    onSuccess: () => {
+    onSuccess: (book: Book) => {
       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-      navigate("/studio/dashboard");
+      navigate(`/studio/books/${book.id}/flow-chart`);
     },
   });
 
