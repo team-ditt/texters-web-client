@@ -20,10 +20,10 @@ export default function MobileFooter() {
           <ul className="flex flex-col gap-[12px] font-bold text-[12px] text-[#A5A5A5]">
             <Link to="/privacy-policy">개인정보 처리방침</Link>
             <Link className="w-fit border-b border-[#A5A5A5]" to="mailto:help@texters.io">
-              help@texters.io
+              teamdiff.texters@gmail.com
             </Link>
             <Link className="w-fit border-b border-[#A5A5A5]" to="mailto:support@texters.io">
-              support@texters.io
+              teamdiff.texters@gmail.com
             </Link>
           </ul>
           {didSignIn ? (
