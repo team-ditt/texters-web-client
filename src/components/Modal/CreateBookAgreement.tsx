@@ -31,11 +31,8 @@ export default function CreateBookAgreement({onRequestClose, ...props}: Props) {
         <span className="font-bold text-[22px] -ms-4">작품</span>
         <SizedBox height={8} />
         <ul>
+          <li className="list-disc list-outside">텍스터즈는 성인 컨텐츠 게시를 금지하고 있어요.</li>
           <li className="list-disc list-outside">
-            현재 텍스터즈에서는 성인물 카테고리를 따로 개발중에 있어요.
-          </li>
-          <li className="list-disc list-outside">
-            성인물 카테고리 개발이 완료되기 전까지,{" "}
             <b>과도한 성적묘사 및 고어한 표현이 담긴 작품은 운영진의 판단아래 작품 공개가 취소</b>될
             수 있어요.
           </li>
