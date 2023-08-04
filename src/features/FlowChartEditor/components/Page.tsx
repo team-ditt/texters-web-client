@@ -11,7 +11,7 @@ import useDebounce from "@/hooks/useDebounce";
 import {Page} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 
 type Props = {
   viewState: ViewState<Page>;
@@ -40,8 +40,12 @@ export default function Page({viewState}: Props) {
     },
     1500,
     title,
+    undefined,
     !title,
   );
+  useEffect(() => {
+    setTitle(page.title);
+  }, [page.title]);
 
   const isDragging = draggingState.isDragging === "page" && draggingState.sourceId === page.id;
   if (!elementState) return null;

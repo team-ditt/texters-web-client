@@ -6,14 +6,13 @@ import {calcChoicePointOffset} from "@/features/FlowChartEditor/utils/calculator
 import useDebounce from "@/hooks/useDebounce";
 import {Choice} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 
 type Props = {
   viewState: ViewState<Choice>;
 };
 
 export default function Choice({viewState}: Props) {
-  const bookId = useFlowChartEditorStore(state => state.bookId);
   const choice = viewState.data;
   const elementState = viewState.elementState;
   const pageViewState = useFlowChartEditorStore(
@@ -35,8 +34,12 @@ export default function Choice({viewState}: Props) {
     },
     1500,
     content,
+    undefined,
     !content,
   );
+  useEffect(() => {
+    setContent(choice.content);
+  }, [choice.content]);
 
   const isDragging = draggingState.isDragging === "choice" && draggingState.sourceId === choice.id;
   const isDraggingSourcePage =

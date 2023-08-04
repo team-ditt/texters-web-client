@@ -44,6 +44,12 @@ export default function PageEditPage() {
     setContent(page.content ?? "");
   }, [page]);
 
+  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+  }, [actionQueue.length]);
+
   if (!page)
     return (
       <div className="flow-chart-view bg-[#EFEFEF]">
@@ -216,22 +222,7 @@ function ChoiceForm({
     return 0;
   };
 
-  const calcReletiveOrder = () => {
-    const containerElement = containerRef.current;
-    if (containerElement) {
-      const {height} = containerElement.getBoundingClientRect();
-      const gap = Number.parseInt(
-        containerElement.parentElement
-          ?.computedStyleMap()
-          .get("gap")
-          ?.toString()
-          .replace("px", "") ?? "0",
-      );
-      const relativeOrder = Math.floor(offsetYRef.current / (height + gap) + 0.5);
-      return relativeOrder;
-    }
-    return 0;
-  };
+  const calcRelativeOrder = () => Math.floor(offsetYRef.current / calcHeightWithGap() + 0.5);
 
   useEffect(() => {
     const containerElement = containerRef.current;
@@ -239,12 +230,12 @@ function ChoiceForm({
       const onMouseMove = (event: MouseEvent) => {
         event.preventDefault();
         offsetYRef.current += event.movementY;
-        const relativeOrder = calcReletiveOrder();
+        const relativeOrder = calcRelativeOrder();
         onDrag(choice.id, relativeOrder);
         setDraggingState(state => ({...state, offsetY: offsetYRef.current}));
       };
       const finishDrag = () => {
-        const relativeOrder = calcReletiveOrder();
+        const relativeOrder = calcRelativeOrder();
         onDragEnd(choice.id, relativeOrder);
         setDraggingState({isDragging: false, offsetY: 0});
         offsetYRef.current = 0;
