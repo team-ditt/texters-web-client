@@ -12,7 +12,7 @@ import {
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
-import {Choice} from "@/types/book";
+import {Choice, Page} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DownArrowCircleIcon} from "assets/icons/down-arrow-circle.svg";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
@@ -20,7 +20,7 @@ import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
-import {FormEventHandler, MouseEvent, useEffect, useRef, useState} from "react";
+import {FormEventHandler, useEffect, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 import {useParams} from "react-router-dom";
 
@@ -92,9 +92,7 @@ export default function PageEditPage() {
 
         <div className="flex flex-col gap-2 pt-4">
           <span className="font-bold text-[18px] mb-2">선택지 만들기</span>
-          {page.choices.map(choice => (
-            <ChoiceForm key={choice.id} choice={choice} />
-          ))}
+          <ChoiceList page={page} />
           {page.choices.length < 5 ? <AddChoiceButton /> : null}
         </div>
       </div>
@@ -105,7 +103,78 @@ export default function PageEditPage() {
   );
 }
 
-function ChoiceForm({choice}: {choice: Choice}) {
+function ChoiceList({page}: {page: Page}) {
+  const {bookId, pageId} = useParams();
+  const {isSaving, updateChoiceOrder} = useFlowChartStore();
+  const queryClient = useQueryClient();
+  const [choiceDraggingState, setChoiceDraggingState] = useState({
+    choiceId: -1,
+    relativeOrder: 0,
+  });
+  const handleChoiceDrag = (choiceId: number, relativeOrder: number) => {
+    setChoiceDraggingState({choiceId, relativeOrder});
+  };
+  const handleChoiceDragEnd = async (choiceId: number, relativeOrder: number) => {
+    let newOrder = page.choices.find(c => c.id === choiceId)?.order;
+    if (newOrder === undefined) {
+      setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
+      return;
+    }
+    newOrder += relativeOrder;
+    newOrder = Math.max(0, Math.min(newOrder, page.choices.length - 1));
+
+    await updateChoiceOrder({
+      bookId: +bookId!,
+      pageId: +pageId!,
+      choiceId,
+      order: newOrder,
+    });
+    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+    setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
+  };
+
+  const choices = page.choices;
+  const shuffledChoices = choices.filter(c => c.id !== choiceDraggingState.choiceId);
+  if (choiceDraggingState.choiceId !== -1) {
+    const choice = choices.find(c => c.id === choiceDraggingState.choiceId)!;
+    let newOrder = choice.order + choiceDraggingState.relativeOrder;
+    newOrder = Math.max(0, Math.min(newOrder, choices.length - 1));
+    shuffledChoices.splice(newOrder, 0, choice);
+  }
+  const orderedShuffledChoices = shuffledChoices.map(c => ({
+    ...c,
+    relativeOrder:
+      shuffledChoices.findIndex(d => d.id === c.id) - choices.findIndex(d => d.id === c.id),
+  }));
+
+  return (
+    <>
+      {orderedShuffledChoices
+        .sort((a, b) => a.order - b.order)
+        .map(choice => (
+          <ChoiceForm
+            key={choice.id}
+            choice={choice}
+            relativeOrder={choice.relativeOrder}
+            onDrag={handleChoiceDrag}
+            onDragEnd={handleChoiceDragEnd}
+          />
+        ))}
+    </>
+  );
+}
+
+function ChoiceForm({
+  choice,
+  relativeOrder,
+  onDrag,
+  onDragEnd,
+}: {
+  choice: Choice;
+  relativeOrder: number;
+  onDrag: (choiceId: number, relativeOrder: number) => void;
+  onDragEnd: (choiceId: number, relativeOrder: number) => void;
+}) {
   const {bookId, pageId} = useParams();
   const {content, onInputContent} = useChoiceContentInput(+bookId!, +pageId!, choice);
   const {isOpen, openModal, closeModal} = useModal();
@@ -122,14 +191,98 @@ function ChoiceForm({choice}: {choice: Choice}) {
     closeModal();
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [draggingState, setDraggingState] = useState({isDragging: false, offsetY: 0});
+  const offsetYRef = useRef(0);
+  const [orderChanged, setOrderChanged] = useState(false);
+
+  const calcHeightWithGap = () => {
+    const containerElement = containerRef.current;
+    if (containerElement) {
+      const {height} = containerElement.getBoundingClientRect();
+      const gap = Number.parseInt(
+        containerElement.parentElement
+          ?.computedStyleMap()
+          .get("gap")
+          ?.toString()
+          .replace("px", "") ?? "0",
+      );
+      return height + gap;
+    }
+    return 0;
+  };
+
+  const calcReletiveOrder = () => {
+    const containerElement = containerRef.current;
+    if (containerElement) {
+      const {height} = containerElement.getBoundingClientRect();
+      const gap = Number.parseInt(
+        containerElement.parentElement
+          ?.computedStyleMap()
+          .get("gap")
+          ?.toString()
+          .replace("px", "") ?? "0",
+      );
+      const relativeOrder = Math.floor(offsetYRef.current / (height + gap) + 0.5);
+      return relativeOrder;
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    const containerElement = containerRef.current;
+    if (containerElement && draggingState.isDragging) {
+      const onMouseMove = (event: MouseEvent) => {
+        event.preventDefault();
+        offsetYRef.current += event.movementY;
+        const relativeOrder = calcReletiveOrder();
+        onDrag(choice.id, relativeOrder);
+        setDraggingState(state => ({...state, offsetY: offsetYRef.current}));
+      };
+      const finishDrag = () => {
+        const relativeOrder = calcReletiveOrder();
+        onDragEnd(choice.id, relativeOrder);
+        setDraggingState({isDragging: false, offsetY: 0});
+        offsetYRef.current = 0;
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", finishDrag);
+
+      return () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", finishDrag);
+      };
+    }
+  }, [draggingState.isDragging]);
+
+  useEffect(() => {
+    setOrderChanged(true);
+  }, [choice.order]);
+
+  useEffect(() => {
+    if (orderChanged) setOrderChanged(false);
+  }, [orderChanged]);
+
   return (
-    <div className="h-12 flex gap-1">
+    <div
+      className={`h-12 flex gap-1 ${
+        draggingState.isDragging ? "z-10" : orderChanged ? "" : "transition-all"
+      }`}
+      style={{
+        transform: draggingState.isDragging
+          ? `translateY(${draggingState.offsetY}px) scale(1.01)`
+          : `translateY(${calcHeightWithGap() * relativeOrder}px)`,
+      }}
+      ref={containerRef}>
       <button
         className="h-12 px-1 rounded-lg hover:bg-[#EFEFEF] transition-colors flex justify-center items-center gap-1 text-[#BBB]"
         onClick={openModal}>
         <TrashIcon width={28} height={28} stroke="#CBD2E0" />
       </button>
-      <DragHandleIcon className="self-center" />
+      <button onMouseDown={() => setDraggingState(state => ({...state, isDragging: true}))}>
+        <DragHandleIcon className="self-center" />
+      </button>
       <SizedBox width={4} />
       <input
         className="flex-1 px-4 border-2 border-black rounded-lg"
@@ -178,7 +331,7 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
     return allPossibleDestinationPages.find(page => page.id === pageId)?.title;
   };
   const isSelected = (pageId: number) => choice.destinationPageId === pageId;
-  const onCloseModal = (event: MouseEvent<HTMLDivElement>) => {
+  const onCloseModal = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     closeModal();
   };
