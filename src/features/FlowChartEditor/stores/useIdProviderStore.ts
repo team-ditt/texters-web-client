@@ -12,9 +12,9 @@ type IdProviderState = {
 type IdProviderAction = {
   convertFlowChart: (lanes: Lane[]) => Lane[];
   generateNewFakeId: () => number;
-  getRealId: (id: number) => number | undefined;
-  getFakeId: (entityType: EntityType, id: number) => number | undefined;
-  register: (fakeId: number, realId: number) => void;
+  getRealId: (id: number) => number;
+  getFakeId: (entityType: EntityType, id: number) => number;
+  register: (entityType: EntityType, fakeId: number, realId: number) => void;
 };
 
 const useIdProviderStore = create<IdProviderState & IdProviderAction>()(
@@ -82,9 +82,10 @@ const useIdProviderStore = create<IdProviderState & IdProviderAction>()(
     },
     getRealId: id => get().idMaps[id],
     getFakeId: (entityType, id) => get().revIdMaps[entityType][id],
-    register: (fakeId, realId) => {
+    register: (entityType, fakeId, realId) => {
       set(state => {
         state.idMaps[fakeId] = realId;
+        state.revIdMaps[entityType][realId] = fakeId;
       });
     },
   })),

@@ -470,7 +470,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
                 bookId,
                 order: laneOrder,
               })
-              .then(lane => idProvider().register(newId, lane.id)),
+              .then(lane => idProvider().register("lane", newId, lane.id)),
           );
           const newLane: Lane = {
             bookId,
@@ -517,7 +517,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
                 title: "페이지 제목을 입력해주세요",
                 order: pageOrder,
               })
-              .then(lane => idProvider().register(newId, lane.id)),
+              .then(page => idProvider().register("page", newId, page.id)),
           );
           const newPage: Page = {
             bookId,
@@ -685,7 +685,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
                 pageId: idProvider().getRealId(page.id)!,
                 content: "선택지를 작성해주세요",
               })
-              .then(lane => idProvider().register(newId, lane.id)),
+              .then(choice => idProvider().register("choice", newId, choice.id)),
           );
           const newChoice: Choice = {
             id: newId,
@@ -728,7 +728,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
         },
         loadNewChoice: (realPageId, realChoiceId, content) => {
           const newChoiceId = idProvider().generateNewFakeId();
-          idProvider().register(newChoiceId, realChoiceId);
+          idProvider().register("choice", newChoiceId, realChoiceId);
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
