@@ -11,26 +11,34 @@ export default function MobileFooter() {
   return (
     <div className="flex flex-col">
       <div className="px-12 py-6 bg-[#3A3A3A] flex justify-between items-center">
-        <div className="flex gap-2">
-          <ul className="flex flex-col gap-[12px] font-bold text-[12px] text-[#A5A5A5]">
-            <Link to="/terms-and-conditions">이용약관</Link>
-            <span>고객문의</span>
-            <span>업무제휴 문의</span>
+        <div className="flex flex-col gap-2">
+          <ul className="flex gap-2 font-bold text-[0.75rem] text-[#A5A5A5]">
+            <Link className="min-w-[4rem]" to="/terms-and-conditions">
+              이용약관
+            </Link>
+            <Link className="min-w-[4rem]" to="/privacy-policy">
+              개인정보 처리방침
+            </Link>
+            {didSignIn ? (
+              <button className="min-w-[4rem]" onClick={openModal}>
+                회원탈퇴
+              </button>
+            ) : null}
           </ul>
-          <ul className="flex flex-col gap-[12px] font-bold text-[12px] text-[#A5A5A5]">
-            <Link to="/privacy-policy">개인정보 처리방침</Link>
+          <ul className="flex gap-2 font-bold text-[0.75rem] text-[#A5A5A5]">
+            <span className="min-w-[4rem]">고객문의</span>
+            <Link
+              className="w-fit min-w-[4rem] border-b border-[#A5A5A5]"
+              to="mailto:support@texters.io">
+              teamdiff.texters@gmail.com
+            </Link>
+          </ul>
+          <ul className="flex gap-2 font-bold text-[0.75rem] text-[#A5A5A5]">
+            <span className="min-w-[4rem]">업무제휴 문의</span>
             <Link className="w-fit border-b border-[#A5A5A5]" to="mailto:help@texters.io">
               teamdiff.texters@gmail.com
             </Link>
-            <Link className="w-fit border-b border-[#A5A5A5]" to="mailto:support@texters.io">
-              teamdiff.texters@gmail.com
-            </Link>
           </ul>
-          {didSignIn ? (
-            <ul className="flex flex-col gap-[12px] font-bold text-[12px] text-[#A5A5A5]">
-              <button onClick={openModal}>회원탈퇴</button>
-            </ul>
-          ) : null}
         </div>
         <a href="https://discord.gg/wVmrzRfJ" target="_blank">
           <DiscordLogoIcon />
