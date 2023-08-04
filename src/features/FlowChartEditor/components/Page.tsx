@@ -52,7 +52,7 @@ export default function Page({viewState}: Props) {
 
   const isIntro = lane?.order === 0;
   const isEnding = !isIntro && page.choices.length === 0;
-  const isContentEmpty = page.content === "";
+  const isContentEmpty = !page.content;
   const hasEmptyChoice = page.choices.some(c => c.destinationPageId === null);
   const isSeparated =
     !isIntro &&
