@@ -1,5 +1,6 @@
 import {useEffect, useRef} from "react";
 
+import {Modal} from "@/components";
 import Choice from "@/features/FlowChartEditor/components/Choice";
 import DraggingChoicePlaceholder from "@/features/FlowChartEditor/components/DraggingChoicePlaceholder";
 import DraggingPagePlaceholder from "@/features/FlowChartEditor/components/DraggingPagePlaceholder";
@@ -13,12 +14,15 @@ import Path from "@/features/FlowChartEditor/components/Path";
 import ScrollBar from "@/features/FlowChartEditor/components/ScrollBar";
 import useMousePosition from "@/features/FlowChartEditor/hooks/useMousePosition";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import usePageLimitAlertModalStore from "@/features/FlowChartEditor/stores/usePageLimitAlertModal";
 
 export default function FlowChartEditor() {
   const viewStates = useFlowChartEditorStore(state => state.viewStates);
   const updateDrag = useFlowChartEditorStore(state => state.updateDrag);
   const setFrameSize = useFlowChartEditorStore(state => state.setFrameSize);
   const scrollViewPort = useFlowChartEditorStore(state => state.scrollViewPort);
+  const {isOpen: isPageLimitAlertModalOpen, closeModal: closePageLimitAlertModal} =
+    usePageLimitAlertModalStore();
 
   const frameRef = useRef<HTMLDivElement>(null);
   const mousePosition = useMousePosition();
@@ -129,6 +133,12 @@ export default function FlowChartEditor() {
       <NewLanePageButton />
       <ScrollBar />
       <PageMoreMenu />
+      <Modal.Alert
+        isOpen={isPageLimitAlertModalOpen}
+        title="페이지를 더 만들 수 없어요!"
+        message="현재 한 작품당 페이지는 최대 100개 까지 만들 수 있어요!"
+        onRequestClose={closePageLimitAlertModal}
+      />
     </div>
   );
 }
