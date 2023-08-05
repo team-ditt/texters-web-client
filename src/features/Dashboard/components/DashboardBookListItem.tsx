@@ -24,7 +24,7 @@ type Props = {
 
 function DashboardBookListItem({book}: Props) {
   const navigate = useNavigate();
-  const {loadFlowChart} = useFlowChartStore();
+  const loadFlowChart = useFlowChartStore(state => state.loadFlowChart);
   const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
   const {isOpen, openModal, closeModal} = useModal();
 

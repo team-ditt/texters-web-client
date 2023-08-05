@@ -6,7 +6,9 @@ import {
   BookDescriptionTextarea,
   BookTitleInput,
 } from "@/features/Book/components";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
+import {useFlowChartStore} from "@/stores";
 import {Book} from "@/types/book";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -20,9 +22,14 @@ export default function BookInfoFormPage() {
   const {value: description, onInput: onInputDescription} = useTextInput();
   const canSubmit = title && description;
 
+  const loadFlowChart = useFlowChartStore(state => state.loadFlowChart);
+  const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
   const {mutate: submitBookInfo, isLoading} = useMutation(api.books.createBook, {
     onSuccess: (book: Book) => {
       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+
+      clearFlowChart();
+      loadFlowChart(book.id);
       navigate(`/studio/books/${book.id}/flow-chart`);
     },
   });
