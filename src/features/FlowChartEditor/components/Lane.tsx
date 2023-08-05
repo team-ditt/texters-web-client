@@ -1,8 +1,8 @@
-import DeleteIcon from "@/features/FlowChartEditor/components/DeleteIcon";
 import StaticElementLocator from "@/features/FlowChartEditor/components/StaticElementLocator";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {Lane} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
+import {ReactComponent as CloseIcon} from "assets/icons/close.svg";
 import {useState} from "react";
 
 type Props = {
@@ -50,9 +50,9 @@ export default function Lane({viewState}: Props) {
           </div>
           {!isIntro && isHovering && isEmpty && (
             <button
-              className="absolute right-[16px] top-[42px] scale-[1.2]"
+              className="absolute right-[14px] top-[32px] scale-[1.2]"
               onClick={handleDeleteButtonClicked}>
-              <DeleteIcon />
+              <CloseIcon width={14} height={14} stroke="#DFDFDF" fill="#DFDFDF" />
             </button>
           )}
         </div>

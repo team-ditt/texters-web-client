@@ -11,6 +11,7 @@ import useDebounce from "@/hooks/useDebounce";
 import {Page} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
+import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ChangeEvent, useEffect, useState} from "react";
 
 type Props = {
@@ -201,14 +202,7 @@ export default function Page({viewState}: Props) {
                   <button
                     className="absolute text-sm right-0.5 bottom-5 w-full flex justify-center items-center gap-[4px]"
                     onClick={handleAddChoiceButtonClicked}>
-                    <div className="relative w-[17px] h-[17px] rounded-full border-[2px] border-[#A5A5A5]">
-                      <div className="w-full h-full p-[2.5px] flex justify-center items-center">
-                        <div className="w-full h-[2px] rounded-full bg-[#A5A5A5]"></div>
-                      </div>
-                      <div className="absolute top-0 w-full h-full p-[2.5px] flex justify-center items-center">
-                        <div className="w-full h-[2px] rounded-full bg-[#A5A5A5] rotate-90"></div>
-                      </div>
-                    </div>
+                    <PlusCircleIcon width={18} height={18} stroke="#A5A5A5" fill="#A5A5A5" />
                     <div className="text-[#A5A5A5] text-[12px] font-[700] tracking-[-0.6px]">
                       선택지 추가하기
                     </div>

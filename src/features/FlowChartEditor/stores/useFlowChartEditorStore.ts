@@ -55,9 +55,15 @@ type FlowChartStoreAction = {
   hideNewLaneButton: () => void;
   showNewPageButton: (laneOrder: number, pageOrder: number) => void;
   hideNewPageButton: () => void;
+  showNewLanePageButton: (laneOrder: number) => void;
+  hideNewLanePageButton: () => void;
   insertNewLane: (laneOrder: number) => Lane | undefined;
   deleteLane: (laneId: number) => void;
-  insertNewPage: (laneOrder: number, pageOrder: number) => Page | undefined;
+  insertNewPage: (
+    laneOrder: number,
+    pageOrder: number,
+    onPageLimitReached: () => void,
+  ) => Page | undefined;
   updatePageInfo: (pageId: number, info: {title?: string; content?: string | null}) => void;
   loadPageTitle: (realPageId: number, title: string) => void;
   loadPageContent: (realPageId: number, content: string) => void;
@@ -109,6 +115,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           pages: {},
           choices: {},
           newPageButton: emptyViewState({laneOrder: -1, pageOrder: -1}, false),
+          newLanePageButton: emptyViewState({laneOrder: -1}, false),
           newLaneButton: emptyViewState({laneOrder: -1}, false),
         },
         draggingState: {
@@ -146,6 +153,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               pages: {},
               choices: {},
               newPageButton: emptyViewState({laneOrder: -1, pageOrder: -1}, false),
+              newLanePageButton: emptyViewState({laneOrder: -1}, false),
               newLaneButton: emptyViewState({laneOrder: -1}, false),
             },
             draggingState: {
@@ -312,6 +320,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             for (let choiceId in viewStates.choices)
               update(viewStates.choices[choiceId], dynamicBoxes.choices[choiceId]);
             update(viewStates.newPageButton, dynamicBoxes.newPageButton);
+            update(viewStates.newLanePageButton, dynamicBoxes.newLanePageButton);
             update(viewStates.newLaneButton, staticBoxes.newLaneButton);
           });
         },
@@ -342,6 +351,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               update(viewStates.choices[choiceId]);
             }
             update(viewStates.newPageButton);
+            update(viewStates.newLanePageButton);
             update(viewStates.newLaneButton);
           });
         },
@@ -353,6 +363,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           });
           get().hideNewLaneButton();
           get().hideNewPageButton();
+          get().hideNewLanePageButton();
         },
         startDragChoice: (choiceId, offset) => {
           set(state => {
@@ -362,6 +373,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           });
           get().hideNewLaneButton();
           get().hideNewPageButton();
+          get().hideNewLanePageButton();
           get().finishHover();
         },
         startDragPath: choiceId => {
@@ -426,6 +438,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             state.viewStates.newLaneButton.toPresent = true;
           });
           get().hideNewPageButton();
+          get().hideNewLanePageButton();
           get().invalidateViewStates();
         },
         hideNewLaneButton: () => {
@@ -456,6 +469,28 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           if (get().viewStates.newPageButton.toPresent === false) return;
           set(state => {
             state.viewStates.newPageButton.toPresent = false;
+          });
+          get().invalidateViewStates();
+        },
+        showNewLanePageButton: laneOrder => {
+          const newLanePageButton = get().viewStates.newLanePageButton;
+          if (
+            newLanePageButton.data.laneOrder === laneOrder &&
+            newLanePageButton.toPresent === true
+          )
+            return;
+          set(state => {
+            state.viewStates.newLanePageButton.data = {
+              laneOrder,
+            };
+            state.viewStates.newLanePageButton.toPresent = true;
+          });
+          get().invalidateViewStates();
+        },
+        hideNewLanePageButton: () => {
+          if (get().viewStates.newLanePageButton.toPresent === false) return;
+          set(state => {
+            state.viewStates.newLanePageButton.toPresent = false;
           });
           get().invalidateViewStates();
         },
@@ -501,8 +536,14 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           });
           get().hideNewLaneButton();
           get().hideNewPageButton();
+          get().hideNewLanePageButton();
         },
-        insertNewPage: (laneOrder, pageOrder) => {
+        insertNewPage: (laneOrder, pageOrder, onPageLimitReached) => {
+          const pageCount = get().modelLanes.reduce((a, l) => a + l.pages.length, 0);
+          if (pageCount >= 100) {
+            onPageLimitReached();
+            return;
+          }
           pageOrder = Math.max(0, pageOrder);
           const bookId = get().bookId;
           if (!bookId) return;
@@ -539,6 +580,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }));
           });
           get().hideNewPageButton();
+          get().hideNewLanePageButton();
           return newPage;
         },
         updatePageInfo: (pageId, {title, content}) => {

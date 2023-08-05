@@ -1,5 +1,6 @@
 import StaticElementLocator from "@/features/FlowChartEditor/components/StaticElementLocator";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 
 export default function NewLaneButton() {
   const viewState = useFlowChartEditorStore(state => state.viewStates.newLaneButton);
@@ -24,14 +25,15 @@ export default function NewLaneButton() {
           height: elementState.box.height,
         }}>
         <button
-          className="absolute w-[24px] h-[24px] rounded-full bg-white border-[3px] border-black shadow-[0_2px_5px_0_#00000080]"
+          className="absolute w-[22px] h-[22px] m-[1px] rounded-full bg-white shadow-[0_2px_5px_0_#00000080]"
           onClick={handleClick}>
-          <div className="w-full h-full p-[2.5px] flex justify-center items-center">
-            <div className="w-full h-[3px] rounded-full bg-black"></div>
-          </div>
-          <div className="absolute top-0 w-full h-full p-[2.5px] flex justify-center items-center">
-            <div className="w-full h-[3px] rounded-full bg-black rotate-90"></div>
-          </div>
+          <PlusCircleIcon
+            className="absolute left-[-1px] top-[-1px]"
+            width={24}
+            height={24}
+            stroke="black"
+            fill="black"
+          />
         </button>
       </div>
     </StaticElementLocator>

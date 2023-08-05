@@ -189,7 +189,7 @@ function MoreButton({book}: Props) {
                       className="px-4 py-2 border-b border-[#242424] flex justify-between items-center text-[#242424]"
                       onClick={onEdit}>
                       작품 기본정보 변경
-                      <EditIcon />
+                      <EditIcon fill="#242424" />
                     </button>
                   ) : null}
                   <button

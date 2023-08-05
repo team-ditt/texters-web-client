@@ -29,7 +29,7 @@ export default function SignInPage() {
       animate={{top: 0}}
       exit={{top: "100%"}}>
       <button className="absolute left-6 top-6" onClick={onClose}>
-        <CloseIcon />
+        <CloseIcon fill="#2D3648" />
       </button>
 
       <div className="w-full max-w-[336px] flex flex-col">

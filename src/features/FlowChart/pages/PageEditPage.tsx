@@ -425,7 +425,7 @@ function AddChoiceButton() {
       className="self-center flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#EFEFEF] transition-colors font-medium text-[#858585]"
       onClick={onClick}
       disabled={isSaving}>
-      <PlusCircleIcon /> 선택지 추가하기
+      <PlusCircleIcon stroke="#A5A5A5" fill="#A5A5A5" /> 선택지 추가하기
     </button>
   );
 }
