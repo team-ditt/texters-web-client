@@ -62,7 +62,7 @@ export default function BookInfoPage() {
         <p
           ref={descriptionRef}
           className={classNames(
-            "flex-1 text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem]",
+            "flex-1 text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem] whitespace-pre-wrap",
             {
               "line-clamp-none": isExpanded,
               "line-clamp-[10]": !isExpanded,
