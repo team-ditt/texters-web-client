@@ -151,6 +151,15 @@ function MoreButton({book}: Props) {
     if (!buttonRef.current) return;
     setOffset(buttonRef.current.getBoundingClientRect());
   }, [buttonRef]);
+  useEffect(() => {
+    function onScroll() {
+      if (!buttonRef.current) return;
+      setOffset(buttonRef.current.getBoundingClientRect());
+    }
+
+    document.getElementById("root")?.addEventListener("scroll", onScroll);
+    return () => document.getElementById("root")?.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -187,7 +196,6 @@ function MoreButton({book}: Props) {
                   </button>
                 </div>
               </>,
-
               document.body,
             )
           : null}

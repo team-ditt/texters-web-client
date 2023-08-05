@@ -21,7 +21,6 @@ import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
 import {FormEventHandler, MouseEvent, useEffect, useRef, useState} from "react";
-import {createPortal} from "react-dom";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
@@ -198,40 +197,35 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
         className={classNames({"rotate-180": isOpen})}
         fill={isOpen ? "#A5A5A5" : "#2D2D2D"}
       />
-      {isOpen
-        ? createPortal(
-            <>
-              <div
-                className="fixed inset-0 w-full h-full bg-transparent z-[12000]"
-                onClick={onCloseModal}
-              />
-              <ul
-                className="absolute top-0 left-0 w-[298px] max-h-[208px] border-2 border-t-0 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]"
-                style={{transform: `translate(${offset.x + 1}px, ${offset.y + 52}px)`}}>
-                <li
-                  className="min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
-                  onClick={() => onUpdateDestinationPageId(null)}>
-                  페이지 연결 해제
-                </li>
-                {allPossibleDestinationPages.map(page => (
-                  <li
-                    key={page.id}
-                    className={classNames(
-                      "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] cursor-pointer",
-                      {
-                        "bg-[#EFEFEF]": isSelected(page.id),
-                        "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
-                      },
-                    )}
-                    onClick={() => onUpdateDestinationPageId(page.id)}>
-                    {page.title}
-                  </li>
-                ))}
-              </ul>
-            </>,
-            document.body,
-          )
-        : null}
+      {isOpen ? (
+        <>
+          <div
+            className="fixed inset-0 w-full h-full bg-transparent z-[12000] cursor-default"
+            onClick={onCloseModal}
+          />
+          <ul className="absolute top-12 left-0 w-[298px] max-h-[212px] border-2 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]">
+            <li
+              className="min-h-[52px] flex items-center px-6 text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
+              onClick={() => onUpdateDestinationPageId(null)}>
+              페이지 연결 해제
+            </li>
+            {allPossibleDestinationPages.map(page => (
+              <li
+                key={page.id}
+                className={classNames(
+                  "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] cursor-pointer",
+                  {
+                    "bg-[#EFEFEF]": isSelected(page.id),
+                    "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
+                  },
+                )}
+                onClick={() => onUpdateDestinationPageId(page.id)}>
+                {page.title}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </button>
   );
 }
