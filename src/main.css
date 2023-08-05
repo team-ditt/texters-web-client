@@ -37,7 +37,6 @@ body,
   width: 100%;
   min-width: 320px;
   height: auto;
-  min-height: max(640px, 100%);
   overflow-x: auto;
   display: flex;
   justify-content: center;
