@@ -21,12 +21,14 @@ import {TextersError} from "@/types/error";
 import {AxiosError} from "axios";
 import {create} from "zustand";
 
+type BufferedAction = {key: string; runnable: (() => Promise<void>) | null};
 type FlowChartStoreState = {
   isSaving: boolean;
   isLoading: boolean;
   updatedAt: string;
   flowChart: FlowChart | null;
   error: TextersError | null;
+  bufferedAction: BufferedAction | null;
 };
 
 type FlowChartStoreAction = {
@@ -42,6 +44,8 @@ type FlowChartStoreAction = {
   updateChoiceOrder: (form: UpdateChoiceOrderForm) => Promise<void>;
   updateChoiceDestinationPageId: (form: UpdateChoiceDestinationForm) => Promise<void>;
   deleteChoice: (form: DeleteChoiceForm, onSuccess: () => Promise<void>) => Promise<void>;
+  updateBufferedAction: (key: string, runnable: (() => Promise<void>) | null) => void;
+  commitBufferedAction: () => Promise<void>;
 };
 
 const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
@@ -50,6 +54,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   updatedAt: new Date().toISOString(),
   flowChart: null,
   error: null,
+  bufferedAction: null,
   loadFlowChart: async bookId => {
     if (get().isLoading) return;
 
@@ -64,6 +69,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   createLane: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       const lane = await api.lanes.createLane(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -74,6 +80,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   deleteLane: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.lanes.deleteLane(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -83,6 +90,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   createPage: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       const page = await api.pages.createPage(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -94,6 +102,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   updatePageInfo: async form => {
     if (form.content === "") form.content = null;
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       const page = await api.pages.updatePageInfo(form);
       set({isSaving: false, updatedAt: page.updatedAt});
@@ -103,6 +112,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   updatePageOrder: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       const page = await api.pages.updatePageOrder(form);
       set({isSaving: false, updatedAt: page.updatedAt});
@@ -112,6 +122,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   deletePage: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.pages.deletePage(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -121,6 +132,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   createChoice: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       const choice = await api.choices.createChoice(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -133,6 +145,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
     if (!form.content) return;
 
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.choices.updateChoice(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -142,6 +155,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   updateChoiceOrder: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.choices.updateChoiceOrder(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -151,6 +165,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   updateChoiceDestinationPageId: async form => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.choices.updateChoiceDestination(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -160,6 +175,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
   },
   deleteChoice: async (form, onSuccess) => {
     set({isSaving: true});
+    await get().commitBufferedAction();
     try {
       await api.choices.deleteChoice(form);
       set({isSaving: false, updatedAt: new Date().toISOString()});
@@ -167,6 +183,21 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
     } catch (error) {
       set({isSaving: false, error: (error as AxiosError<TextersError>).response?.data});
     }
+  },
+  updateBufferedAction: (key, runnable) => {
+    const action = {key, runnable};
+    const prevAction = get().bufferedAction;
+    if (prevAction?.runnable && prevAction.key !== action.key) {
+      set({bufferedAction: null});
+      prevAction.runnable();
+    }
+    set({bufferedAction: action});
+  },
+  commitBufferedAction: async () => {
+    const action = get().bufferedAction;
+    if (!action?.runnable) return;
+    set({bufferedAction: null});
+    await action.runnable();
   },
 }));
 
