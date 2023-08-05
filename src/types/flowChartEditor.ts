@@ -43,6 +43,10 @@ export type NewPageButtonState = {
   pageOrder: number;
 };
 
+export type NewLanePageButtonState = {
+  laneOrder: number;
+};
+
 export type NewLaneButtonState = {
   laneOrder: number;
 };
@@ -69,6 +73,7 @@ export type ViewStates = {
   pages: {[key: number]: ViewState<Page>};
   choices: {[key: number]: ViewState<Choice>};
   newPageButton: ViewState<NewPageButtonState>;
+  newLanePageButton: ViewState<NewLanePageButtonState>;
   newLaneButton: ViewState<NewLaneButtonState>;
 };
 

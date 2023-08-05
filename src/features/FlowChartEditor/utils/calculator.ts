@@ -149,15 +149,16 @@ export const calcDynamicElementBoxes = (
   viewStates: ViewStates,
   frameSize: Size,
 ): {
-  // lanes: {[key: number]: Box};
   pages: {[key: number]: Box};
   choices: {[key: number]: Box};
   newPageButton: Box | undefined;
+  newLanePageButton: Box | undefined;
   contentSize: Size;
 } => {
   const pageBoxes: {[key: number]: Box} = {};
   const choiceBoxes: {[key: number]: Box} = {};
   let newPageButtonBox: Box | null = null;
+  let newLanePageButtonBox: Box | null = null;
   const contentSize = {
     width: PAGE_WIDTH,
     height: 0,
@@ -224,10 +225,10 @@ export const calcDynamicElementBoxes = (
 
     if (
       lane.pages.length === 0 &&
-      viewStates.newPageButton.toPresent &&
-      viewStates.newPageButton.data.laneOrder === laneOrder
+      viewStates.newLanePageButton.toPresent &&
+      viewStates.newLanePageButton.data.laneOrder === laneOrder
     ) {
-      newPageButtonBox = {
+      newLanePageButtonBox = {
         x: laneX,
         y: frameSize.height / 2 - NEW_PAGE_BUTTON_HEIGHT / 2,
         width: PAGE_WIDTH,
@@ -250,10 +251,10 @@ export const calcDynamicElementBoxes = (
 
     if (
       laneOrder === lanes.length - 1 &&
-      viewStates.newPageButton.toPresent &&
-      viewStates.newPageButton.data.laneOrder === lanes.length
+      viewStates.newLanePageButton.toPresent &&
+      viewStates.newLanePageButton.data.laneOrder === lanes.length
     ) {
-      newPageButtonBox = {
+      newLanePageButtonBox = {
         x: laneX + PAGE_WIDTH,
         y: frameSize.height / 2 - NEW_PAGE_BUTTON_HEIGHT / 2,
         width: PAGE_WIDTH,
@@ -270,6 +271,7 @@ export const calcDynamicElementBoxes = (
     pages: pageBoxes,
     choices: choiceBoxes,
     newPageButton: newPageButtonBox ?? undefined,
+    newLanePageButton: newLanePageButtonBox ?? undefined,
     contentSize,
   };
 };

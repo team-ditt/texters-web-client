@@ -17,6 +17,8 @@ export default function useFlowChartEditor() {
   const finishDrag = useFlowChartEditorStore(state => state.finishDrag);
   const showNewPageButton = useFlowChartEditorStore(state => state.showNewPageButton);
   const hideNewPageButton = useFlowChartEditorStore(state => state.hideNewPageButton);
+  const showNewLanePageButton = useFlowChartEditorStore(state => state.showNewLanePageButton);
+  const hideNewLanePageButton = useFlowChartEditorStore(state => state.hideNewLanePageButton);
   const showNewLaneButton = useFlowChartEditorStore(state => state.showNewLaneButton);
   const hideNewLaneButton = useFlowChartEditorStore(state => state.hideNewLaneButton);
 
@@ -264,13 +266,13 @@ export default function useFlowChartEditor() {
           const dragPosition = draggingState.current;
           const {pages: pageBoxes} = calcElementBoxesModel(lanes);
           if (lanes.length === 1 && dragPosition.x >= PAGE_WIDTH) {
-            showNewPageButton(1, -1);
+            showNewLanePageButton(1);
             return;
           }
           for (let laneOrder = 1; laneOrder < lanes.length; ++laneOrder) {
             const lane = lanes[laneOrder];
             if (laneOrder === lanes.length - 1 && PAGE_WIDTH * lanes.length <= dragPosition.x) {
-              showNewPageButton(lanes.length, -1);
+              showNewLanePageButton(lanes.length);
               return;
             }
 
@@ -281,7 +283,7 @@ export default function useFlowChartEditor() {
               continue;
 
             if (lane.pages.length === 0) {
-              showNewPageButton(laneOrder, -1);
+              showNewLanePageButton(laneOrder);
               return;
             }
 
@@ -307,6 +309,7 @@ export default function useFlowChartEditor() {
             }
           }
           hideNewPageButton();
+          hideNewLanePageButton();
         },
       ),
     [],
