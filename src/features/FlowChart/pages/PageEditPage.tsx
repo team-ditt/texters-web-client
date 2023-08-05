@@ -42,6 +42,12 @@ export default function PageEditPage() {
     setTitle(page.title);
     setContent(page.content ?? "");
   }, [page]);
+  useEffect(() => {
+    document.body.style.backgroundColor = "#EFEFEF";
+    return () => {
+      document.body.style.backgroundColor = "";
+    };
+  }, []);
 
   if (!page)
     return (
