@@ -39,6 +39,12 @@ export default function PageEditPage() {
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
+    document.body.style.backgroundColor = "#EFEFEF";
+    return () => {
+      document.body.style.backgroundColor = "";
+    };
+  }, []);
+  useEffect(() => {
     if (!page) return;
     setTitle(page.title);
     setContent(page.content ?? "");
@@ -190,7 +196,7 @@ function ChoiceForm({
 
   const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
-  const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE], {});
+  const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
 
   const onConfirm = async () => {
     await deleteChoice(
@@ -221,7 +227,6 @@ function ChoiceForm({
     }
     return 0;
   };
-
   const calcRelativeOrder = () => Math.floor(offsetYRef.current / calcHeightWithGap() + 0.5);
 
   useEffect(() => {
@@ -250,11 +255,9 @@ function ChoiceForm({
       };
     }
   }, [draggingState.isDragging]);
-
   useEffect(() => {
     setOrderChanged(true);
   }, [choice.order]);
-
   useEffect(() => {
     if (orderChanged) setOrderChanged(false);
   }, [orderChanged]);
@@ -334,6 +337,20 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
     if (!buttonRef.current) return;
     setOffset(buttonRef.current.getBoundingClientRect());
   }, [buttonRef]);
+  useEffect(() => {
+    function onUpdateOffset() {
+      if (!buttonRef.current) return;
+      setOffset(buttonRef.current.getBoundingClientRect());
+    }
+
+    const root = document.getElementById("root");
+    root?.addEventListener("scroll", onUpdateOffset);
+    root?.addEventListener("resize", onUpdateOffset);
+    return () => {
+      root?.removeEventListener("scroll", onUpdateOffset);
+      root?.removeEventListener("resize", onUpdateOffset);
+    };
+  }, []);
 
   return (
     <button
@@ -349,14 +366,16 @@ function DestinationPageSelect({choice}: {choice: Choice}) {
         ? createPortal(
             <>
               <div
-                className="fixed inset-0 w-full h-full bg-transparent z-[12000]"
+                className="fixed top-0 left-0 w-full h-full bg-transparent z-[12000] cursor-default"
                 onClick={onCloseModal}
               />
               <ul
-                className="absolute top-0 left-0 w-[298px] max-h-[208px] border-2 border-t-0 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]"
-                style={{transform: `translate(${offset.x + 1}px, ${offset.y + 52}px)`}}>
+                className="absolute top-12 left-0 w-[298px] max-h-[212px] border-2 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]"
+                style={{
+                  transform: `translate(${offset.x}px, ${offset.y + 4}px)`,
+                }}>
                 <li
-                  className="min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
+                  className="min-h-[52px] flex items-center px-6 text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
                   onClick={() => onUpdateDestinationPageId(null)}>
                   페이지 연결 해제
                 </li>
