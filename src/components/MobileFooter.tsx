@@ -10,7 +10,7 @@ export default function MobileFooter() {
 
   return (
     <div className="flex flex-col">
-      <div className="px-12 py-6 bg-[#3A3A3A] flex justify-between items-center">
+      <div className="px-8 sm:px-12 py-5 bg-[#3A3A3A] flex flex-col gap-4 sm:flex-row sm:justify-between items-center">
         <div className="flex flex-col gap-2">
           <ul className="flex gap-2 font-bold text-[0.75rem] text-[#A5A5A5]">
             <Link className="min-w-[4rem]" to="/terms-and-conditions">
