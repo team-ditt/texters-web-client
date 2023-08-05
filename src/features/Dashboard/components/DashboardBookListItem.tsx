@@ -152,13 +152,18 @@ function MoreButton({book}: Props) {
     setOffset(buttonRef.current.getBoundingClientRect());
   }, [buttonRef]);
   useEffect(() => {
-    function onScroll() {
+    function onUpdateOffset() {
       if (!buttonRef.current) return;
       setOffset(buttonRef.current.getBoundingClientRect());
     }
 
-    document.getElementById("root")?.addEventListener("scroll", onScroll);
-    return () => document.getElementById("root")?.removeEventListener("scroll", onScroll);
+    const root = document.getElementById("root");
+    root?.addEventListener("scroll", onUpdateOffset);
+    root?.addEventListener("resize", onUpdateOffset);
+    return () => {
+      root?.removeEventListener("scroll", onUpdateOffset);
+      root?.removeEventListener("resize", onUpdateOffset);
+    };
   }, []);
 
   return (
