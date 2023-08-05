@@ -86,7 +86,13 @@ export default function PageMoreMenu() {
               className="px-4 py-2 flex justify-between items-center"
               onClick={onReadFromThePage}>
               이 페이지부터 읽어보기
-              <ViewIcon stroke="#6F6F6F" fill="transparent" width="20" height="20" />
+              <ViewIcon
+                stroke="#6F6F6F"
+                fill="transparent"
+                width="20"
+                height="20"
+                strokeWidth={1.3}
+              />
             </button>
             <button
               className="px-4 py-2 border-t border-[#AFAFAF] flex justify-between items-center"
@@ -96,7 +102,7 @@ export default function PageMoreMenu() {
             </button>
             {!isIntro && (
               <button
-                className="px-4 py-2 border-t border-[#AFAFAF] flex justify-between items-center text-[#FF0000]"
+                className="px-4 py-2 border-t translate-x-[1px] border-[#AFAFAF] flex justify-between items-center text-[#FF0000]"
                 onClick={onPageDelete}>
                 페이지 삭제하기
                 <TrashIcon stroke="#FF0000" />
