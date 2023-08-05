@@ -4,8 +4,9 @@ export default function useDebounce<T>(
   callback: (current: T) => void,
   delay: number,
   dependency: T,
+  callbackImmediate?: (current: T) => void,
   disabled?: boolean,
-  fireImmediately?: boolean,
+  fireOnInitial?: boolean,
 ) {
   const value = useRef(dependency);
   const timeout = useRef<NodeJS.Timeout | null>(null);
@@ -28,10 +29,12 @@ export default function useDebounce<T>(
     if (disabled) return;
     value.current = dependency;
 
-    if (isInitial.current && !fireImmediately) {
+    if (isInitial.current && !fireOnInitial) {
       isInitial.current = false;
       return;
     }
+
+    if (callbackImmediate) callbackImmediate(value.current);
 
     const _timeout = setTimeout(wrapper, delay);
     timeout.current = _timeout;
