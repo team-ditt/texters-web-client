@@ -27,7 +27,10 @@ export default function Choice({viewState}: Props) {
   const [isPointHovering, setIsPointHovering] = useState(false);
 
   const [content, setContent] = useState(choice.content);
-  const onInputContent = (event: ChangeEvent<HTMLInputElement>) => setContent(event.target.value);
+  const onInputContent = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > 100) return;
+    setContent(event.target.value);
+  };
   useDebounce(
     current => {
       updateChoiceContent(choice.id, current);

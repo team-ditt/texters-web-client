@@ -1,4 +1,4 @@
-import {ChangeEventHandler} from "react";
+import {ChangeEvent, ChangeEventHandler} from "react";
 
 type Props = {
   title: string;
@@ -7,10 +7,16 @@ type Props = {
 };
 
 export default function BookTitleInput({title, isValid, onInput}: Props) {
+  const MAX_LENGTH = 30;
   const borderColor = () => {
     if (!title) return "#BDBDBD";
     if (!isValid) return "#FF0000";
     return "#000000";
+  };
+
+  const _onInput = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > MAX_LENGTH) return;
+    onInput(event);
   };
 
   return (
@@ -22,8 +28,8 @@ export default function BookTitleInput({title, isValid, onInput}: Props) {
           className="flex-1 text-center font-medium text-[24px] placeholder:text-[#BDBDBD]"
           value={title}
           placeholder="작품 제목을 입력해주세요"
-          maxLength={30}
-          onInput={onInput}
+          maxLength={MAX_LENGTH}
+          onInput={_onInput}
         />
       </div>
       <span className="m-2 h-6 self-center text-[#FF0000]">

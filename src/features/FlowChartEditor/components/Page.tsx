@@ -34,7 +34,10 @@ export default function Page({viewState}: Props) {
   const openPageMoreMenu = useFlowChartEditorStore(state => state.openPageMoreMenu);
 
   const [title, setTitle] = useState(page.title);
-  const onInputTitle = (event: ChangeEvent<HTMLInputElement>) => setTitle(event.target.value);
+  const onInputTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > 30) return;
+    setTitle(event.target.value);
+  };
   useDebounce(
     current => {
       updatePageInfo(page.id, {title: current});

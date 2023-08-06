@@ -14,6 +14,11 @@ export default function PenNameForm({penName, isValidPenName, isDuplicatePenName
   const [message, setMessage] = useState("");
   const [formColor, setFormColor] = useState("#A9A9A9");
 
+  const _onInput = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > 15) return;
+    onInput(event);
+  };
+
   useEffect(() => {
     function getMessage() {
       if (!penName) return "";
@@ -41,7 +46,7 @@ export default function PenNameForm({penName, isValidPenName, isDuplicatePenName
           style={{borderColor: formColor}}
           value={penName}
           placeholder="필명"
-          onInput={onInput}
+          onInput={_onInput}
           maxLength={15}
         />
       </div>

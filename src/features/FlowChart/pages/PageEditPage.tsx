@@ -20,7 +20,7 @@ import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
 import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
-import {FormEventHandler, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 import {useParams} from "react-router-dom";
 
@@ -35,6 +35,15 @@ export default function PageEditPage() {
     () => api.pages.fetchPage(+bookId!, +pageId!),
     {enabled: didSignIn, refetchOnWindowFocus: false, retry: false},
   );
+
+  const _onInputTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > 30) return;
+    onInputTitle(event);
+  };
+  const _onInputContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    if (event.currentTarget.value.length > 20000) return;
+    onInputContent(event);
+  };
 
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
@@ -85,14 +94,14 @@ export default function PageEditPage() {
             value={title}
             placeholder="페이지 제목"
             maxLength={30}
-            onInput={onInputTitle}
+            onInput={_onInputTitle}
           />
           <div className="flex-1 border-b-[3px] border-b-black flex flex-col">
             <textarea
               className="min-h-[600px] flex-1 border-y-2 border-[#BDBDBD] placeholder:text-[#BDBDBD] resize-none leading-7 px-6 py-3"
               placeholder="페이지 본문"
               value={content ?? undefined}
-              onInput={onInputContent as FormEventHandler}
+              onInput={_onInputContent}
               maxLength={20000}
             />
             <p className="flex self-end items-center px-6 py-3">
@@ -198,6 +207,10 @@ function ChoiceForm({
   const queryClient = useQueryClient();
   const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
 
+  const _onInputContent = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value.length > 100) return;
+    onInputContent(event);
+  };
   const onConfirm = async () => {
     await deleteChoice(
       {bookId: +bookId!, pageId: +pageId!, choiceId: choice.id},
@@ -286,7 +299,7 @@ function ChoiceForm({
         className="flex-1 px-4 border-2 border-black rounded-lg"
         placeholder="선택지를 추가해주세요! (최대 100자)"
         value={content}
-        onInput={onInputContent}
+        onInput={_onInputContent}
         maxLength={100}
       />
       <DestinationPageSelect choice={choice} />
