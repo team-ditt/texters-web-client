@@ -1,4 +1,4 @@
-import {useAuthStore} from "@/stores";
+import {useAuthStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
 import axios from "axios";
 
@@ -23,6 +23,12 @@ axiosAuthenticated.interceptors.request.use(
     if (accessToken) {
       request.headers.Authorization = accessToken;
     }
+
+    const {flowChartLockKey} = useFlowChartStore.getState();
+    if (flowChartLockKey) {
+      request.headers["x-flow-chart-lock-key"] = flowChartLockKey;
+    }
+
     return request;
   },
   error => Promise.reject(error),
@@ -45,6 +51,10 @@ axiosAuthenticated.interceptors.response.use(
       const accessToken = response.data;
       const {saveToken} = useAuthStore.getState();
       saveToken(`Bearer ${accessToken}`);
+    }
+    if (response.config.url?.endsWith("flow-chart")) {
+      const key = response.headers["x-flow-chart-lock-key"];
+      useFlowChartStore.getState().updateFlowChartLockKey(key);
     }
 
     return response.data;

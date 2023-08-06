@@ -23,6 +23,7 @@ import {create} from "zustand";
 
 type BufferedAction = {key: string; runnable: (() => Promise<void>) | null};
 type FlowChartStoreState = {
+  flowChartLockKey: string | null;
   isSaving: boolean;
   isLoading: boolean;
   updatedAt: string;
@@ -32,6 +33,7 @@ type FlowChartStoreState = {
 };
 
 type FlowChartStoreAction = {
+  updateFlowChartLockKey: (key: string) => void;
   loadFlowChart: (bookId: number) => Promise<void>;
   createLane: (form: CreateLaneForm) => Promise<Lane>;
   deleteLane: (form: DeleteLaneForm) => Promise<void>;
@@ -49,12 +51,14 @@ type FlowChartStoreAction = {
 };
 
 const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((set, get) => ({
+  flowChartLockKey: null,
   isSaving: false,
   isLoading: false,
   updatedAt: new Date().toISOString(),
   flowChart: null,
   error: null,
   bufferedAction: null,
+  updateFlowChartLockKey: key => set({flowChartLockKey: key}),
   loadFlowChart: async bookId => {
     if (get().isLoading) return;
 
