@@ -2,10 +2,9 @@ import {api} from "@/api";
 import {Modal, SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {useDidSignIn} from "@/features/Auth/hooks";
-import {FlowChartAppBar} from "@/features/FlowChart/components";
+import {ChoiceDestinationPageSelect, FlowChartAppBar} from "@/features/FlowChart/components";
 import {
   useChoiceContentInput,
-  useDestinationPages,
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
@@ -14,14 +13,11 @@ import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {Choice, Page} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {ReactComponent as DownArrowCircleIcon} from "assets/icons/down-arrow-circle.svg";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 import {ReactComponent as TrashIcon} from "assets/icons/trash.svg";
-import classNames from "classnames";
 import {AnimatePresence, motion} from "framer-motion";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
-import {createPortal} from "react-dom";
 import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
@@ -302,7 +298,7 @@ function ChoiceForm({
         onInput={_onInputContent}
         maxLength={100}
       />
-      <DestinationPageSelect choice={choice} />
+      <ChoiceDestinationPageSelect bookId={+bookId!} pageId={+pageId!} choice={choice} />
 
       <Modal.Dialog
         isOpen={isOpen}
@@ -313,105 +309,6 @@ function ChoiceForm({
         onCancel={closeModal}
       />
     </div>
-  );
-}
-
-function DestinationPageSelect({choice}: {choice: Choice}) {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const [offset, setOffset] = useState({x: 0, y: 0});
-  const {isOpen, openModal, closeModal} = useModal();
-  const {bookId, pageId} = useParams();
-  const {allPossibleDestinationPages} = useDestinationPages(+pageId!, choice.id);
-  const {updateChoiceDestinationPageId} = useFlowChartStore();
-
-  const queryClient = useQueryClient();
-  const onUpdateDestinationPageId = async (id: number | null) => {
-    await updateChoiceDestinationPageId({
-      bookId: +bookId!,
-      pageId: +pageId!,
-      choiceId: choice.id,
-      destinationPageId: id,
-    });
-    useFlowChartEditorStore.getState().loadChoiceDestination(choice.id, id);
-    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
-    closeModal();
-  };
-  const getPageTitle = (pageId: number | null) => {
-    if (!pageId) return "";
-    return allPossibleDestinationPages.find(page => page.id === pageId)?.title;
-  };
-  const isSelected = (pageId: number) => choice.destinationPageId === pageId;
-  const onCloseModal = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    closeModal();
-  };
-
-  useEffect(() => {
-    if (!buttonRef.current) return;
-    setOffset(buttonRef.current.getBoundingClientRect());
-  }, [buttonRef]);
-  useEffect(() => {
-    function onUpdateOffset() {
-      if (!buttonRef.current) return;
-      setOffset(buttonRef.current.getBoundingClientRect());
-    }
-
-    const root = document.getElementById("root");
-    root?.addEventListener("scroll", onUpdateOffset);
-    root?.addEventListener("resize", onUpdateOffset);
-    return () => {
-      root?.removeEventListener("scroll", onUpdateOffset);
-      root?.removeEventListener("resize", onUpdateOffset);
-    };
-  }, []);
-
-  return (
-    <button
-      ref={buttonRef}
-      className="relative flex justify-between items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg"
-      onClick={openModal}>
-      {choice.destinationPageId ? getPageTitle(choice.destinationPageId) : "연결된 페이지 없음"}
-      <DownArrowCircleIcon
-        className={classNames({"rotate-180": isOpen})}
-        fill={isOpen ? "#A5A5A5" : "#2D2D2D"}
-      />
-      {isOpen
-        ? createPortal(
-            <>
-              <div
-                className="fixed top-0 left-0 w-full h-full bg-transparent z-[12000] cursor-default"
-                onClick={onCloseModal}
-              />
-              <ul
-                className="absolute top-12 left-0 w-[298px] max-h-[212px] border-2 border-[#D9D9D9] flex flex-col items-stretch bg-white overflow-auto z-[12000]"
-                style={{
-                  transform: `translate(${offset.x}px, ${offset.y + 4}px)`,
-                }}>
-                <li
-                  className="min-h-[52px] flex items-center px-6 text-[#FF0000] hover:bg-[#F9F9F9] cursor-pointer"
-                  onClick={() => onUpdateDestinationPageId(null)}>
-                  페이지 연결 해제
-                </li>
-                {allPossibleDestinationPages.map(page => (
-                  <li
-                    key={page.id}
-                    className={classNames(
-                      "min-h-[52px] flex items-center px-6 border-t-2 border-[#D9D9D9] cursor-pointer",
-                      {
-                        "bg-[#EFEFEF]": isSelected(page.id),
-                        "text-[#888888] hover:bg-[#F9F9F9]": !isSelected(page.id),
-                      },
-                    )}
-                    onClick={() => onUpdateDestinationPageId(page.id)}>
-                    {page.title}
-                  </li>
-                ))}
-              </ul>
-            </>,
-            document.body,
-          )
-        : null}
-    </button>
   );
 }
 
