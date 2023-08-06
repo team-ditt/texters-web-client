@@ -146,7 +146,7 @@ export default function Choice({viewState}: Props) {
             <div
               onMouseOver={() => setIsPointHovering(true)}
               onMouseLeave={() => setIsPointHovering(false)}
-              className={`absolute w-[20px] h-[20px] rounded-full border border-white border-[2px] transition-colors cursor-pointer ${
+              className={`absolute w-[20px] h-[20px] rounded-full border-white border-[2px] transition-colors cursor-pointer ${
                 isPointHovering && choice.destinationPageId
                   ? "bg-[#F04438]"
                   : choice.destinationPageId || isHovering || isHoveringPath || isDraggingPath

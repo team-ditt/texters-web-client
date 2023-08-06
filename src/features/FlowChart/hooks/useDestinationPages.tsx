@@ -29,7 +29,8 @@ export default function useDestinationPages(pageId: number, choiceId: number) {
     if (!sourcePage) return [];
     return allPages
       .filter(page => page.laneOrder > sourcePage.laneOrder)
-      .sort((a, b) => a.laneOrder - b.laneOrder);
+      .sort((a, b) => a.laneOrder - b.laneOrder)
+      .map(page => ({id: page.id, title: page.title}));
   }, [allPages, choiceId]);
 
   return {allPossibleDestinationPages};
