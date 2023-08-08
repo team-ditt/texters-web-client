@@ -18,6 +18,7 @@ const OFFSET = {
 
 export default function PageMoreMenu() {
   const {recordLastVisitedPageId} = useBookReaderStore();
+  const isEditable = useFlowChartEditorStore(state => state.isEditable());
   const bookId = useFlowChartEditorStore(state => state.bookId);
   const openedMoreMenuPageId = useFlowChartEditorStore(state => state.openedMoreMenuPageId);
   const pageViewState = useFlowChartEditorStore(
@@ -94,13 +95,15 @@ export default function PageMoreMenu() {
                 strokeWidth={1.3}
               />
             </button>
-            <button
-              className="px-4 py-2 border-t border-[#AFAFAF] flex justify-between items-center"
-              onClick={onPageEdit}>
-              페이지 작성으로 이동
-              <EditIcon stroke="#6F6F6F" fill="#6F6F6F" strokeWidth={0.5} />
-            </button>
-            {!isIntro && (
+            {isEditable && (
+              <button
+                className="px-4 py-2 border-t border-[#AFAFAF] flex justify-between items-center"
+                onClick={onPageEdit}>
+                페이지 작성으로 이동
+                <EditIcon stroke="#6F6F6F" fill="#6F6F6F" strokeWidth={0.5} />
+              </button>
+            )}
+            {!isIntro && isEditable && (
               <button
                 className="px-4 py-2 border-t translate-x-[1px] border-[#AFAFAF] flex justify-between items-center text-[#FF0000]"
                 onClick={onPageDelete}>

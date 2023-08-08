@@ -28,14 +28,18 @@ function DashboardBookListItem({book}: Props) {
   const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
   const {isOpen, openModal, closeModal} = useModal();
 
+  const navigateToFlowChart = () => {
+    clearFlowChart();
+    loadFlowChart(book.id);
+    navigate(`/studio/books/${book.id}/flow-chart`);
+  };
+
   const onNavigate = (event: MouseEvent) => {
     const overlay = document.querySelector(".ReactModal__Overlay");
     if (overlay?.contains(event.target as Node)) return;
     if (book.status === "PUBLISHED") return openModal();
 
-    clearFlowChart();
-    loadFlowChart(book.id);
-    navigate(`/studio/books/${book.id}/flow-chart`);
+    navigateToFlowChart();
   };
 
   return (
@@ -80,7 +84,10 @@ function DashboardBookListItem({book}: Props) {
         isOpen={isOpen}
         title="공개된 작품이에요"
         message="이미 공개된 작품은 수정할 수 없어요!"
-        onRequestClose={closeModal}
+        onRequestClose={() => {
+          closeModal();
+          navigateToFlowChart();
+        }}
       />
     </>
   );

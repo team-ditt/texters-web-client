@@ -7,7 +7,7 @@ import {
   isSameBox,
 } from "@/features/FlowChartEditor/utils/calculator";
 import {useFlowChartStore} from "@/stores";
-import {Choice, FlowChart, Lane, Page} from "@/types/book";
+import {BookStatus, Choice, FlowChart, Lane, Page} from "@/types/book";
 import {
   Action,
   Box,
@@ -28,6 +28,7 @@ const idProvider = () => useIdProviderStore.getState();
 
 type FlowChartStoreState = {
   bookId: number | null;
+  bookStatus: BookStatus | null;
   modelLanes: Lane[];
   viewStates: ViewStates;
   draggingState: DraggingState;
@@ -35,6 +36,10 @@ type FlowChartStoreState = {
   viewPortState: ViewPortState;
   actionQueue: Action[];
   openedMoreMenuPageId: number | null;
+};
+
+type FlowChartStoreComputed = {
+  isEditable: () => boolean;
 };
 
 type FlowChartStoreAction = {
@@ -104,11 +109,14 @@ const deepCopyLanes = (lanes: Lane[]) =>
     })),
   }));
 
-const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreAction>()(
+const useFlowChartEditorStore = create<
+  FlowChartStoreState & FlowChartStoreComputed & FlowChartStoreAction
+>()(
   subscribeWithSelector(
     immer((set, get) => {
       return {
         bookId: null,
+        bookStatus: null,
         modelLanes: [],
         viewStates: {
           lanes: {},
@@ -136,10 +144,12 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
         },
         actionQueue: [],
         openedMoreMenuPageId: null,
+        isEditable: () => get().bookStatus === "DRAFT",
         loadFlowChart: flowChart => {
           get().clearFlowChart();
           set(state => {
             state.bookId = flowChart.id;
+            state.bookStatus = flowChart.status;
           });
           const lanes = deepCopyLanes(flowChart.lanes);
           get().setModelLanes(idProvider().convertFlowChart(lanes));
@@ -147,6 +157,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
         clearFlowChart: () => {
           set(state => ({
             bookId: null,
+            bookStatus: null,
             modelLanes: [],
             viewStates: {
               lanes: {},
@@ -253,7 +264,11 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           set(state => {
             const viewStates = state.viewStates;
             const staticBoxes = calcStaticElementBoxes(viewStates, state.viewPortState.frameSize);
-            const dynamicBoxes = calcDynamicElementBoxes(viewStates, state.viewPortState.frameSize);
+            const dynamicBoxes = calcDynamicElementBoxes(
+              viewStates,
+              state.viewPortState.frameSize,
+              state.isEditable(),
+            );
             state.viewPortState.contentSize = dynamicBoxes.contentSize;
             const timestamp = Date.now();
 

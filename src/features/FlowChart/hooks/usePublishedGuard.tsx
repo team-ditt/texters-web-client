@@ -6,10 +6,10 @@ import {useModal} from "@/hooks";
 import {TextersError, TextersErrorCode} from "@/types/error";
 import {useQuery} from "@tanstack/react-query";
 import {AxiosError} from "axios";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import {useNavigate} from "react-router-dom";
 
-export default function useMyBookInfo(bookId: number) {
+export default function usePublishedGuard(bookId: number) {
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
@@ -24,19 +24,24 @@ export default function useMyBookInfo(bookId: number) {
     retry: false,
   });
 
-  const onClose = () => {
-    window.location.href = "/studio/dashboard";
-  };
+  const onGoFlowChart = useMemo(
+    () => () => {
+      closeModal();
+      navigate(`/studio/books/${bookId}/flow-chart`, {replace: true});
+    },
+    [bookId],
+  );
 
-  const NotAuthorAlert = () => (
-    <Modal.Alert
-      isOpen={isError}
-      title="작가 본인이 맞으신가요?"
-      message="작품 수정은 작가 본인만 가능해요!"
-      onRequestClose={onClose}
-      shouldCloseOnOverlayClick={false}
-      shouldCloseOnEsc={false}
-    />
+  const PublishedBookAlert = useMemo(
+    () => () => (
+      <Modal.Alert
+        isOpen={isOpen}
+        title="공개된 작품이에요"
+        message="이미 공개된 작품은 수정할 수 없어요!"
+        onRequestClose={onGoFlowChart}
+      />
+    ),
+    [isOpen, onGoFlowChart],
   );
 
   useEffect(() => {
@@ -49,5 +54,5 @@ export default function useMyBookInfo(bookId: number) {
       navigate("/error/not-found");
   }, [error]);
 
-  return {book, NotAuthorAlert};
+  return {book, PublishedBookAlert};
 }

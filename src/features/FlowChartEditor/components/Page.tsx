@@ -21,6 +21,7 @@ type Props = {
 export default function Page({viewState}: Props) {
   const page = viewState.data;
   const elementState = viewState.elementState;
+  const isEditable = useFlowChartEditorStore(state => state.isEditable());
   const pages = useFlowChartEditorStore(state => state.viewStates.pages);
   const choices = useFlowChartEditorStore(state => state.viewStates.choices);
   const lane = useFlowChartEditorStore(state => state.viewStates.lanes[page.laneId]?.data);
@@ -94,25 +95,27 @@ export default function Page({viewState}: Props) {
 
   return (
     <div onMouseOver={handleHovered} onMouseLeave={finishHover}>
-      <DynamicElementLocator zIndex={50}>
-        <div
-          className="w-full h-full"
-          style={{
-            transform: `translate(${Math.round(
-              currentPosition.x + draggingPositionOffset.x,
-            )}px, ${Math.round(currentPosition.y + draggingPositionOffset.y)}px)`,
-            transition: `all ${isDragging ? 0 : 0.05}s ease`,
-            backgroundColor: "red",
-          }}>
+      {isEditable && (
+        <DynamicElementLocator zIndex={50}>
           <div
-            className={`h-full w-full ${isDragging ? "scale-[1.02]" : ""}`}
+            className="w-full h-full"
             style={{
-              transformOrigin: `${elementState.box.width / 2}px ${elementState.box.height / 2}px`,
+              transform: `translate(${Math.round(
+                currentPosition.x + draggingPositionOffset.x,
+              )}px, ${Math.round(currentPosition.y + draggingPositionOffset.y)}px)`,
+              transition: `all ${isDragging ? 0 : 0.05}s ease`,
+              backgroundColor: "red",
             }}>
-            {!isIntro && <PageHandle pageId={page.id} />}
+            <div
+              className={`h-full w-full ${isDragging ? "scale-[1.02]" : ""}`}
+              style={{
+                transformOrigin: `${elementState.box.width / 2}px ${elementState.box.height / 2}px`,
+              }}>
+              {!isIntro && <PageHandle pageId={page.id} />}
+            </div>
           </div>
-        </div>
-      </DynamicElementLocator>
+        </DynamicElementLocator>
+      )}
       <DynamicElementLocator zIndex={isDragging ? 6 : 5}>
         <div
           style={{
@@ -172,7 +175,10 @@ export default function Page({viewState}: Props) {
                     </div>
                   )}
                 </div>
-                <div className="absolute w-[calc(100%-32px)] h-[52px] flex justify-center items-center border-b-[2px] border-black text-[16px]">
+                <div
+                  className={`absolute w-[calc(100%-32px)] h-[52px] flex justify-center items-center text-[16px] ${
+                    isEditable || page.choices.length > 0 ? "border-b-[2px] border-black" : ""
+                  }`}>
                   <input
                     className="w-[210px] text-center overflow-hidden text-ellipsis whitespace-nowrap bg-transparent"
                     value={title}
@@ -180,6 +186,7 @@ export default function Page({viewState}: Props) {
                     placeholder="페이지 제목을 입력해주세요"
                     maxLength={30}
                     onInput={onInputTitle}
+                    disabled={!isEditable}
                   />
                 </div>
                 <button
@@ -201,7 +208,7 @@ export default function Page({viewState}: Props) {
                       top: PAGE_POINT_OFFSET_Y,
                     }}></div>
                 )}
-                {page.choices.length < 5 && (
+                {page.choices.length < 5 && isEditable && (
                   <button
                     className="absolute text-sm right-0.5 bottom-5 w-full flex justify-center items-center gap-[4px]"
                     onClick={handleAddChoiceButtonClicked}>

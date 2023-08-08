@@ -30,7 +30,7 @@ export default function BookInfoEditPage() {
   } = useTextInput();
   const canSubmit = title && description;
 
-  const {book, NotAuthorAlert, PublishedBookAlert} = useMyBookInfo(+bookId!);
+  const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
   const {mutate: updateBookInfo, isLoading: isUpdating} = useMutation(
     () => api.books.updateBookInfo(book!.id, {coverImage, title, description}),
     {
@@ -77,7 +77,6 @@ export default function BookInfoEditPage() {
         <MobileViewAlert />
         <RequestSignInDialog />
         <NotAuthorAlert />
-        <PublishedBookAlert />
       </div>
     );
 
@@ -131,7 +130,6 @@ export default function BookInfoEditPage() {
       <MobileViewAlert />
       <RequestSignInDialog />
       <NotAuthorAlert />
-      <PublishedBookAlert />
     </div>
   );
 }

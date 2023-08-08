@@ -50,6 +50,7 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
+          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "page" || draggingState.sourceId === null) return;
           const draggingPageId = draggingState.sourceId;
 
@@ -129,6 +130,7 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
+          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "choice" || draggingState.sourceId === null) return;
           const draggingChoiceId = draggingState.sourceId;
 
@@ -191,6 +193,7 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
+          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "path") return;
           const sourceChoiceId = draggingState.sourceId;
 
@@ -258,6 +261,7 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
+          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging) return;
           if (useFlowChartEditorStore.getState().viewStates.newLaneButton.toPresent) return;
           if (useFlowChartEditorStore.getState().openedMoreMenuPageId !== null) return;
@@ -321,6 +325,7 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
+          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging) return;
           if (useFlowChartEditorStore.getState().openedMoreMenuPageId !== null) return;
 

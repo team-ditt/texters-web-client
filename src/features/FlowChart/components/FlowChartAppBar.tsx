@@ -1,5 +1,6 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
+import PublishedMarker from "@/components/PublishedMarkder";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
@@ -19,8 +20,9 @@ export default function FlowChartAppBar() {
     error: flowChartError,
     loadFlowChart,
   } = useFlowChartStore();
-  const {book, NotAuthorAlert, PublishedBookAlert} = useMyBookInfo(+bookId!);
+  const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
   const isLockedFlowChart = flowChartError?.code === TextersErrorCode.LOCKED_FLOW_CHART;
+  const isPublished = book?.status === "PUBLISHED";
 
   const onGoBack = () => navigate(-1);
   const onRefresh = () => {
@@ -52,7 +54,11 @@ export default function FlowChartAppBar() {
         <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1>
       </div>
       <div className="flex items-center gap-1">
-        <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
+        {isPublished ? (
+          <PublishedMarker />
+        ) : (
+          <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
+        )}
         <SizedBox width={12} />
         <button
           className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
@@ -69,7 +75,6 @@ export default function FlowChartAppBar() {
       </div>
 
       <NotAuthorAlert />
-      <PublishedBookAlert />
       <Modal.Dialog
         isOpen={isLockedFlowChart}
         title="잠깐, 여러 창을 띄워 두고 작업 중이신가요?"
