@@ -1,6 +1,6 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
-import PublishedMarker from "@/components/PublishedMarkder";
+import PublishedMarker from "@/components/PublishedMarker";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";

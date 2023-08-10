@@ -42,6 +42,11 @@ function DashboardBookListItem({book}: Props) {
     navigateToFlowChart();
   };
 
+  const onRequestCloseModal = () => {
+    closeModal();
+    navigateToFlowChart();
+  };
+
   return (
     <>
       <motion.a
@@ -84,10 +89,7 @@ function DashboardBookListItem({book}: Props) {
         isOpen={isOpen}
         title="공개된 작품이에요"
         message="이미 공개된 작품은 수정할 수 없어요!"
-        onRequestClose={() => {
-          closeModal();
-          navigateToFlowChart();
-        }}
+        onRequestClose={onRequestCloseModal}
       />
     </>
   );
