@@ -40,7 +40,7 @@ export default function MobileFooter() {
             </Link>
           </ul>
         </div>
-        <a href="https://discord.gg/wVmrzRfJ" target="_blank">
+        <a href="https://discord.gg/XAyP6D5avu" target="_blank">
           <DiscordLogoIcon />
         </a>
       </div>
