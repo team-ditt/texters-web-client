@@ -3,6 +3,7 @@ export const keys = {
   GET_WEEKLY_MOST_VIEWED_BOOKS: "/books/weekly-most-viewed",
   GET_BOOKS: "/books",
   GET_BOOK: "/books/info",
+  GET_BOOK_COMMENTS: "/books/comments",
   GET_BOOK_LIKED: "/members/books/liked",
   GET_MY_BOOKS: "/studio/dashboard",
   GET_MY_BOOK: "/studio/dashboard/books",

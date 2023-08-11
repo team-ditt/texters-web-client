@@ -22,7 +22,7 @@ function isValidDateString(dateString: string) {
   return !isNaN(timestamp);
 }
 
-function toDateString(date: Date, separator = ".") {
+export function toDateString(date: Date, separator = ".") {
   const year = date.getFullYear().toString().padStart(2, "0");
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");

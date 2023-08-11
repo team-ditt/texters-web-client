@@ -1,6 +1,7 @@
 import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
 import {useBookDescriptionRef, useBookInfo, useBookTitleRef} from "@/features/Book/hooks";
+import CommentButton from "@/features/Comment/components/CommentButton";
 import {useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
@@ -57,7 +58,10 @@ export default function BookInfoPage() {
           <span ref={titleRef} className="font-bold text-[20px] text-[#2D3648]">
             {book.title}
           </span>
-          <BookLikeButton book={book} showCount />
+          <div className="flex">
+            <CommentButton bookId={+bookId!} showCount />
+            <BookLikeButton book={book} showCount />
+          </div>
         </div>
         <p
           ref={descriptionRef}

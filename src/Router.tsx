@@ -15,6 +15,7 @@ const FlowChartPage = lazy(() => import("@/features/FlowChart/pages/FlowChartPag
 const PageEditPage = lazy(() => import("@/features/FlowChart/pages/PageEditPage"));
 const BookReaderPage = lazy(() => import("@/features/Book/pages/BookReaderPage"));
 const BookDemoReaderPage = lazy(() => import("@/features/Book/pages/BookDemoReaderPage"));
+const CommentPage = lazy(() => import("@/features/Comment/pages/CommentPage"));
 const NotFoundPage = lazy(() => import("@/features/Error/pages/NotFoundPage"));
 
 export function Router() {
@@ -29,6 +30,7 @@ export function Router() {
         <Route path="/books" element={<BookSearchPage />} />
         <Route path="/books/:bookId" element={<BookInfoPage />} />
         <Route path="/books/:bookId/read" element={<BookReaderPage />} />
+        <Route path="/books/:bookId/comment" element={<CommentPage />} />
         <Route path="/studio/dashboard" element={<DashboardPage />} />
         <Route path="/studio/books/info" element={<BookInfoFormPage />} />
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
