@@ -19,7 +19,7 @@ export default function DashboardBookList({memberId}: Props) {
     {getNextPageParam: lastPage => lastPage?.hasNext, enabled: didSignIn},
   );
   const fetchNext = () => {
-    if (didSignIn && hasNextPage) fetchNextPage();
+    if (didSignIn && hasNextPage) fetchNextPage({pageParam: data?.pageParams.length});
   };
   const books = data?.pages.flatMap(page => page.data) ?? [];
 

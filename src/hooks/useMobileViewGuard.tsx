@@ -19,7 +19,7 @@ export default function useMobileViewGuard() {
     <Modal.Alert
       isOpen={isOpen}
       title="모바일은 안돼요!"
-      message="텍스터즈 스튜디오는 PC환경에서만 사용 가능해요!"
+      message="텍스터즈 스튜디오는 PC환경에서만 사용 가능해요! 작품을 작성하려면 PC를 이용해주세요!"
       onRequestClose={onClose}
     />
   );

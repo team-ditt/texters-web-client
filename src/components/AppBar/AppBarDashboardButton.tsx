@@ -38,13 +38,13 @@ export default function AppBarDashboardButton() {
       <Modal.Alert
         isOpen={isMobileGuardOpen}
         title="모바일은 안돼요!"
-        message="텍스터즈 스튜디오는 PC환경에서만 사용 가능해요!"
+        message="텍스터즈 스튜디오는 PC환경에서만 사용 가능해요! 작품을 작성하려면 PC를 이용해주세요!"
         onRequestClose={closeMobileGuardModal}
       />
       <Modal.Dialog
         isOpen={isRequestSignInOpen}
         title="로그인하시겠어요?"
-        message="텍스터즈 스튜디오는 로그인 후 사용할 수 있어요!"
+        message="텍스터즈 스튜디오는 로그인 후 사용할 수 있어요! 작품을 작성하려면 로그인해주세요!"
         confirmMessage="로그인하기"
         onConfirm={onConfirmSignIn}
         onCancel={closeRequestSignInModal}
