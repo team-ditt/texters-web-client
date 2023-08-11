@@ -18,6 +18,7 @@ export default function Choice({viewState}: Props) {
   const pageViewState = useFlowChartEditorStore(
     state => state.viewStates.pages[choice.sourcePageId],
   );
+  const isEditable = useFlowChartEditorStore(state => state.isEditable());
   const draggingState = useFlowChartEditorStore(state => state.draggingState);
   const hoveringState = useFlowChartEditorStore(state => state.hoveringState);
   const updateChoiceContent = useFlowChartEditorStore(state => state.updateChoiceContent);
@@ -79,32 +80,36 @@ export default function Choice({viewState}: Props) {
 
   return (
     <div onMouseOver={handleHovered} onMouseLeave={finishHover}>
-      <DynamicElementLocator zIndex={50}>
-        <div
-          style={{
-            position: "absolute",
-            transform: `translate(${currentPosition.x}px, ${currentPosition.y}px) scale(${elementState.scale})`,
-            width: 0,
-            height: 0,
-            transition: `all ${isDragging ? 0 : 0.05}s ease`,
-          }}>
+      {isEditable && (
+        <DynamicElementLocator zIndex={50}>
           <div
-            className="w-full h-full"
             style={{
-              transform: `translate(${draggingPositionOffset.x}px, ${draggingPositionOffset.y}px)`,
+              position: "absolute",
+              transform: `translate(${currentPosition.x}px, ${currentPosition.y}px) scale(${elementState.scale})`,
+              width: 0,
+              height: 0,
               transition: `all ${isDragging ? 0 : 0.05}s ease`,
             }}>
             <div
-              className={`h-full w-full transition-all`}
+              className="w-full h-full"
               style={{
-                transformOrigin: `${elementState.box.width / 2}px ${elementState.box.height / 2}px`,
+                transform: `translate(${draggingPositionOffset.x}px, ${draggingPositionOffset.y}px)`,
+                transition: `all ${isDragging ? 0 : 0.05}s ease`,
               }}>
-              <ChoiceHandle choiceId={choice.id} />
-              <ChoiceDelete choiceId={choice.id} />
+              <div
+                className={`h-full w-full transition-all`}
+                style={{
+                  transformOrigin: `${elementState.box.width / 2}px ${
+                    elementState.box.height / 2
+                  }px`,
+                }}>
+                <ChoiceHandle choiceId={choice.id} />
+                <ChoiceDelete choiceId={choice.id} />
+              </div>
             </div>
           </div>
-        </div>
-      </DynamicElementLocator>
+        </DynamicElementLocator>
+      )}
       <DynamicElementLocator zIndex={isDraggingSourcePage || isDragging ? 13 : 12}>
         <div
           className="absolute"
@@ -113,7 +118,7 @@ export default function Choice({viewState}: Props) {
             opacity: elementState.opacity * (isDraggingSourcePage || isDragging ? 0.8 : 1),
             width: elementState.box.width,
             height: elementState.box.height,
-            paddingLeft: 32,
+            paddingLeft: isEditable ? 32 : 0,
             paddingBottom: 12,
             filter: isDraggingSourcePage || isDragging ? "blur(1px)" : "none",
           }}>
@@ -139,6 +144,7 @@ export default function Choice({viewState}: Props) {
                     placeholder="선택지를 작성해주세요"
                     maxLength={100}
                     onInput={onInputContent}
+                    disabled={!isEditable}
                   />
                 </div>
               </div>
@@ -146,15 +152,20 @@ export default function Choice({viewState}: Props) {
             <div
               onMouseOver={() => setIsPointHovering(true)}
               onMouseLeave={() => setIsPointHovering(false)}
-              className={`absolute w-[20px] h-[20px] rounded-full border-white border-[2px] transition-colors cursor-pointer ${
-                isPointHovering && choice.destinationPageId
+              className={`absolute w-[20px] h-[20px] rounded-full border-white border-[2px] transition-colors ${
+                isEditable && "cursor-pointer"
+              } ${
+                isEditable && isPointHovering && choice.destinationPageId
                   ? "bg-[#F04438]"
-                  : choice.destinationPageId || isHovering || isHoveringPath || isDraggingPath
+                  : choice.destinationPageId ||
+                    (isEditable && isHovering) ||
+                    isHoveringPath ||
+                    isDraggingPath
                   ? "bg-[#00CD15]"
                   : "bg-[#242424]"
               }`}
               style={{
-                left: calcChoicePointOffset().x - 32 - 10,
+                left: calcChoicePointOffset().x - (isEditable ? 32 : 0) - 10,
                 top: calcChoicePointOffset().y - 10,
               }}
               onMouseDown={handlePointPressed}>
@@ -162,7 +173,7 @@ export default function Choice({viewState}: Props) {
                 className="absolute top-[7px] left-[2px] w-[12px] h-[2px] rounded-full bg-white transtion-all"
                 style={{
                   filter: "drop-shadow(0px 1.5px 3px rgba(0, 0, 0, 0.50))",
-                  opacity: isPointHovering && choice.destinationPageId ? 1 : 0,
+                  opacity: isEditable && isPointHovering && choice.destinationPageId ? 1 : 0,
                 }}></div>
             </div>
           </div>

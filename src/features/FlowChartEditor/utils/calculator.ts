@@ -48,11 +48,14 @@ export const calcCurrentState = (
   };
 };
 
-const calcPageSize = (page: Page): Size => {
+const calcPageSize = (page: Page, editable: boolean = true): Size => {
   return {
     width: PAGE_WIDTH,
     height:
-      PAGE_BASE_HEIGHT + page.choices.length * CHOICE_HEIGHT - (page.choices.length === 5 ? 52 : 0),
+      PAGE_BASE_HEIGHT +
+      page.choices.length * CHOICE_HEIGHT -
+      (page.choices.length === 5 || !editable ? 52 : 0) -
+      (page.choices.length === 0 && !editable ? 15 : 0),
   };
 };
 
@@ -73,7 +76,10 @@ export const calcPagePointOffset = (): Coordinate => ({
   y: PAGE_CONTENT_VERTICAL_MARGIN + PAGE_POINT_OFFSET_Y + 12,
 });
 
-export const calcElementBoxesModel = (lanes: Lane[]): {pages: {[key: number]: Box}} => {
+export const calcElementBoxesModel = (
+  lanes: Lane[],
+  editable: boolean = true,
+): {pages: {[key: number]: Box}} => {
   const pageBoxes: {[key: number]: Box} = {};
 
   for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
@@ -81,7 +87,7 @@ export const calcElementBoxesModel = (lanes: Lane[]): {pages: {[key: number]: Bo
     let laneHeight = 0;
     for (let pageOrder = 0; pageOrder < lane.pages.length; ++pageOrder) {
       const page = lane.pages[pageOrder];
-      const size = calcPageSize(page);
+      const size = calcPageSize(page, editable);
       pageBoxes[page.id] = {
         x: lane.order * PAGE_WIDTH,
         y: laneHeight,
@@ -148,6 +154,7 @@ export const calcStaticElementBoxes = (
 export const calcDynamicElementBoxes = (
   viewStates: ViewStates,
   frameSize: Size,
+  editable: boolean = true,
 ): {
   pages: {[key: number]: Box};
   choices: {[key: number]: Box};
@@ -192,7 +199,7 @@ export const calcDynamicElementBoxes = (
         laneHeight += newPageButtonBox.height;
       }
 
-      const size = calcPageSize(page);
+      const size = calcPageSize(page, editable);
       const pageBox = {
         x: laneX,
         y: laneHeight,

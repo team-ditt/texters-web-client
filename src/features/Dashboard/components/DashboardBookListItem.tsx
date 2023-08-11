@@ -8,6 +8,7 @@ import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {ReactComponent as BookIcon} from "assets/icons/book.svg";
 import {ReactComponent as EditIcon} from "assets/icons/edit.svg";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
@@ -28,14 +29,23 @@ function DashboardBookListItem({book}: Props) {
   const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
   const {isOpen, openModal, closeModal} = useModal();
 
+  const navigateToFlowChart = () => {
+    clearFlowChart();
+    loadFlowChart(book.id);
+    navigate(`/studio/books/${book.id}/flow-chart`);
+  };
+
   const onNavigate = (event: MouseEvent) => {
     const overlay = document.querySelector(".ReactModal__Overlay");
     if (overlay?.contains(event.target as Node)) return;
     if (book.status === "PUBLISHED") return openModal();
 
-    clearFlowChart();
-    loadFlowChart(book.id);
-    navigate(`/studio/books/${book.id}/flow-chart`);
+    navigateToFlowChart();
+  };
+
+  const onRequestCloseModal = () => {
+    closeModal();
+    navigateToFlowChart();
   };
 
   return (
@@ -80,7 +90,7 @@ function DashboardBookListItem({book}: Props) {
         isOpen={isOpen}
         title="공개된 작품이에요"
         message="이미 공개된 작품은 수정할 수 없어요!"
-        onRequestClose={closeModal}
+        onRequestClose={onRequestCloseModal}
       />
     </>
   );
@@ -141,6 +151,10 @@ function MoreButton({book}: Props) {
     event.stopPropagation();
     navigate(`/studio/books/${book.id}`);
   };
+  const onGoBookInfo = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    navigate(`/books/${book.id}`);
+  };
   const onDelete = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     closeModal();
@@ -191,7 +205,14 @@ function MoreButton({book}: Props) {
                       작품 기본정보 변경
                       <EditIcon fill="#242424" />
                     </button>
-                  ) : null}
+                  ) : (
+                    <button
+                      className="px-4 py-2 border-b border-[#242424] flex justify-between items-center text-[#242424]"
+                      onClick={onGoBookInfo}>
+                      작품 개요 보러가기
+                      <BookIcon fill="#242424" />
+                    </button>
+                  )}
                   <button
                     className="px-4 py-2 flex justify-between items-center text-[#FF0000]"
                     onClick={onDelete}
