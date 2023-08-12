@@ -79,7 +79,7 @@ export default function CommentEditor({bookId}: Props) {
       <div className="px-6 py-4 flex flex-row gap-[14px] items-center">
         <div className="grow" onClick={onClickTextarea}>
           <TextareaAutosize
-            className="w-full text-[14px] text-[#3D3D3D] placeholder:text-[#3D3D3D] resize-none bg-white disabled:bg-white"
+            className="w-full text-[#3D3D3D] placeholder:text-[#3D3D3D] resize-none bg-white disabled:bg-white"
             minRows={1}
             maxRows={3}
             placeholder="댓글을 입력해주세요."
@@ -90,7 +90,7 @@ export default function CommentEditor({bookId}: Props) {
           />
         </div>
         <button
-          className={`self-start px-[12px] py-[6px] rounded-[4px] text-white text-[14px] font-[700] ${
+          className={`self-start px-[12px] py-[6px] rounded-[4px] text-white font-bold ${
             content.length > 0 ? "bg-[#3D3D3D]" : "bg-[#C1C1C1]"
           }`}
           disabled={content.length === 0}
