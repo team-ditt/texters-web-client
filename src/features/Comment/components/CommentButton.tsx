@@ -13,7 +13,7 @@ type Props = {
 export default function CommentButton({bookId, showCount = false}: Props) {
   const navigate = useNavigate();
   const onGoCommentPage = () => {
-    navigate(`/books/${bookId}/comment`);
+    navigate(`/books/${bookId}/comments`);
   };
 
   const {data: paginatedComments, error} = useQuery(

@@ -32,10 +32,7 @@ export default function CommentEditor({bookId}: Props) {
 
   const {value: content, setValue: setContent, onInput: onInputContent} = useTextInput();
   const _onInputContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!checkSignIn()) {
-      event.preventDefault();
-      return;
-    }
+    if (!checkSignIn()) return event.preventDefault();
     if (event.currentTarget.value.length > MAX_CONTENT_LENGTH) return;
     (onInputContent as ChangeEventHandler)(event);
   };
@@ -58,10 +55,7 @@ export default function CommentEditor({bookId}: Props) {
   };
 
   const onClickTextarea = (event: MouseEvent<HTMLDivElement>) => {
-    if (!checkSignIn()) {
-      event.preventDefault();
-      return;
-    }
+    if (!checkSignIn()) return event.preventDefault();
   };
   const checkSignIn = () => {
     if (!didSignIn) {

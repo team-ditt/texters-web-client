@@ -20,7 +20,7 @@ type ListProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 export default function CommentList({comments, className, ...props}: ListProps) {
-  if (comments === undefined) return null;
+  if (!comments) return null;
   if (comments.length === 0)
     return (
       <div className="h-[calc(100%-1px)] flex flex-col justify-center items-center">
@@ -54,11 +54,11 @@ function CommentListItem({comment}: ListItemProps) {
       <div className="flex flex-col py-[18px] border-b border-[#ECECEC]">
         <div className="flex flex-row justify-between mb-[12px]">
           <span className="text-[18px] text-[#171717] font-[700] flex flex-row items-center gap-[6px]">
-            {comment.isAuthor && (
+            {comment.isAuthor ? (
               <div className="bg-[#171717] rounded-full w-[18px] h-[18px] flex justify-center items-center">
                 <EditPencilIcon width="12" height="12" />
               </div>
-            )}
+            ) : null}
             {comment.commenterName}
           </span>
           <span
@@ -93,13 +93,13 @@ function CommentListItem({comment}: ListItemProps) {
                 )}>
                 {comment.content}
               </p>
-              {hasEllipsis && (
+              {hasEllipsis ? (
                 <button
                   className="text-[14px] text-[#8B8B8B] font-[700] text-left"
                   onClick={toggleExpand}>
                   {isExpanded ? "접기" : "더보기"}
                 </button>
-              )}
+              ) : null}
             </div>
           )}
         </div>

@@ -21,7 +21,7 @@ export default function CommentPage() {
   const fetchNext = () => {
     if (!isFetchingNextPage && hasNextPage) fetchNextPage();
   };
-  const totalCount = data?.pages?.[0]?.totalCount ?? 0;
+  const totalCount = data?.pages?.[0]?.totalCount;
   const comments = data?.pages?.flatMap(page => page.data);
 
   const {triggerRef} = useInfiniteScroll(fetchNext);
@@ -60,11 +60,13 @@ export default function CommentPage() {
         </button>
         <div className="flex flex-row items-center gap-2">
           <span className="text-[22px] text-[#171717] font-[700]">댓글</span>
-          <span className="text-[22px] text-[#8B8B8B]">{totalCount}</span>
+          {totalCount !== undefined ? (
+            <span className="text-[22px] text-[#8B8B8B]">{totalCount}</span>
+          ) : null}
         </div>
       </div>
       <div className="w-full grow h-0 overflow-y-auto">
-        {comments && <CommentList comments={comments} />}
+        {comments ? <CommentList comments={comments} /> : null}
         <div ref={triggerRef} className="h-[1px]" />
       </div>
       <div className="w-full">
