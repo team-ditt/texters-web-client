@@ -4,6 +4,7 @@ import {useBookDescriptionRef, useBookInfo, useBookTitleRef} from "@/features/Bo
 import CommentButton from "@/features/Comment/components/CommentButton";
 import {useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
+import {toCompactNumber, toDateString} from "@/utils/formatter";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
 import classNames from "classnames";
@@ -17,7 +18,7 @@ export default function BookInfoPage() {
   const {book} = useBookInfo(+bookId!);
   const {hasHistory, removeLastVisitedPageId} = useBookReaderStore();
 
-  const {titleRef} = useBookTitleRef(book?.title);
+  const {titleRef} = useBookTitleRef(book?.title, 32);
   const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
 
   const onGoBack = () => navigate(-1);
@@ -55,7 +56,7 @@ export default function BookInfoPage() {
         />
         <SizedBox height={12} />
         <div className="flex justify-between items-center self-stretch">
-          <span ref={titleRef} className="font-bold text-[20px] text-[#2D3648]">
+          <span ref={titleRef} className="font-bold text-[22px] leading-[32px] text-[#2D3648]">
             {book.title}
           </span>
           <div className="flex">
@@ -63,6 +64,18 @@ export default function BookInfoPage() {
             <BookLikeButton book={book} showCount />
           </div>
         </div>
+        <SizedBox height={2} />
+        <span className="font-bold text-[#494949]">{book.author.penName}</span>
+        <SizedBox height={4} />
+        <div className="flex items-center gap-2">
+          <span className="ms-0.5 text-[12px] text-[#999999]">
+            조회수 {toCompactNumber(book.viewed)}
+          </span>
+          <span className="ms-0.5 text-[12px] text-[#999999]">
+            작품 공개일 {toDateString(new Date(book.updatedAt))}
+          </span>
+        </div>
+        <SizedBox height={8} />
         <p
           ref={descriptionRef}
           className={classNames(
