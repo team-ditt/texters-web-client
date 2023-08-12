@@ -16,10 +16,13 @@ export default function DashboardBookList({memberId}: Props) {
   const {data, hasNextPage, fetchNextPage} = useInfiniteQuery(
     [keys.GET_MY_BOOKS, memberId],
     ({pageParam = 0}) => api.books.fetchMyBooks({memberId, page: pageParam + 1, limit: 10}),
-    {getNextPageParam: lastPage => lastPage?.hasNext, enabled: didSignIn},
+    {
+      getNextPageParam: lastPage => (lastPage.hasNext ? lastPage.page : undefined),
+      enabled: didSignIn,
+    },
   );
   const fetchNext = () => {
-    if (didSignIn && hasNextPage) fetchNextPage({pageParam: data?.pageParams.length});
+    if (didSignIn && hasNextPage) fetchNextPage();
   };
   const books = data?.pages.flatMap(page => page.data) ?? [];
 

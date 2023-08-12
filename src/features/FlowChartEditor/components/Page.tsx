@@ -194,7 +194,7 @@ export default function Page({viewState}: Props) {
                   className={`absolute top-[14px] right-[16px] ${
                     openedMoreMenuPageId === page.id ? "bg-[#ECECEC] rounded-full" : ""
                   }`}>
-                  <MoreVerticalIcon width={22} height={22} />
+                  <MoreVerticalIcon width={22} height={22} fill="#2D3648" />
                 </button>
                 {!isIntro && (
                   <div

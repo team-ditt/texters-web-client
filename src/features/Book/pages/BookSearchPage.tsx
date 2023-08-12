@@ -22,7 +22,7 @@ export default function BookSearchPage() {
   const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
     [keys.GET_BOOKS, query, order],
     ({pageParam = 0}) => api.books.fetchBooks({query, page: pageParam + 1, limit: 10, order}),
-    {getNextPageParam: lastPage => lastPage.hasNext},
+    {getNextPageParam: lastPage => (lastPage.hasNext ? lastPage.page : undefined)},
   );
   const books = data?.pages.flatMap(page => page.data) ?? [];
 
@@ -102,7 +102,7 @@ export default function BookSearchPage() {
       {hasNextPage ? (
         <button
           className="border-2 py-2 border-[#D9D9D9] rounded-[4px] flex justify-center items-center gap-1 font-semibold text-[14px] text-[#717171]"
-          onClick={() => fetchNextPage({pageParam: data?.pageParams.length})}
+          onClick={fetchNextPage as () => void}
           disabled={isFetchingNextPage}>
           더보기
           <DownArrowIcon />

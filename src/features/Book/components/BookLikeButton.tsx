@@ -32,9 +32,9 @@ export default function BookLikeButton({book, showCount = false}: Props) {
     <>
       <button className="flex flex-col items-center p-1.5" onClick={onToggleLike}>
         {isLiked ? (
-          <LikedIcon width={24} height={24} />
+          <LikedIcon width={24} height={24} fill="#171717" />
         ) : (
-          <NotLikedIcon width={24} height={24} fill="#2D3648" />
+          <NotLikedIcon width={24} height={24} fill="#171717" />
         )}
         {showCount ? (
           <span className="font-semibold text-[12px]">{toCompactNumber(book.liked)}</span>

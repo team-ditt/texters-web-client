@@ -184,7 +184,7 @@ function MoreButton({book}: Props) {
     <>
       <div className="relative">
         <button ref={buttonRef} onClick={onOpenModal}>
-          <MoreVerticalIcon />
+          <MoreVerticalIcon fill="#2D3648" />
         </button>
         {isOpen
           ? createPortal(
