@@ -9,6 +9,7 @@ import {DashboardBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as BookIcon} from "assets/icons/book.svg";
+import {ReactComponent as ChatIcon} from "assets/icons/chat.svg";
 import {ReactComponent as EditIcon} from "assets/icons/edit.svg";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
@@ -71,6 +72,11 @@ function DashboardBookListItem({book}: Props) {
             <SizedBox width={12} />
             <LikedIcon fill="#999999" />
             <span className="ms-0.5 text-[12px] text-[#999999]">{toCompactNumber(book.liked)}</span>
+            <SizedBox width={12} />
+            <ChatIcon width={13} height={13} fill="#999999" />
+            <span className="ms-0.5 text-[12px] text-[#999999]">
+              {toCompactNumber(book.commentsCount)}
+            </span>
           </div>
           <BookStatusChip book={book} />
           <span className="text-[14px] text-[#717D96] text-ellipsis line-clamp-1">

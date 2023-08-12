@@ -2,6 +2,7 @@ import {SizedBox} from "@/components";
 import BookCoverImage from "@/features/Book/components/BookCoverImage";
 import {Book} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
+import {ReactComponent as ChatIcon} from "assets/icons/chat.svg";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
 import {HTMLAttributes, useMemo} from "react";
@@ -45,6 +46,11 @@ function BookListItem({book}: ListItemProps) {
             <SizedBox width={12} />
             <LikedIcon fill="#999999" />
             <span className="ms-0.5 text-[12px] text-[#999999]">{toCompactNumber(book.liked)}</span>
+            <SizedBox width={12} />
+            <ChatIcon width={13} height={13} fill="#999999" />
+            <span className="ms-0.5 text-[12px] text-[#999999]">
+              {toCompactNumber(book.commentsCount)}
+            </span>
           </div>
           <span className="font-semibold text-[14px] text-[#1A202C]">{book.author.penName}</span>
           <span className="text-[14px] text-[#717D96] text-ellipsis line-clamp-1">

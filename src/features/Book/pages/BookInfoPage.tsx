@@ -59,7 +59,7 @@ export default function BookInfoPage() {
             {book.title}
           </span>
           <div className="flex">
-            <CommentButton bookId={+bookId!} showCount />
+            <CommentButton book={book} showCount />
             <BookLikeButton book={book} showCount />
           </div>
         </div>

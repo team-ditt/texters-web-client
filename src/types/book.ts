@@ -11,6 +11,7 @@ export type Book = {
   updatedAt: string;
   viewed: number;
   liked: number;
+  commentsCount: number;
   coverImageUrl: string | null;
   author: Author;
 };
