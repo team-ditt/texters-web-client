@@ -15,7 +15,7 @@ export default function BookReaderPage() {
   const [currentPageId, setCurrentPageId] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
 
-  const {recordLastVisitedPageId, findLastVisitedPageId, removeLastVisitedPageId} =
+  const {recordHistory, findLastHistory, hasHistory, popHistory, resetHistory} =
     useBookReaderStore();
   const {book} = useBookInfo(+bookId!);
   const {data: introPage} = useQuery(
@@ -35,24 +35,29 @@ export default function BookReaderPage() {
     },
   );
 
-  const onLoadPage = (pageId: number) => {
-    setCurrentPageId(pageId);
-    recordLastVisitedPageId(bookId!, pageId);
-  };
   const onGoBackToIntro = () => {
+    resetHistory(bookId!);
     setCurrentPageId(undefined);
   };
   const onGoBack = () => navigate(`/books/${bookId}`);
+  const onPopHistory = () => {
+    popHistory(bookId!);
+    setCurrentPageId(findLastHistory(bookId!)?.pageId);
+  };
 
   useEffect(() => {
-    setCurrentPageId(findLastVisitedPageId(bookId!));
+    const lastHistory = findLastHistory(bookId!);
+    if (lastHistory?.isEnding) return resetHistory(bookId!);
+    setCurrentPageId(lastHistory?.pageId);
   }, []);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (!findLastVisitedPageId(bookId!) && introPage) return setCurrentPage({...introPage});
+    if (!hasHistory(bookId!) && introPage) return setCurrentPage({...introPage});
   }, [introPage, page]);
   useEffect(() => {
-    if (currentPage?.isIntro || currentPage?.isEnding) removeLastVisitedPageId(bookId!);
+    if (!currentPage) return;
+    if (currentPage.isIntro) resetHistory(bookId!);
+    recordHistory(bookId!, {pageId: currentPage.id, isEnding: currentPage.isEnding});
     document.getElementById("root")?.scrollTo({top: 0});
   }, [currentPage]);
 
@@ -86,11 +91,18 @@ export default function BookReaderPage() {
         <div className="border-t border-[#999999]" />
         <SizedBox height={32} />
         <div className="flex flex-col items-stretch gap-3">
+          {!currentPage?.isIntro && hasHistory(bookId!) ? (
+            <button
+              className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
+              onClick={onPopHistory}>
+              뒤로가기
+            </button>
+          ) : null}
           {currentPage?.choices.map(choice => (
             <button
               key={choice.id}
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
-              onClick={() => onLoadPage(choice.destinationPageId!)}
+              onClick={() => setCurrentPageId(choice.destinationPageId!)}
               disabled={!choice.destinationPageId}>
               {choice.content}
             </button>

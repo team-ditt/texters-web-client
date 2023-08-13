@@ -305,11 +305,11 @@ function PublishButton({book}: Props) {
 
 function DemoReadButton({book}: Props) {
   const navigate = useNavigate();
-  const {removeLastVisitedPageId} = useBookReaderStore();
+  const {resetHistory} = useBookReaderStore();
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    removeLastVisitedPageId(book.id.toString());
+    resetHistory(book.id.toString());
     navigate(`/studio/books/${book.id}/read`);
   };
 

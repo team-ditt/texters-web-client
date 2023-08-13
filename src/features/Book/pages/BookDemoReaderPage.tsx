@@ -16,8 +16,7 @@ export default function BookDemoReaderPage() {
   const [currentPageId, setCurrentPageId] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
 
-  const {recordLastVisitedPageId, findLastVisitedPageId, removeLastVisitedPageId} =
-    useBookReaderStore();
+  const {recordHistory, findLastHistory, hasHistory, resetHistory} = useBookReaderStore();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
   const {data: introPage} = useQuery(
     [keys.GET_INTRO_PAGE],
@@ -36,10 +35,6 @@ export default function BookDemoReaderPage() {
     },
   );
 
-  const onLoadPage = (pageId: number) => {
-    setCurrentPageId(pageId);
-    recordLastVisitedPageId(bookId!, pageId);
-  };
   const onGoBackToIntro = () => {
     setCurrentPageId(undefined);
   };
@@ -48,14 +43,18 @@ export default function BookDemoReaderPage() {
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
-    setCurrentPageId(findLastVisitedPageId(bookId!));
+    const lastHistory = findLastHistory(bookId!);
+    if (lastHistory?.isEnding) return;
+    setCurrentPageId(lastHistory?.pageId);
   }, []);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (!findLastVisitedPageId(bookId!) && introPage) return setCurrentPage({...introPage});
+    if (!hasHistory(bookId!) && introPage) return setCurrentPage({...introPage});
   }, [introPage, page]);
   useEffect(() => {
-    if (currentPage?.isIntro || currentPage?.isEnding) removeLastVisitedPageId(bookId!);
+    if (!currentPage) return;
+    if (currentPage.isIntro) resetHistory(bookId!);
+    recordHistory(bookId!, {pageId: currentPage.id, isEnding: currentPage.isEnding});
     document.getElementById("root")?.scrollTo({top: 0});
   }, [currentPage]);
 
@@ -95,7 +94,7 @@ export default function BookDemoReaderPage() {
             <button
               key={choice.id}
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
-              onClick={() => onLoadPage(choice.destinationPageId!)}
+              onClick={() => setCurrentPageId(choice.destinationPageId!)}
               disabled={!choice.destinationPageId}>
               {choice.content}
             </button>

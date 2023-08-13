@@ -12,7 +12,7 @@ import {useNavigate, useParams} from "react-router-dom";
 export default function FlowChartAppBar() {
   const {bookId, pageId} = useParams();
   const navigate = useNavigate();
-  const {recordLastVisitedPageId, removeLastVisitedPageId} = useBookReaderStore();
+  const {recordHistory, resetHistory} = useBookReaderStore();
   const {
     flowChart,
     isSaving,
@@ -32,11 +32,7 @@ export default function FlowChartAppBar() {
     window.location.href = "/";
   };
   const onDemoRead = () => {
-    removeLastVisitedPageId(bookId!);
-    navigate(`/studio/books/${bookId}/read`);
-  };
-  const onDemoReadFromThisPage = () => {
-    recordLastVisitedPageId(bookId!, +pageId!);
+    resetHistory(bookId!);
     navigate(`/studio/books/${bookId}/read`);
   };
 
@@ -68,7 +64,7 @@ export default function FlowChartAppBar() {
         {pageId ? (
           <button
             className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
-            onClick={onDemoReadFromThisPage}>
+            onClick={onDemoRead}>
             이 페이지부터 미리 읽어보기
           </button>
         ) : null}

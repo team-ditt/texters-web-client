@@ -16,18 +16,19 @@ export default function BookInfoPage() {
   const {isOpen, openModal, closeModal} = useModal();
 
   const {book} = useBookInfo(+bookId!);
-  const {hasHistory, removeLastVisitedPageId} = useBookReaderStore();
+  const {findLastHistory, resetHistory} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title, 32);
   const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
 
   const onGoBack = () => navigate(-1);
   const onGoReader = () => {
-    if (hasHistory(bookId!)) return openModal();
+    const lastHistory = findLastHistory(bookId!);
+    if (!lastHistory?.isEnding) return openModal();
     navigate(`/books/${bookId}/read`);
   };
   const onGoIntroPage = () => {
-    removeLastVisitedPageId(bookId!);
+    resetHistory(bookId!);
     closeModal();
     navigate(`/books/${bookId}/read`);
   };

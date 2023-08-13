@@ -30,7 +30,7 @@ export default function BookInfoFormPage() {
 
       clearFlowChart();
       loadFlowChart(book.id);
-      navigate(`/studio/books/${book.id}/flow-chart`);
+      navigate(`/studio/books/${book.id}/flow-chart`, {replace: true});
     },
   });
 
