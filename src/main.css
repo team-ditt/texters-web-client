@@ -67,6 +67,43 @@ body,
   padding-left: 16px;
 }
 
+/* ToolTip */
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 100px;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: -34px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: #242424;
+  color: white;
+  text-align: center;
+  transition: all 0.1s ease-in-out;
+  opacity: 0;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+
 @layer base {
   button,
   input,

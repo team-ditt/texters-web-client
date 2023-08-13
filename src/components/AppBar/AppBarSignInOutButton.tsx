@@ -13,8 +13,9 @@ export default function AppBarSignInOutButton() {
   if (didSignIn)
     return (
       <>
-        <button className="p-1.5" onClick={openModal}>
+        <button className="p-1.5 tooltip" onClick={openModal}>
           <SignOutIcon />
+          <span className="tooltip-text !w-[60px] !-left-[12px]">로그아웃</span>
         </button>
         <Modal.Dialog
           isOpen={isOpen}
@@ -27,8 +28,9 @@ export default function AppBarSignInOutButton() {
     );
 
   return (
-    <Link className="p-1.5" to="/sign-in">
+    <Link className="p-1.5 tooltip" to="/sign-in">
       <SignInIcon />
+      <span className="tooltip-text !w-[60px] !-left-[12px]">로그인</span>
     </Link>
   );
 }
