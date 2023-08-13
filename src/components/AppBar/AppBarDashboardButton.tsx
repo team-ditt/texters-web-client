@@ -32,8 +32,9 @@ export default function AppBarDashboardButton() {
 
   return (
     <>
-      <button className="p-1.5" onClick={onNavigateToDashboard}>
+      <button className="p-1.5 tooltip" onClick={onNavigateToDashboard}>
         <ToDashboardIcon />
+        <span className="tooltip-text">텍스터즈 스튜디오</span>
       </button>
       <Modal.Alert
         isOpen={isMobileGuardOpen}

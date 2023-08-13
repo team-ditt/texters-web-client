@@ -1,34 +1,56 @@
 import {create} from "zustand";
 import {createJSONStorage, persist} from "zustand/middleware";
 
+type BookHistory = {
+  pageId: number;
+  isIntro?: boolean;
+  isEnding?: boolean;
+};
+
 type BookReaderStoreState = {
-  history: {[key: string]: number};
+  history: {[key: string]: BookHistory[]};
 };
 
 type BookReaderStoreAction = {
-  recordLastVisitedPageId: (bookId: string, pageId: number) => void;
-  findLastVisitedPageId: (bookId: string) => number | undefined;
+  recordHistory: (bookId: string, bookHistory: BookHistory) => void;
+  popHistory: (bookId: string) => void;
+  findLastHistory: (bookId: string) => BookHistory | undefined;
   hasHistory: (bookId: string) => boolean;
-  removeLastVisitedPageId: (bookId: string) => void;
+  canGoBack: (bookId: string) => boolean;
+  resetHistory: (bookId: string) => void;
 };
 
 const useBookReaderStore = create<BookReaderStoreState & BookReaderStoreAction>()(
   persist(
     (set, get) => ({
       history: {},
-      recordLastVisitedPageId: (bookId, pageId) => {
+      recordHistory: (bookId, bookHistory) => {
         const {history} = get();
-        set({history: {...history, [bookId]: pageId}});
+        const queue: BookHistory[] = history[bookId] ?? [];
+        queue.push(bookHistory);
+        set({history: {...history, [bookId]: queue}});
       },
-      findLastVisitedPageId: bookId => {
+      popHistory: bookId => {
         const {history} = get();
-        return history[bookId];
+        const queue: BookHistory[] = history[bookId] ?? [];
+        queue.pop();
+        set({history: {...history, [bookId]: queue}});
+      },
+      findLastHistory: bookId => {
+        const {history} = get();
+        const queue = history[bookId];
+        return queue?.[queue?.length - 1];
       },
       hasHistory: bookId => {
-        const {history} = get();
-        return bookId in history;
+        const {history, findLastHistory} = get();
+        const lastHistory = findLastHistory(bookId);
+        return history[bookId]?.length > 0 && !lastHistory?.isIntro && !lastHistory?.isEnding;
       },
-      removeLastVisitedPageId: bookId => {
+      canGoBack: bookId => {
+        const {history} = get();
+        return history[bookId]?.length > 1;
+      },
+      resetHistory: bookId => {
         const {history} = get();
         delete history[bookId];
         set({history: {...history}});
