@@ -3,7 +3,8 @@ import {createJSONStorage, persist} from "zustand/middleware";
 
 type BookHistory = {
   pageId: number;
-  isEnding: boolean;
+  isIntro?: boolean;
+  isEnding?: boolean;
 };
 
 type BookReaderStoreState = {
@@ -15,6 +16,7 @@ type BookReaderStoreAction = {
   popHistory: (bookId: string) => void;
   findLastHistory: (bookId: string) => BookHistory | undefined;
   hasHistory: (bookId: string) => boolean;
+  canGoBack: (bookId: string) => boolean;
   resetHistory: (bookId: string) => void;
 };
 
@@ -40,8 +42,13 @@ const useBookReaderStore = create<BookReaderStoreState & BookReaderStoreAction>(
         return queue?.[queue?.length - 1];
       },
       hasHistory: bookId => {
+        const {history, findLastHistory} = get();
+        const lastHistory = findLastHistory(bookId);
+        return history[bookId]?.length > 0 && !lastHistory?.isIntro && !lastHistory?.isEnding;
+      },
+      canGoBack: bookId => {
         const {history} = get();
-        return Boolean(history[bookId]?.length > 0);
+        return history[bookId]?.length > 1;
       },
       resetHistory: bookId => {
         const {history} = get();

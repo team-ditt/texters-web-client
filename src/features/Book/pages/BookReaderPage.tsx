@@ -15,7 +15,7 @@ export default function BookReaderPage() {
   const [currentPageId, setCurrentPageId] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
 
-  const {recordHistory, findLastHistory, hasHistory, popHistory, resetHistory} =
+  const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
   const {book} = useBookInfo(+bookId!);
   const {data: introPage} = useQuery(
@@ -26,7 +26,7 @@ export default function BookReaderPage() {
       refetchOnWindowFocus: false,
     },
   );
-  const {data: page} = useQuery(
+  const {data: page, isFetching} = useQuery(
     [keys.GET_PAGE, currentPageId],
     () => api.pages.fetchPage(book!.id, currentPageId!),
     {
@@ -35,6 +35,10 @@ export default function BookReaderPage() {
     },
   );
 
+  const onLoadPage = (pageId: number) => {
+    recordHistory(bookId!, {pageId, isEnding: false});
+    setCurrentPageId(pageId);
+  };
   const onGoBackToIntro = () => {
     resetHistory(bookId!);
     setCurrentPageId(undefined);
@@ -52,12 +56,19 @@ export default function BookReaderPage() {
   }, []);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (!hasHistory(bookId!) && introPage) return setCurrentPage({...introPage});
+    if (findLastHistory(bookId!)?.isIntro) return;
+    if (!hasHistory(bookId!) && introPage) {
+      recordHistory(bookId!, {pageId: introPage.id, isIntro: true});
+      return setCurrentPage({...introPage});
+    }
   }, [introPage, page]);
   useEffect(() => {
     if (!currentPage) return;
-    if (currentPage.isIntro) resetHistory(bookId!);
-    recordHistory(bookId!, {pageId: currentPage.id, isEnding: currentPage.isEnding});
+    if (currentPage.isEnding) {
+      popHistory(bookId!);
+      recordHistory(bookId!, {pageId: currentPage.id, isEnding: true});
+    }
+
     document.getElementById("root")?.scrollTo({top: 0});
   }, [currentPage]);
 
@@ -72,7 +83,7 @@ export default function BookReaderPage() {
     <div className="mobile-view pt-16 pb-4">
       <BookReaderAppBar book={book} />
       <div className="flex-1 p-6 flex flex-col items-stretch">
-        {currentPage?.isIntro ? (
+        {findLastHistory(bookId!)?.isIntro ? (
           <>
             <BookCoverImage
               className="self-center w-full max-w-[400px] rounded-lg"
@@ -91,10 +102,11 @@ export default function BookReaderPage() {
         <div className="border-t border-[#999999]" />
         <SizedBox height={32} />
         <div className="flex flex-col items-stretch gap-3">
-          {!currentPage?.isIntro && hasHistory(bookId!) ? (
+          {canGoBack(bookId!) ? (
             <button
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
-              onClick={onPopHistory}>
+              onClick={onPopHistory}
+              disabled={isFetching}>
               뒤로가기
             </button>
           ) : null}
@@ -102,16 +114,17 @@ export default function BookReaderPage() {
             <button
               key={choice.id}
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
-              onClick={() => setCurrentPageId(choice.destinationPageId!)}
-              disabled={!choice.destinationPageId}>
+              onClick={() => onLoadPage(choice.destinationPageId!)}
+              disabled={!choice.destinationPageId || isFetching}>
               {choice.content}
             </button>
           ))}
           {currentPage?.isEnding ? (
             <>
               <button
-                className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]]"
-                onClick={onGoBackToIntro}>
+                className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]] disabled:opacity-50"
+                onClick={onGoBackToIntro}
+                disabled={isFetching}>
                 처음부터 다시 읽기
               </button>
               <button

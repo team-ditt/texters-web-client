@@ -35,6 +35,11 @@ export default function FlowChartAppBar() {
     resetHistory(bookId!);
     navigate(`/studio/books/${bookId}/read`);
   };
+  const onDemoReadFromThisPage = () => {
+    resetHistory(bookId!);
+    recordHistory(bookId!, {pageId: +pageId!, isEnding: false});
+    navigate(`/studio/books/${bookId}/read`);
+  };
 
   useFlowChartEditor();
   useEffect(() => {
@@ -64,7 +69,7 @@ export default function FlowChartAppBar() {
         {pageId ? (
           <button
             className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
-            onClick={onDemoRead}>
+            onClick={onDemoReadFromThisPage}>
             이 페이지부터 미리 읽어보기
           </button>
         ) : null}

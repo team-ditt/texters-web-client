@@ -17,7 +17,7 @@ const OFFSET = {
 };
 
 export default function PageMoreMenu() {
-  const {resetHistory} = useBookReaderStore();
+  const {recordHistory} = useBookReaderStore();
   const isEditable = useFlowChartEditorStore(state => state.isEditable());
   const bookId = useFlowChartEditorStore(state => state.bookId);
   const openedMoreMenuPageId = useFlowChartEditorStore(state => state.openedMoreMenuPageId);
@@ -46,8 +46,9 @@ export default function PageMoreMenu() {
 
   const onReadFromThePage = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    const realId = useIdProviderStore.getState().getRealId(page.id)!;
     closePageMoreMenu();
-    resetHistory(String(bookId));
+    recordHistory(bookId!.toString(), {pageId: realId, isEnding: false});
     navigate(`/studio/books/${bookId}/read`);
   };
   const onPageEdit = (event: MouseEvent<HTMLButtonElement>) => {
