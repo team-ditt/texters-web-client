@@ -19,6 +19,9 @@ export default function useBookInfo(bookId: number) {
   );
 
   useEffect(() => {
+    if (book && book.status !== "PUBLISHED") navigate("/error/not-found", {replace: true});
+  }, [book]);
+  useEffect(() => {
     if (
       (error as AxiosError<TextersError>)?.response?.data.code === TextersErrorCode.BOOK_NOT_FOUND
     )
