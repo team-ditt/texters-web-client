@@ -59,6 +59,7 @@ const useBookReaderStore = create<BookReaderStoreState & BookReaderStoreAction>(
     {
       name: "book-reader-storage",
       storage: createJSONStorage(() => localStorage),
+      version: 1,
     },
   ),
 );
