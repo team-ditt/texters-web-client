@@ -5,7 +5,7 @@ import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
 import {useBookInfo} from "@/features/Book/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -15,6 +15,7 @@ export default function BookReaderPage() {
   const [currentPageId, setCurrentPageId] = useState<number | undefined>(undefined);
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
   const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
   const {book} = useBookInfo(+bookId!);
@@ -50,14 +51,24 @@ export default function BookReaderPage() {
   };
 
   useEffect(() => {
-    const lastHistory = findLastHistory(bookId!);
-    if (lastHistory?.isEnding) return resetHistory(bookId!);
+    if (!bookId) return;
+
+    const lastHistory = findLastHistory(bookId);
+    if (lastHistory?.isEnding) return resetHistory(bookId);
     setCurrentPageId(lastHistory?.pageId);
-  }, []);
+
+    return () => {
+      queryClient.removeQueries([keys.GET_INTRO_PAGE]);
+      queryClient.removeQueries([keys.GET_PAGE]);
+    };
+  }, [bookId]);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (findLastHistory(bookId!)?.isIntro) return;
-    if (!hasHistory(bookId!) && introPage) {
+    const lastHistory = findLastHistory(bookId!);
+    if (lastHistory?.isEnding) return resetHistory(bookId!);
+    if (lastHistory?.isIntro) return;
+
+    if (!lastHistory && introPage) {
       recordHistory(bookId!, {pageId: introPage.id, isIntro: true});
       return setCurrentPage({...introPage});
     }

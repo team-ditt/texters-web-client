@@ -6,7 +6,7 @@ import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import {useAuthGuard, useMobileViewGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -19,6 +19,8 @@ export default function BookDemoReaderPage() {
   const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
+
+  const queryClient = useQueryClient();
   const {data: introPage} = useQuery(
     [keys.GET_INTRO_PAGE],
     () => api.pages.fetchIntroPage(book!.id),
@@ -53,9 +55,13 @@ export default function BookDemoReaderPage() {
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
+    if (!bookId) return;
+
     setCurrentPageId(findLastHistory(bookId!)?.pageId);
-    return () => resetHistory(bookId!);
-  }, []);
+    return () => {
+      resetHistory(bookId!);
+    };
+  }, [bookId]);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
     if (findLastHistory(bookId!)?.isIntro) return;
