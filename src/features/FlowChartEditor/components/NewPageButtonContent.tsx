@@ -1,5 +1,4 @@
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import usePageLimitAlertModalStore from "@/features/FlowChartEditor/stores/usePageLimitAlertModal";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
 
 type Props = {
@@ -9,12 +8,9 @@ type Props = {
 
 export default function NewPageButtonContent({laneOrder, pageOrder}: Props) {
   const insertNewPage = useFlowChartEditorStore(state => state.insertNewPage);
-  const {openModal} = usePageLimitAlertModalStore();
 
   const handleClick = () => {
-    insertNewPage(laneOrder, pageOrder, () => {
-      openModal();
-    });
+    insertNewPage(laneOrder, pageOrder);
   };
 
   return (

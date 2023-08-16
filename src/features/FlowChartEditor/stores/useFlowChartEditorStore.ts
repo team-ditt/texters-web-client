@@ -64,11 +64,7 @@ type FlowChartStoreAction = {
   hideNewLanePageButton: () => void;
   insertNewLane: (laneOrder: number) => Lane | undefined;
   deleteLane: (laneId: number) => void;
-  insertNewPage: (
-    laneOrder: number,
-    pageOrder: number,
-    onPageLimitReached: () => void,
-  ) => Page | undefined;
+  insertNewPage: (laneOrder: number, pageOrder: number) => Page | undefined;
   updatePageInfo: (pageId: number, info: {title?: string; content?: string | null}) => void;
   loadPageTitle: (realPageId: number, title: string) => void;
   loadPageContent: (realPageId: number, content: string) => void;
@@ -553,12 +549,7 @@ const useFlowChartEditorStore = create<
           get().hideNewPageButton();
           get().hideNewLanePageButton();
         },
-        insertNewPage: (laneOrder, pageOrder, onPageLimitReached) => {
-          const pageCount = get().modelLanes.reduce((a, l) => a + l.pages.length, 0);
-          if (pageCount >= 100) {
-            onPageLimitReached();
-            return;
-          }
+        insertNewPage: (laneOrder, pageOrder) => {
           pageOrder = Math.max(0, pageOrder);
           const bookId = get().bookId;
           if (!bookId) return;
