@@ -7,7 +7,7 @@ import {
   BookTitleInput,
 } from "@/features/Book/components";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
+import {useAuthGuard, useTextInput} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {Book} from "@/types/book";
 import {Validator} from "@/utils";
@@ -40,7 +40,6 @@ export default function BookInfoFormPage() {
   const onCancel = () => navigate(-1);
 
   const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
 
   return (
     <div className="desktop-view">
@@ -86,7 +85,6 @@ export default function BookInfoFormPage() {
         </motion.div>
       ) : null}
 
-      <MobileViewAlert />
       <RequestSignInDialog />
     </div>
   );

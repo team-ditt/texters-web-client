@@ -40,7 +40,7 @@ export default function DashboardBookList({memberId}: Props) {
     );
 
   return (
-    <div className="flex flex-col items-stretch gap-[12px]">
+    <div className="grid grid-cols min-[480px]:grid-cols-2 min-[640px]:grid-cols-3 gap-3">
       {books.map(book => (
         <DashboardBookListItem key={book.id} book={book} />
       ))}
