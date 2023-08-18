@@ -6,11 +6,11 @@ import {AxiosError} from "axios";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
-export default function useBookInfo(bookId: number) {
+export default function usePublishedBookInfo(bookId: number) {
   const navigate = useNavigate();
   const {data: book, error} = useQuery(
     [keys.GET_BOOK, bookId],
-    () => api.books.fetchBook(+bookId!),
+    () => api.books.fetchPublishedBook(+bookId!),
     {
       enabled: !!bookId,
       refetchOnWindowFocus: false,
@@ -18,9 +18,6 @@ export default function useBookInfo(bookId: number) {
     },
   );
 
-  useEffect(() => {
-    if (book && book.status !== "PUBLISHED") navigate("/error/not-found", {replace: true});
-  }, [book]);
   useEffect(() => {
     if (
       (error as AxiosError<TextersError>)?.response?.data.code === TextersErrorCode.BOOK_NOT_FOUND

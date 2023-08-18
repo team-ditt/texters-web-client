@@ -9,7 +9,7 @@ import {Link} from "react-router-dom";
 export default function HomePage() {
   const {data: paginatedBooks} = useQuery(
     [keys.GET_BOOKS, {page: 1, limit: 10, order: "published-date"}],
-    () => api.books.fetchBooks({page: 1, limit: 10, order: "published-date"}),
+    () => api.books.fetchPublishedBooks({page: 1, limit: 10, order: "published-date"}),
   );
 
   return (
