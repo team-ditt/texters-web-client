@@ -1,10 +1,13 @@
+import {Modal} from "@/components";
 import SizedBox from "@/components/SizedBox";
 import {BookCoverImage} from "@/features/Book/components";
 import BookStatusChip from "@/features/Dashboard/components/BookStatusChip";
 import BookUpdatableChip from "@/features/Dashboard/components/BookUpdatableChip";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import {useFlowChartStore} from "@/stores";
+import {useModal} from "@/hooks";
+import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
+import {Validator} from "@/utils";
 import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as BookOpenIcon} from "assets/icons/book-open.svg";
 import {ReactComponent as CloseModalIcon} from "assets/icons/close-modal.svg";
@@ -27,60 +30,85 @@ export default function DashboardBookModal({book, onRequestClose, ...props}: Pro
   const navigate = useNavigate();
   const loadFlowChart = useFlowChartStore(state => state.loadFlowChart);
   const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
+  const resetHistory = useBookReaderStore(state => state.resetHistory);
+  const {isOpen, openModal, closeModal} = useModal();
 
-  const navigateToFlowChart = () => {
-    clearFlowChart();
-    loadFlowChart(book.id);
-    navigate(`/studio/books/${book.id}`);
+  const onClick = {
+    toEditor: () => {
+      if (Validator.isMobileDevice(navigator.userAgent)) return openModal();
+      clearFlowChart();
+      loadFlowChart(book.id);
+      navigate(`/studio/books/${book.id}/editor`);
+    },
+    toDemoRead: () => {
+      resetHistory(book.id.toString());
+      navigate(`/studio/books/${book.id}/read`);
+    },
+    toPublishedBookInfo: () => {
+      navigate(`/books/${book.id}`);
+    },
   };
 
   return (
-    <ReactModal
-      overlayClassName="fixed inset-0 bg-overlay z-[12000]"
-      className="absolute top-14 bottom-14 left-2 right-2 m-auto max-w-[320px] min-[480px]:max-w-[650px] min-[480px]:h-fit max-h-[700px] border-[3px] border-black outline-none bg-white rounded-[12px] flex flex-col justify-between overflow-hidden"
-      closeTimeoutMS={200}
-      onRequestClose={onRequestClose}
-      appElement={document.getElementById("root") as HTMLElement}
-      {...props}>
-      <div className="w-full p-4 pt-12 flex flex-col gap-x-4 gap-y-2 min-[480px]:flex-row overflow-auto disable-scrollbar">
-        <div className="absolute top-0 left-0 px-4 py-2 w-full flex justify-between bg-white">
-          <span className="font-bold text-[22px] text-[#242424]">작품 정보</span>
-          <button onClick={onRequestClose}>
-            <CloseModalIcon width={28} height={28} />
-          </button>
-        </div>
-
-        <div className="flex flex-col">
-          <BookCoverImage
-            className="w-full min-[480px]:max-w-[200px] min-[480px]:self-center aspect-square rounded-lg"
-            src={book.coverImageUrl ?? undefined}
-          />
-          <BookStatistics className="hidden min-[480px]:flex" book={book} />
-        </div>
-
-        <div className="flex flex-col">
-          <BookInfo book={book} />
-          <div className="py-2 flex flex-wrap gap-1">
-            <button className="px-2 py-1 border-[1.5px] border-[#242424] rounded-lg text-[14px] font-medium flex items-center gap-2">
-              <PlayBoldIcon width={16} height={16} />
-              미리 읽어보기
+    <>
+      <ReactModal
+        overlayClassName="fixed inset-0 bg-overlay z-[12000]"
+        className="absolute top-14 bottom-14 left-2 right-2 m-auto max-w-[320px] min-[480px]:max-w-[650px] min-[480px]:h-fit max-h-[700px] border-[3px] border-black outline-none bg-white rounded-[12px] flex flex-col justify-between overflow-hidden"
+        closeTimeoutMS={200}
+        onRequestClose={onRequestClose}
+        appElement={document.getElementById("root") as HTMLElement}
+        {...props}>
+        <div className="w-full p-4 pt-12 flex flex-col gap-x-4 gap-y-2 min-[480px]:flex-row overflow-auto disable-scrollbar">
+          <div className="absolute top-0 left-0 px-4 py-2 w-full flex justify-between bg-white">
+            <span className="font-bold text-[22px] text-[#242424]">작품 정보</span>
+            <button onClick={onRequestClose}>
+              <CloseModalIcon width={28} height={28} />
             </button>
-            {book.isPublished ? (
-              <button className="px-2 py-1 border-[1.5px] border-[#242424] rounded-lg text-[14px] font-medium flex items-center gap-2">
-                <LinkBoldIcon width={18} height={18} />
-                공개된 작품 보러가기
-              </button>
-            ) : null}
           </div>
-          <BookStatistics className="min-[480px]:hidden" book={book} />
-          <BookActions className="mt-2" book={book} />
-        </div>
-      </div>
 
-      <button className="w-full min-h-[48px] bg-[#242424] text-white" onClick={navigateToFlowChart}>
-        <span>텍스터즈 에디터로 이동하기</span>
-      </button>
-    </ReactModal>
+          <div className="flex flex-col">
+            <BookCoverImage
+              className="w-full min-[480px]:max-w-[200px] min-[480px]:self-center aspect-square rounded-lg"
+              src={book.coverImageUrl ?? undefined}
+            />
+            <BookStatistics className="hidden min-[480px]:flex" book={book} />
+          </div>
+
+          <div className="flex flex-col">
+            <BookInfo book={book} />
+            <div className="py-2 flex flex-wrap gap-1">
+              <button
+                className="px-2 py-1 border-[1.5px] border-[#242424] rounded-lg text-[14px] font-medium flex items-center gap-2"
+                onClick={onClick.toDemoRead}>
+                <PlayBoldIcon width={16} height={16} />
+                미리 읽어보기
+              </button>
+              {book.isPublished ? (
+                <button
+                  className="px-2 py-1 border-[1.5px] border-[#242424] rounded-lg text-[14px] font-medium flex items-center gap-2"
+                  onClick={onClick.toPublishedBookInfo}>
+                  <LinkBoldIcon width={18} height={18} />
+                  공개된 작품 보러가기
+                </button>
+              ) : null}
+            </div>
+            <BookStatistics className="min-[480px]:hidden" book={book} />
+            <BookActions className="mt-2" book={book} />
+          </div>
+        </div>
+
+        <button className="w-full min-h-[48px] bg-[#242424] text-white" onClick={onClick.toEditor}>
+          <span>텍스터즈 에디터로 이동하기</span>
+        </button>
+      </ReactModal>
+
+      <Modal.Alert
+        isOpen={isOpen}
+        title="모바일은 안돼요!"
+        message="텍스터즈 에디터는 PC환경에서만 사용 가능해요! 작품을 작성/수정하려면 PC를 이용해주세요!"
+        onRequestClose={closeModal}
+      />
+    </>
   );
 }
 

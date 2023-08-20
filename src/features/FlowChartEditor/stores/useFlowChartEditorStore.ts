@@ -7,7 +7,7 @@ import {
   isSameBox,
 } from "@/features/FlowChartEditor/utils/calculator";
 import {useFlowChartStore} from "@/stores";
-import {BookStatus, Choice, FlowChart, Lane, Page} from "@/types/book";
+import {Choice, FlowChart, Lane, Page} from "@/types/book";
 import {
   Action,
   Box,
@@ -28,7 +28,6 @@ const idProvider = () => useIdProviderStore.getState();
 
 type FlowChartStoreState = {
   bookId: number | null;
-  bookStatus: BookStatus | null;
   modelLanes: Lane[];
   viewStates: ViewStates;
   draggingState: DraggingState;
@@ -36,10 +35,6 @@ type FlowChartStoreState = {
   viewPortState: ViewPortState;
   actionQueue: Action[];
   openedMoreMenuPageId: number | null;
-};
-
-type FlowChartStoreComputed = {
-  isEditable: () => boolean;
 };
 
 type FlowChartStoreAction = {
@@ -105,14 +100,11 @@ const deepCopyLanes = (lanes: Lane[]) =>
     })),
   }));
 
-const useFlowChartEditorStore = create<
-  FlowChartStoreState & FlowChartStoreComputed & FlowChartStoreAction
->()(
+const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreAction>()(
   subscribeWithSelector(
     immer((set, get) => {
       return {
         bookId: null,
-        bookStatus: null,
         modelLanes: [],
         viewStates: {
           lanes: {},
@@ -140,13 +132,9 @@ const useFlowChartEditorStore = create<
         },
         actionQueue: [],
         openedMoreMenuPageId: null,
-        isEditable: () => get().bookStatus === "DRAFT",
         loadFlowChart: flowChart => {
           get().clearFlowChart();
-          set(state => {
-            state.bookId = flowChart.id;
-            state.bookStatus = flowChart.status;
-          });
+          set({bookId: flowChart.id});
           const lanes = deepCopyLanes(flowChart.lanes);
           get().setModelLanes(idProvider().convertFlowChart(lanes));
         },
@@ -260,11 +248,7 @@ const useFlowChartEditorStore = create<
           set(state => {
             const viewStates = state.viewStates;
             const staticBoxes = calcStaticElementBoxes(viewStates, state.viewPortState.frameSize);
-            const dynamicBoxes = calcDynamicElementBoxes(
-              viewStates,
-              state.viewPortState.frameSize,
-              state.isEditable(),
-            );
+            const dynamicBoxes = calcDynamicElementBoxes(viewStates, state.viewPortState.frameSize);
             state.viewPortState.contentSize = dynamicBoxes.contentSize;
             const timestamp = Date.now();
 

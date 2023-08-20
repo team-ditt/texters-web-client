@@ -45,7 +45,11 @@ export type BookForm = {
   description: string;
 };
 
-export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {lanes: Lane[]};
+export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {
+  createdAt: string;
+  updatedAt: string;
+  lanes: Lane[];
+};
 
 export type Lane = {
   id: number;

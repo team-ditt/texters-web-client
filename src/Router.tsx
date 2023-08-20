@@ -34,8 +34,8 @@ export function Router() {
         <Route path="/studio/dashboard" element={<DashboardPage />} />
         <Route path="/studio/books/info" element={<BookInfoFormPage />} />
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
-        <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
-        <Route path="/studio/books/:bookId/flow-chart/pages/:pageId" element={<PageEditPage />} />
+        <Route path="/studio/books/:bookId/editor" element={<FlowChartPage />} />
+        <Route path="/studio/books/:bookId/editor/pages/:pageId" element={<PageEditPage />} />
         <Route path="/studio/books/:bookId/read" element={<BookDemoReaderPage />} />
         <Route
           path="/terms-and-conditions"

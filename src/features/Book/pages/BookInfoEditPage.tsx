@@ -7,7 +7,7 @@ import {
   BookTitleInput,
 } from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
-import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
+import {useAuthGuard, useTextInput} from "@/hooks";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AnimatePresence, motion} from "framer-motion";
@@ -47,7 +47,6 @@ export default function BookInfoEditPage() {
   const onCancel = () => navigate(-1);
 
   const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!book) return;
     setTitle(book.title);
@@ -74,7 +73,6 @@ export default function BookInfoEditPage() {
           </AnimatePresence>
         </div>
 
-        <MobileViewAlert />
         <RequestSignInDialog />
         <NotAuthorAlert />
       </div>
@@ -127,7 +125,6 @@ export default function BookInfoEditPage() {
         ) : null}
       </div>
 
-      <MobileViewAlert />
       <RequestSignInDialog />
       <NotAuthorAlert />
     </div>
