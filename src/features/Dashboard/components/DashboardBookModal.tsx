@@ -1,14 +1,21 @@
+import {api} from "@/api";
 import {Modal} from "@/components";
 import SizedBox from "@/components/SizedBox";
+import {keys} from "@/constants";
 import {BookCoverImage} from "@/features/Book/components";
 import BookStatusChip from "@/features/Dashboard/components/BookStatusChip";
 import BookUpdatableChip from "@/features/Dashboard/components/BookUpdatableChip";
+import DeleteBookDialog from "@/features/Dashboard/components/DeleteBookDialog";
+import PublishBookDialog from "@/features/Dashboard/components/PublishBookDialog";
+import UnpublishBookDialog from "@/features/Dashboard/components/UnpublishBookDialog";
+import UpdateBookDialog from "@/features/Dashboard/components/UpdateBookDialog";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useModal} from "@/hooks";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {DashboardBook} from "@/types/book";
 import {Validator} from "@/utils";
 import {toCompactNumber} from "@/utils/formatter";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as BookOpenIcon} from "assets/icons/book-open.svg";
 import {ReactComponent as CloseModalIcon} from "assets/icons/close-modal.svg";
 import {ReactComponent as EyeOffIcon} from "assets/icons/eye-off.svg";
@@ -169,12 +176,87 @@ function BookStatistics({book, className}: HTMLAttributes<HTMLDivElement> & {boo
 }
 
 function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: DashboardBook}) {
-  const navigate = useNavigate();
-  const onClick = {
-    toBookEdit: () => {
-      navigate(`/studio/books/${book.id}`);
+  const {
+    isOpen: isPublishModalOpen,
+    openModal: openPublishModal,
+    closeModal: closePublishModal,
+  } = useModal();
+  const {
+    isOpen: isUnpublishModalOpen,
+    openModal: openUnpublishModal,
+    closeModal: closeUnpublishModal,
+  } = useModal();
+  const {
+    isOpen: isUpdateModalOpen,
+    openModal: openUpdateModal,
+    closeModal: closeUpdateModal,
+  } = useModal();
+  const {
+    isOpen: isDeleteModalOpen,
+    openModal: openDeleteModal,
+    closeModal: closeDeleteModal,
+  } = useModal();
+
+  const queryClient = useQueryClient();
+  const {mutate: publishBook, isLoading: isPublishing} = useMutation(
+    () => api.books.publishBook(book.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+        closePublishModal();
+      },
+      onError: () => {
+        alert("작품을 공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+        closePublishModal();
+      },
     },
-  };
+  );
+  const {mutate: updateBook, isLoading: isUpdating} = useMutation(
+    () => api.books.publishBook(book.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+        closeUpdateModal();
+      },
+      onError: () => {
+        alert("작품을 업데이트하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+        closeUpdateModal();
+      },
+    },
+  );
+  const {mutate: unpublishBook, isLoading: isUnpublishing} = useMutation(
+    () => api.books.unpublishBook(book.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+        closeUnpublishModal();
+      },
+      onError: () => {
+        alert("작품을 비공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+        closeUnpublishModal();
+      },
+    },
+  );
+  const {mutate: deleteBook, isLoading: isDeleting} = useMutation(
+    () => api.books.deleteBook(book.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+        closeDeleteModal();
+      },
+      onError: () => {
+        alert("작품을 삭제하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+        closeDeleteModal();
+      },
+    },
+  );
+
+  const navigate = useNavigate();
+  const onEditBookInfo = () => navigate(`/studio/books/${book.id}`);
 
   return (
     <div className={`flex flex-col ${className}`}>
@@ -183,33 +265,66 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
       <div className="flex flex-wrap gap-x-1 gap-y-2">
         <button
           className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 border border-[#D9D9D9] rounded-md bg-[#EFEFEF] text-[#242424]"
-          onClick={onClick.toBookEdit}>
+          onClick={onEditBookInfo}>
           <BookOpenIcon width={16} height={16} fill="#242424" />
           작품 개요 수정하기
         </button>
         {book.isPublished ? null : (
-          <button className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white">
+          <button
+            className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white"
+            onClick={openPublishModal}>
             <EyeIcon width={16} height={16} fill="white" />
             작품 공개하기
           </button>
         )}
         {book.canUpdate ? (
-          <button className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#52B78F] text-white">
+          <button
+            className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#52B78F] text-white"
+            onClick={openUpdateModal}>
             <UpdateIcon width={16} height={16} fill="white" />
             작품 업데이트하기
           </button>
         ) : null}
         {book.isPublished ? (
-          <button className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#888888] text-white">
+          <button
+            className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#888888] text-white"
+            onClick={openUnpublishModal}>
             <EyeOffIcon width={16} height={16} fill="white" />
             작품 비공개하기
           </button>
         ) : null}
-        <button className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#F04438] text-white">
+        <button
+          className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#F04438] text-white"
+          onClick={openDeleteModal}>
           <TrashIcon width={16} height={16} fill="white" stroke="white" />
           작품 완전삭제하기
         </button>
       </div>
+
+      <PublishBookDialog
+        isOpen={isPublishModalOpen}
+        isPublishing={isPublishing}
+        onConfirm={publishBook}
+        onRequestClose={closePublishModal}
+      />
+      <UpdateBookDialog
+        isOpen={isUpdateModalOpen}
+        isUpdating={isUpdating}
+        onConfirm={updateBook}
+        onRequestClose={closeUpdateModal}
+      />
+      <UnpublishBookDialog
+        isOpen={isUnpublishModalOpen}
+        isUnpublishing={isUnpublishing}
+        onConfirm={unpublishBook}
+        onRequestClose={closeUnpublishModal}
+      />
+      <DeleteBookDialog
+        isOpen={isDeleteModalOpen}
+        isDeleting={isDeleting}
+        onConfirm={deleteBook}
+        onRequestClose={closeDeleteModal}
+      />
     </div>
   );
 }

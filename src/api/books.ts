@@ -52,7 +52,11 @@ export async function updateBookInfo(bookId: number, {coverImage, title, descrip
 }
 
 export function publishBook(bookId: number) {
-  return axiosAuthenticated.put(`/books/${bookId}/publish`);
+  return axiosAuthenticated.post(`/books/${bookId}/publish`);
+}
+
+export function unpublishBook(bookId: number) {
+  return axiosAuthenticated.post(`/books/${bookId}/unpublish`);
 }
 
 export function deleteBook(bookId: number) {
