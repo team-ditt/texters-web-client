@@ -21,18 +21,16 @@ export default function BookTitleInput({title, isValid, onInput}: Props) {
 
   return (
     <>
-      <div
-        className="self-center w-[630px] h-[50px] border-b-[3px] flex items-center"
-        style={{borderColor: borderColor()}}>
+      <div className="h-[46px] border-b-2 flex items-center" style={{borderColor: borderColor()}}>
         <input
-          className="flex-1 text-center font-medium text-[24px] placeholder:text-[#BDBDBD]"
+          className="flex-1 text-center font-medium text-[22px] placeholder:text-[#BDBDBD]"
           value={title}
           placeholder="작품 제목을 입력해주세요"
           maxLength={MAX_LENGTH}
           onInput={_onInput}
         />
       </div>
-      <span className="m-2 h-6 self-center text-[#FF0000]">
+      <span className="m-1 h-6 self-center text-[14px] text-[#F04437]">
         {isValid ? null : "사용할 수 없는 제목이에요!"}
       </span>
     </>

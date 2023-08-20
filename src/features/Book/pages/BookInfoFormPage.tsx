@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {DesktopAppBar, SizedBox, SpinningLoader} from "@/components";
+import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {
   BookCoverImageUploader,
@@ -42,37 +42,34 @@ export default function BookInfoFormPage() {
   const {RequestSignInDialog} = useAuthGuard();
 
   return (
-    <div className="desktop-view">
-      <DesktopAppBar />
-      <div className="desktop-view-content p-6 relative">
-        <div className="flex flex-row justify-between items-center">
-          <span className="text-[28px] font-bold">작품 개요 작성하기</span>
-        </div>
-        <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
-        <SizedBox height={24} />
+    <div className="mobile-view p-6 pt-16">
+      <div className="flex flex-row justify-between items-center">
+        <span className="text-[24px] font-bold">작품 개요 작성하기</span>
+      </div>
+      <div className="mt-1 self-stretch border-t-2 border-[#2D3648]" />
+      <SizedBox height={24} />
 
-        <BookCoverImageUploader setCoverImage={setCoverImage as (file: File) => void} />
-        <SizedBox height={16} />
-        <BookTitleInput title={title} isValid={isValid} onInput={onInputTitle} />
-        <SizedBox height={16} />
-        <BookDescriptionTextarea
-          description={description}
-          onInput={onInputDescription as ChangeEventHandler}
-        />
+      <BookCoverImageUploader setCoverImage={setCoverImage as (file: File) => void} />
+      <SizedBox height={16} />
+      <BookTitleInput title={title} isValid={isValid} onInput={onInputTitle} />
+      <SizedBox height={4} />
+      <BookDescriptionTextarea
+        description={description}
+        onInput={onInputDescription as ChangeEventHandler}
+      />
 
-        <div className="mt-6 flex justify-center gap-[20px]">
-          <button
-            className="px-10 py-3 border-2 border-[#171717] rounded-lg font-bold text-[18px] text-[#171717]"
-            onClick={onCancel}>
-            취소
-          </button>
-          <button
-            className="px-10 py-3 bg-[#242424] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
-            onClick={onSubmit}
-            disabled={!canSubmit}>
-            저장
-          </button>
-        </div>
+      <div className="mt-4 flex justify-center gap-[20px]">
+        <button
+          className="px-10 py-3 border-2 border-[#171717] rounded-lg font-bold text-[18px] text-[#171717]"
+          onClick={onCancel}>
+          취소
+        </button>
+        <button
+          className="px-10 py-3 bg-[#242424] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
+          onClick={onSubmit}
+          disabled={!canSubmit}>
+          저장
+        </button>
       </div>
 
       {isLoading ? (

@@ -169,12 +169,21 @@ function BookStatistics({book, className}: HTMLAttributes<HTMLDivElement> & {boo
 }
 
 function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: DashboardBook}) {
+  const navigate = useNavigate();
+  const onClick = {
+    toBookEdit: () => {
+      navigate(`/studio/books/${book.id}`);
+    },
+  };
+
   return (
     <div className={`flex flex-col ${className}`}>
       <span className="font-bold text-[18px] text-[#242424]">작품 설정</span>
       <SizedBox height={8} />
       <div className="flex flex-wrap gap-x-1 gap-y-2">
-        <button className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 border border-[#D9D9D9] rounded-md bg-[#EFEFEF] text-[#242424]">
+        <button
+          className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 border border-[#D9D9D9] rounded-md bg-[#EFEFEF] text-[#242424]"
+          onClick={onClick.toBookEdit}>
           <BookOpenIcon width={16} height={16} fill="#242424" />
           작품 개요 수정하기
         </button>
