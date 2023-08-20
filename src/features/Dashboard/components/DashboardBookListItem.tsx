@@ -2,43 +2,26 @@ import {SizedBox} from "@/components";
 import {BookCoverImage} from "@/features/Book/components";
 import BookStatusChip from "@/features/Dashboard/components/BookStatusChip";
 import BookUpdatableChip from "@/features/Dashboard/components/BookUpdatableChip";
-import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import {useFlowChartStore} from "@/stores";
+import DashboardBookModal from "@/features/Dashboard/components/DashboardBookModal";
+import {useModal} from "@/hooks";
 import {DashboardBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import classNames from "classnames";
 import {motion} from "framer-motion";
-import {MouseEvent} from "react";
-import {useNavigate} from "react-router-dom";
 
 type Props = {
   book: DashboardBook;
 };
 
 export default function DashboardBookListItem({book}: Props) {
-  const navigate = useNavigate();
-  const loadFlowChart = useFlowChartStore(state => state.loadFlowChart);
-  const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
-
-  const navigateToFlowChart = () => {
-    clearFlowChart();
-    loadFlowChart(book.id);
-    navigate(`/studio/books/${book.id}/flow-chart`);
-  };
-
-  const onNavigate = (event: MouseEvent) => {
-    const overlay = document.querySelector(".ReactModal__Overlay");
-    if (overlay?.contains(event.target as Node)) return;
-
-    navigateToFlowChart();
-  };
+  const {isOpen, openModal, closeModal} = useModal();
 
   return (
     <>
-      <motion.a
+      <motion.button
         className="border border-[#D9D9D9] rounded-lg shadow-md flex flex-col hover:shadow-lg transition-all duration-100 cursor-pointer overflow-hidden"
         whileHover={{scale: 1.01}}
-        onClick={onNavigate}>
+        onClick={openModal}>
         <BookCoverImage className="w-full aspect-square" src={book.coverImageUrl ?? undefined} />
 
         <div className="flex-1 flex flex-col justify-between items-stretch self-stretch px-3 py-2">
@@ -47,10 +30,10 @@ export default function DashboardBookListItem({book}: Props) {
             {book.canUpdate ? <BookUpdatableChip /> : null}
           </div>
 
-          <span className="font-bold text-[18px] text-[#2D3648] text-ellipsis line-clamp-2">
+          <span className="text-left font-bold text-[18px] text-[#2D3648] text-ellipsis line-clamp-2">
             {book.title}
           </span>
-          <span className="text-[14px] text-[#717D96] text-ellipsis line-clamp-2">
+          <span className="text-left text-[14px] text-[#717D96] text-ellipsis line-clamp-2">
             {book.description}
           </span>
 
@@ -88,7 +71,9 @@ export default function DashboardBookListItem({book}: Props) {
             </p>
           </div>
         </div>
-      </motion.a>
+      </motion.button>
+
+      <DashboardBookModal book={book} isOpen={isOpen} onRequestClose={closeModal} />
     </>
   );
 }
