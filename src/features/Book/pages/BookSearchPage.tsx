@@ -21,7 +21,8 @@ export default function BookSearchPage() {
 
   const {data, hasNextPage, fetchNextPage, isFetchingNextPage} = useInfiniteQuery(
     [keys.GET_BOOKS, query, order],
-    ({pageParam = 0}) => api.books.fetchBooks({query, page: pageParam + 1, limit: 10, order}),
+    ({pageParam = 0}) =>
+      api.books.fetchPublishedBooks({query, page: pageParam + 1, limit: 10, order}),
     {getNextPageParam: lastPage => (lastPage.hasNext ? lastPage.page : undefined)},
   );
   const books = data?.pages.flatMap(page => page.data) ?? [];

@@ -1,6 +1,5 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
-import PublishedMarker from "@/components/PublishedMarker";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
@@ -22,7 +21,9 @@ export default function FlowChartAppBar() {
   } = useFlowChartStore();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
   const isLockedFlowChart = flowChartError?.code === TextersErrorCode.LOCKED_FLOW_CHART;
-  const isPublished = book?.status === "PUBLISHED";
+  const isFailedToAutoSave = Boolean(
+    flowChartError && flowChartError.code !== TextersErrorCode.LOCKED_FLOW_CHART,
+  );
 
   const onGoBack = () => navigate(-1);
   const onRefresh = () => {
@@ -43,7 +44,7 @@ export default function FlowChartAppBar() {
 
   useFlowChartEditor();
   useEffect(() => {
-    if (!flowChart && book?.status !== "PUBLISHED") loadFlowChart(+bookId!);
+    if (!flowChart) loadFlowChart(+bookId!);
   }, [flowChart, book]);
 
   return (
@@ -55,11 +56,7 @@ export default function FlowChartAppBar() {
         <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1>
       </div>
       <div className="flex items-center gap-1">
-        {isPublished ? (
-          <PublishedMarker />
-        ) : (
-          <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
-        )}
+        <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
         <SizedBox width={12} />
         <button
           className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
@@ -80,6 +77,15 @@ export default function FlowChartAppBar() {
         isOpen={isLockedFlowChart}
         title="잠깐, 여러 창을 띄워 두고 작업 중이신가요?"
         message="텍스터즈는 작품 동시 수정을 지원하고 있지 않아요. 새로고침하시겠어요?"
+        confirmMessage="새로고침하기"
+        onConfirm={onRefresh}
+        cancelMessage="홈으로 가기"
+        onCancel={onGoHome}
+      />
+      <Modal.Dialog
+        isOpen={isFailedToAutoSave}
+        title="자동저장에 실패했어요!"
+        message="서버와의 연결이 불안정해요... 이어서 작업하시려면 새로고침해주세요!"
         confirmMessage="새로고침하기"
         onConfirm={onRefresh}
         cancelMessage="홈으로 가기"

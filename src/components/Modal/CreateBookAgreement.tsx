@@ -22,13 +22,13 @@ export default function CreateBookAgreement({onRequestClose, ...props}: Props) {
         <CloseModalIcon width={28} height={28} />
       </button>
 
-      <div className="w-full flex flex-col items-start gap-[6px] px-8 py-4">
-        <span className="text-[30px] font-bold">작품 제작 전 동의사항</span>
+      <div className="w-full flex flex-col items-start gap-[6px] px-6 py-4">
+        <span className="text-[24px] font-bold">작품 제작 전 동의사항</span>
       </div>
       <div className="w-full border-t border-[#D9D9D9]" />
 
-      <div className="w-full ps-12 pe-8 py-6 overflow-y-auto">
-        <span className="font-bold text-[22px] -ms-4">작품</span>
+      <div className="w-full ps-10 pe-8 py-6 overflow-y-auto">
+        <span className="font-bold text-[20px] -ms-4">작품</span>
         <SizedBox height={8} />
         <ul>
           <li className="list-disc list-outside">텍스터즈는 성인 컨텐츠 게시를 금지하고 있어요.</li>
@@ -38,7 +38,7 @@ export default function CreateBookAgreement({onRequestClose, ...props}: Props) {
           </li>
         </ul>
         <SizedBox height={8} />
-        <span className="font-bold text-[22px] -ms-4">표지</span>
+        <span className="font-bold text-[20px] -ms-4">표지</span>
         <SizedBox height={8} />
         <ul>
           <li className="list-disc list-outside">

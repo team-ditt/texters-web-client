@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {DesktopAppBar, SizedBox, SpinningLoader} from "@/components";
+import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {
   BookCoverImageUploader,
@@ -7,7 +7,7 @@ import {
   BookTitleInput,
 } from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
-import {useAuthGuard, useMobileViewGuard, useTextInput} from "@/hooks";
+import {useAuthGuard, useTextInput} from "@/hooks";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AnimatePresence, motion} from "framer-motion";
@@ -47,7 +47,6 @@ export default function BookInfoEditPage() {
   const onCancel = () => navigate(-1);
 
   const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!book) return;
     setTitle(book.title);
@@ -56,67 +55,12 @@ export default function BookInfoEditPage() {
 
   if (!book)
     return (
-      <div className="desktop-view">
-        <DesktopAppBar />
-        <div className="desktop-view-content p-6 relative">
-          <div className="flex flex-row justify-between items-center">
-            <span className="text-[28px] font-bold">작품 개요 수정하기</span>
-          </div>
-          <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
-          <AnimatePresence mode="wait">
-            <motion.div
-              className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
-              initial={{opacity: 0}}
-              animate={{opacity: 0.5}}
-              exit={{opacity: 0}}>
-              <SpinningLoader color="#BDBDBD" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <MobileViewAlert />
-        <RequestSignInDialog />
-        <NotAuthorAlert />
-      </div>
-    );
-
-  return (
-    <div className="desktop-view">
-      <DesktopAppBar />
-      <div className="desktop-view-content p-6 relative">
+      <div className="mobile-view p-6 pt-16">
         <div className="flex flex-row justify-between items-center">
-          <span className="text-[28px] font-bold">작품 개요 수정하기</span>
+          <span className="text-[24px] font-bold">작품 개요 수정하기</span>
         </div>
-        <div className="mt-4 self-stretch border-t-2 border-[#2D3648]" />
-        <SizedBox height={24} />
-
-        <BookCoverImageUploader
-          coverImageUrl={book.coverImageUrl ?? undefined}
-          setCoverImage={setCoverImage as (file: File) => void}
-        />
-        <SizedBox height={16} />
-        <BookTitleInput title={title} isValid={isValid} onInput={onInputTitle} />
-        <SizedBox height={16} />
-        <BookDescriptionTextarea
-          description={description}
-          onInput={onInputDescription as ChangeEventHandler}
-        />
-
-        <div className="mt-6 flex justify-center gap-[20px]">
-          <button
-            className="px-10 py-3 border-2 border-[#171717] rounded-lg font-bold text-[18px] text-[#171717]"
-            onClick={onCancel}>
-            취소
-          </button>
-          <button
-            className="px-10 py-3 bg-[#242424] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
-            onClick={onSubmit}
-            disabled={!canSubmit}>
-            수정
-          </button>
-        </div>
-
-        {isUpdating ? (
+        <div className="mt-1 self-stretch border-t-2 border-[#2D3648]" />
+        <AnimatePresence mode="wait">
           <motion.div
             className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
             initial={{opacity: 0}}
@@ -124,10 +68,57 @@ export default function BookInfoEditPage() {
             exit={{opacity: 0}}>
             <SpinningLoader color="#BDBDBD" />
           </motion.div>
-        ) : null}
+        </AnimatePresence>
+
+        <RequestSignInDialog />
+        <NotAuthorAlert />
+      </div>
+    );
+
+  return (
+    <div className="mobile-view p-6 pt-16">
+      <div className="flex flex-row justify-between items-center">
+        <span className="text-[24px] font-bold">작품 개요 수정하기</span>
+      </div>
+      <div className="mt-1 self-stretch border-t-2 border-[#2D3648]" />
+      <SizedBox height={24} />
+
+      <BookCoverImageUploader
+        coverImageUrl={book.coverImageUrl ?? undefined}
+        setCoverImage={setCoverImage as (file: File) => void}
+      />
+      <SizedBox height={16} />
+      <BookTitleInput title={title} isValid={isValid} onInput={onInputTitle} />
+      <SizedBox height={4} />
+      <BookDescriptionTextarea
+        description={description}
+        onInput={onInputDescription as ChangeEventHandler}
+      />
+
+      <div className="mt-4 flex justify-center gap-[20px]">
+        <button
+          className="px-10 py-3 border-2 border-[#171717] rounded-lg font-bold text-[18px] text-[#171717]"
+          onClick={onCancel}>
+          취소
+        </button>
+        <button
+          className="px-10 py-3 bg-[#242424] rounded-lg font-bold text-[18px] text-white disabled:bg-[#CECECE] transition-colors"
+          onClick={onSubmit}
+          disabled={!canSubmit}>
+          수정
+        </button>
       </div>
 
-      <MobileViewAlert />
+      {isUpdating ? (
+        <motion.div
+          className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
+          initial={{opacity: 0}}
+          animate={{opacity: 0.5}}
+          exit={{opacity: 0}}>
+          <SpinningLoader color="#BDBDBD" />
+        </motion.div>
+      ) : null}
+
       <RequestSignInDialog />
       <NotAuthorAlert />
     </div>

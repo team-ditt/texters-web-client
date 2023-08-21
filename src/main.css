@@ -147,6 +147,15 @@ body,
     @apply bg-black-300 rounded-[8px];
   }
 
+  .disable-scrollbar::-webkit-scrollbar {
+    background: transparent;
+    width: 0;
+  }
+
+  .disable-scrollbar {
+    scrollbar-width: none;
+  }
+
   /* Loader */
   .spinning-loader div {
     animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;

@@ -8,7 +8,6 @@ import {
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
-import usePublishedGuard from "@/features/FlowChart/hooks/usePublishedGuard";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
@@ -44,7 +43,6 @@ export default function PageEditPage() {
 
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
-  const {PublishedBookAlert} = usePublishedGuard(+bookId!);
   useEffect(() => {
     document.body.style.backgroundColor = "#EFEFEF";
     return () => {
@@ -79,7 +77,6 @@ export default function PageEditPage() {
 
         <MobileViewAlert />
         <RequestSignInDialog />
-        <PublishedBookAlert />
       </div>
     );
 
@@ -119,7 +116,6 @@ export default function PageEditPage() {
 
       <MobileViewAlert />
       <RequestSignInDialog />
-      <PublishedBookAlert />
     </div>
   );
 }

@@ -1,29 +1,36 @@
 import {Author} from "@/types/member";
 
-export type BookStatus = "DRAFT" | "PUBLISHED";
+export type BookStatistics = {
+  viewed: number;
+  liked: number;
+  commentsCount: number;
+};
 
 export type Book = {
   id: number;
   title: string;
   description: string;
-  status: BookStatus;
-  createdAt: string;
-  updatedAt: string;
-  viewed: number;
-  liked: number;
-  commentsCount: number;
   coverImageUrl: string | null;
   author: Author;
 };
 
 export type WeeklyMostViewedBook = Book & {
+  publishedAt: string;
   weeklyViewed: number;
 };
 
-export type DashboardBook = Book & {
-  canPublish: boolean;
-  publishErrors: string[];
-};
+export type DashboardBook = Book &
+  BookStatistics & {
+    createdAt: string;
+    updatedAt: string;
+    isPublished: boolean;
+    canUpdate: boolean;
+  };
+
+export type PublishedBook = Book &
+  BookStatistics & {
+    publishedAt: string;
+  };
 
 export type BookQuery = {
   query?: string;
@@ -38,7 +45,11 @@ export type BookForm = {
   description: string;
 };
 
-export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {lanes: Lane[]};
+export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {
+  createdAt: string;
+  updatedAt: string;
+  lanes: Lane[];
+};
 
 export type Lane = {
   id: number;

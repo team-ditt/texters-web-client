@@ -1,7 +1,6 @@
 import {Modal} from "@/components/Modal";
 import {useDidSignIn} from "@/features/Auth/hooks";
 import {useModal} from "@/hooks";
-import {Validator} from "@/utils";
 import {ReactComponent as ToDashboardIcon} from "assets/icons/to-dashboard.svg";
 import {useNavigate} from "react-router-dom";
 
@@ -10,18 +9,12 @@ export default function AppBarDashboardButton() {
   const navigate = useNavigate();
 
   const {
-    isOpen: isMobileGuardOpen,
-    openModal: openMobileGuardModal,
-    closeModal: closeMobileGuardModal,
-  } = useModal();
-  const {
     isOpen: isRequestSignInOpen,
     openModal: openRequestSignInModal,
     closeModal: closeRequestSignInModal,
   } = useModal();
 
   const onNavigateToDashboard = () => {
-    if (Validator.isMobileDevice(navigator.userAgent)) return openMobileGuardModal();
     if (!didSignIn) return openRequestSignInModal();
     navigate("/studio/dashboard");
   };
@@ -36,12 +29,7 @@ export default function AppBarDashboardButton() {
         <ToDashboardIcon />
         <span className="tooltip-text">텍스터즈 스튜디오</span>
       </button>
-      <Modal.Alert
-        isOpen={isMobileGuardOpen}
-        title="모바일은 안돼요!"
-        message="텍스터즈 스튜디오는 PC환경에서만 사용 가능해요! 작품을 작성하려면 PC를 이용해주세요!"
-        onRequestClose={closeMobileGuardModal}
-      />
+
       <Modal.Dialog
         isOpen={isRequestSignInOpen}
         title="로그인하시겠어요?"

@@ -1,6 +1,6 @@
 import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
-import {useBookDescriptionRef, useBookInfo, useBookTitleRef} from "@/features/Book/hooks";
+import {useBookDescriptionRef, useBookTitleRef, usePublishedBookInfo} from "@/features/Book/hooks";
 import CommentButton from "@/features/Comment/components/CommentButton";
 import {useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
@@ -15,7 +15,7 @@ export default function BookInfoPage() {
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {book} = useBookInfo(+bookId!);
+  const {book} = usePublishedBookInfo(+bookId!);
   const {hasHistory, resetHistory} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title, 32);
@@ -72,7 +72,7 @@ export default function BookInfoPage() {
             조회수 {toCompactNumber(book.viewed)}
           </span>
           <span className="ms-0.5 text-[12px] text-[#999999]">
-            작품 공개일 {toDateString(new Date(book.updatedAt))}
+            작품 공개일 {toDateString(new Date(book.publishedAt))}
           </span>
         </div>
         <SizedBox height={8} />

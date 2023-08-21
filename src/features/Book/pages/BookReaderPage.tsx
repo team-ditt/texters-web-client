@@ -2,7 +2,7 @@ import {api} from "@/api";
 import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
-import {useBookInfo} from "@/features/Book/hooks";
+import {usePublishedBookInfo} from "@/features/Book/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -16,9 +16,9 @@ export default function BookReaderPage() {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-  const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
+  const {recordHistory, findLastHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
-  const {book} = useBookInfo(+bookId!);
+  const {book} = usePublishedBookInfo(+bookId!);
   const {data: introPage} = useQuery(
     [keys.GET_INTRO_PAGE],
     () => api.pages.fetchIntroPage(book!.id),

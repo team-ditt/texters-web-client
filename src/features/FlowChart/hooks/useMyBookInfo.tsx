@@ -2,7 +2,6 @@ import {api} from "@/api";
 import {Modal} from "@/components";
 import {keys} from "@/constants";
 import {useProfile} from "@/features/Member/hooks";
-import {useModal} from "@/hooks";
 import {TextersError, TextersErrorCode} from "@/types/error";
 import {useQuery} from "@tanstack/react-query";
 import {AxiosError} from "axios";
@@ -11,7 +10,6 @@ import {useNavigate} from "react-router-dom";
 
 export default function useMyBookInfo(bookId: number) {
   const navigate = useNavigate();
-  const {isOpen, openModal, closeModal} = useModal();
 
   const {profile} = useProfile();
   const {
@@ -39,9 +37,6 @@ export default function useMyBookInfo(bookId: number) {
     />
   );
 
-  useEffect(() => {
-    if (book?.status === "PUBLISHED") openModal();
-  }, [book]);
   useEffect(() => {
     if (
       (error as AxiosError<TextersError>)?.response?.data.code === TextersErrorCode.BOOK_NOT_FOUND

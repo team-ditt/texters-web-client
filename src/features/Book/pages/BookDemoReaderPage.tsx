@@ -3,10 +3,11 @@ import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
-import {useAuthGuard, useMobileViewGuard} from "@/hooks";
+import {useProfile} from "@/features/Member/hooks";
+import {useAuthGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -18,22 +19,22 @@ export default function BookDemoReaderPage() {
 
   const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
+  const {profile} = useProfile();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
 
-  const queryClient = useQueryClient();
   const {data: introPage} = useQuery(
     [keys.GET_INTRO_PAGE],
-    () => api.pages.fetchIntroPage(book!.id),
+    () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
     {
-      enabled: !!book,
+      enabled: Boolean(profile && book),
       refetchOnWindowFocus: false,
     },
   );
   const {data: page, isFetching} = useQuery(
     [keys.GET_PAGE, currentPageId],
-    () => api.pages.fetchPage(book!.id, currentPageId!),
+    () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
     {
-      enabled: Boolean(book && currentPageId),
+      enabled: Boolean(profile && book && currentPageId),
       refetchOnWindowFocus: false,
     },
   );
@@ -46,14 +47,13 @@ export default function BookDemoReaderPage() {
     resetHistory(bookId!);
     setCurrentPageId(undefined);
   };
-  const onGoBack = () => navigate(`/studio/books/${bookId}/flow-chart`, {replace: true});
+  const onGoBack = () => navigate(`/studio/books/${bookId}/editor`, {replace: true});
   const onPopHistory = () => {
     popHistory(bookId!);
     setCurrentPageId(findLastHistory(bookId!)?.pageId);
   };
 
   const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!bookId) return;
 
@@ -79,7 +79,6 @@ export default function BookDemoReaderPage() {
     return (
       <div className="mobile-view justify-center items-center">
         <SpinningLoader color="#888888" />
-        <MobileViewAlert />
         <RequestSignInDialog />
       </div>
     );
@@ -142,7 +141,6 @@ export default function BookDemoReaderPage() {
         </div>
       </div>
 
-      <MobileViewAlert />
       <RequestSignInDialog />
       <NotAuthorAlert />
     </div>
