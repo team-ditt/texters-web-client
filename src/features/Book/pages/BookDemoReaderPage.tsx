@@ -85,7 +85,7 @@ export default function BookDemoReaderPage() {
 
   return (
     <div className="mobile-view pt-16 pb-4">
-      <BookReaderAppBar book={book} />
+      <BookReaderAppBar book={book} showLike={false} />
       <div className="flex-1 p-6 flex flex-col items-stretch">
         {findLastHistory(bookId!)?.isIntro ? (
           <>

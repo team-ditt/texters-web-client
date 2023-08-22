@@ -1,6 +1,6 @@
 import {SizedBox} from "@/components";
 import BookCoverImage from "@/features/Book/components/BookCoverImage";
-import {Book} from "@/types/book";
+import {PublishedBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as ChatIcon} from "assets/icons/chat.svg";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
@@ -9,7 +9,7 @@ import {HTMLAttributes, useMemo} from "react";
 import {Link} from "react-router-dom";
 
 type ListProps = HTMLAttributes<HTMLDivElement> & {
-  books: Book[];
+  books: PublishedBook[];
 };
 
 export default function BookList({books, className, ...props}: ListProps) {
@@ -23,7 +23,7 @@ export default function BookList({books, className, ...props}: ListProps) {
 }
 
 type ListItemProps = {
-  book: Book;
+  book: PublishedBook;
 };
 
 function BookListItem({book}: ListItemProps) {

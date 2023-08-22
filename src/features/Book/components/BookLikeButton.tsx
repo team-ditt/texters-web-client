@@ -2,14 +2,14 @@ import {Modal} from "@/components";
 import {useDidSignIn} from "@/features/Auth/hooks";
 import {useBookLike} from "@/features/Book/hooks";
 import {useModal} from "@/hooks";
-import {Book} from "@/types/book";
+import {PublishedBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as LikedIcon} from "assets/icons/liked.svg";
 import {ReactComponent as NotLikedIcon} from "assets/icons/not-liked.svg";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
-  book: Book;
+  book: PublishedBook;
   showCount?: boolean;
 };
 

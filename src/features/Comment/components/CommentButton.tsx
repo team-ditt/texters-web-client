@@ -1,10 +1,10 @@
-import {Book} from "@/types/book";
+import {PublishedBook} from "@/types/book";
 import {toCompactNumber} from "@/utils/formatter";
 import {ReactComponent as ChatIcon} from "assets/icons/chat.svg";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
-  book: Book;
+  book: PublishedBook;
   showCount?: boolean;
 };
 

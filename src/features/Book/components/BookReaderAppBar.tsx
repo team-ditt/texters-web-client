@@ -1,16 +1,17 @@
 import {SizedBox} from "@/components";
 import BookLikeButton from "@/features/Book/components/BookLikeButton";
-import {Book} from "@/types/book";
+import {DashboardBook, PublishedBook} from "@/types/book";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
 import {motion} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
-  book: Book;
+  book: DashboardBook | PublishedBook;
+  showLike?: boolean;
 };
 
-export default function BookReaderAppBar({book}: Props) {
+export default function BookReaderAppBar({book, showLike = true}: Props) {
   const navigate = useNavigate();
   const lastScrollPositionRef = useRef(0);
   const [hidden, setHidden] = useState(false);
@@ -56,7 +57,7 @@ export default function BookReaderAppBar({book}: Props) {
         <LeftArrowIcon />
       </button>
       <h1 className="flex-1 px-3 text-center font-bold line-clamp-1 text-ellipsis">{book.title}</h1>
-      {book.status === "PUBLISHED" ? <BookLikeButton book={book} /> : <SizedBox width={36} />}
+      {showLike ? <BookLikeButton book={book as PublishedBook} /> : <SizedBox width={36} />}
     </motion.nav>
   );
 }
