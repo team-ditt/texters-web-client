@@ -11,4 +11,8 @@ export const keys = {
   GET_FLOW_CHART_PAGE: "/studio/books/editor/pages",
   GET_INTRO_PAGE: "/books/pages/intro",
   GET_PAGE: "/books/pages",
+  GET_BOARD_THREADS: "/boards/threads",
+  GET_BOARD_THREAD: "/boards/thread",
+  GET_BOARD_FIXED_THREADS: "/boards/threads/fixed",
+  GET_BOARD_THREAD_COMMENTS: "/boards/threads/comments",
 };
