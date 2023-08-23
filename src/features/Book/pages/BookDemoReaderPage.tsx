@@ -8,7 +8,7 @@ import {useAuthGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
 import {useQuery} from "@tanstack/react-query";
-import {useEffect, useState} from "react";
+import {useEffect, useLayoutEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function BookDemoReaderPage() {
@@ -22,12 +22,11 @@ export default function BookDemoReaderPage() {
   const {profile} = useProfile();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
 
-  const {data: introPage} = useQuery(
+  const {data: introPage, refetch: refetchIntroPage} = useQuery(
     [keys.GET_INTRO_PAGE],
     () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
     {
       enabled: Boolean(profile && book),
-      refetchOnWindowFocus: false,
     },
   );
   const {data: page, isFetching} = useQuery(
@@ -35,7 +34,6 @@ export default function BookDemoReaderPage() {
     () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
     {
       enabled: Boolean(profile && book && currentPageId),
-      refetchOnWindowFocus: false,
     },
   );
 
@@ -53,6 +51,10 @@ export default function BookDemoReaderPage() {
     setCurrentPageId(findLastHistory(bookId!)?.pageId);
   };
 
+  useLayoutEffect(() => {
+    refetchIntroPage();
+  }, []);
+
   const {RequestSignInDialog} = useAuthGuard();
   useEffect(() => {
     if (!bookId) return;
@@ -64,7 +66,7 @@ export default function BookDemoReaderPage() {
   }, [bookId]);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (findLastHistory(bookId!)?.isIntro) return;
+    if (findLastHistory(bookId!)?.isIntro && introPage) return setCurrentPage({...introPage});
     if (!hasHistory(bookId!) && introPage) {
       recordHistory(bookId!, {pageId: introPage.id, isIntro: true});
       return setCurrentPage({...introPage});
