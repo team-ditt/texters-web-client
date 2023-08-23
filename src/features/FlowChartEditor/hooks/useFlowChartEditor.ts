@@ -22,7 +22,7 @@ export default function useFlowChartEditor() {
   const showNewLaneButton = useFlowChartEditorStore(state => state.showNewLaneButton);
   const hideNewLaneButton = useFlowChartEditorStore(state => state.hideNewLaneButton);
 
-  /* update element transtisions on request anim frame */
+  /* update element transitions on request anim frame */
   useRequestAnimationFrame(updateTransitions);
 
   /* finish drag on mouse up*/
