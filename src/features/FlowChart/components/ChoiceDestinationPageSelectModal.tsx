@@ -39,7 +39,8 @@ export default function ChoiceDestinationPageSelectModal({
       destinationPageId: selectedPageId,
     });
     loadChoiceDestination(choice.id, selectedPageId);
-    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
     onRequestClose?.call(null, event);
   };
 

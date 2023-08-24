@@ -74,7 +74,7 @@ export default function useFlowChartEditor() {
           const {pages: pageBoxes} = calcElementBoxesModel(lanes);
 
           let inserted = false;
-          for (let laneOrder = 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             if (inserted) break;
             const lane = lanes[laneOrder];
             if (
@@ -224,7 +224,7 @@ export default function useFlowChartEditor() {
           };
 
           const {pages: pageBoxes} = calcElementBoxesModel(lanes);
-          for (let laneOrder = choiceLaneOrder + 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             const lane = lanes[laneOrder];
             for (let page of lane.pages) {
               const pageBox = pageBoxes[page.id];
@@ -269,7 +269,7 @@ export default function useFlowChartEditor() {
             showNewLanePageButton(1);
             return;
           }
-          for (let laneOrder = 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             const lane = lanes[laneOrder];
             if (laneOrder === lanes.length - 1 && PAGE_WIDTH * lanes.length <= dragPosition.x) {
               showNewLanePageButton(lanes.length);

@@ -40,7 +40,6 @@ export default function PageMoreMenu() {
   if (!elementState) return;
 
   const lane = lanes[page.laneId].data;
-  const isIntro = lane?.order === 0;
   const currentPosition = elementState.box;
 
   const onReadFromThePage = (event: MouseEvent<HTMLButtonElement>) => {
@@ -100,7 +99,7 @@ export default function PageMoreMenu() {
               페이지 작성으로 이동
               <EditIcon stroke="#6F6F6F" fill="#6F6F6F" strokeWidth={0.5} />
             </button>
-            {!isIntro && (
+            {!page.isIntro && (
               <button
                 className="px-4 py-2 border-t translate-x-[1px] border-[#AFAFAF] flex justify-between items-center text-[#FF0000]"
                 onClick={onPageDelete}>

@@ -1,9 +1,12 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
+import {keys} from "@/constants";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
+import {useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
 import {useEffect} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -46,6 +49,13 @@ export default function FlowChartAppBar() {
   useEffect(() => {
     if (!flowChart) loadFlowChart(+bookId!);
   }, [flowChart, book]);
+
+  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+  }, [actionQueue.length]);
 
   return (
     <nav className="fixed inset-0 mx-auto my-0 min-w-[800px] h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000] drop-shadow-sm">
