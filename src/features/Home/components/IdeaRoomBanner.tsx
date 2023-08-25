@@ -9,7 +9,7 @@ export default function IdeaRoomCard() {
   };
 
   return (
-    <div className="w-full bg-[#E2E7F0] p-10 flex flex-col">
+    <div className="self-center w-full max-w-[560px] p-10 flex flex-col">
       <span className={`text-[32px] font-bold text-[#191919] mb-[30px]`}>
         텍스터들의 아이디어가 실현되는 이곳!
       </span>
