@@ -1,4 +1,4 @@
-import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
+import {ReactComponent as PlusIcon} from "assets/icons/plus.svg";
 import {useRef, useState} from "react";
 import {useNavigate} from "react-router";
 
@@ -65,7 +65,7 @@ export default function NewThreadButton({boardId}: Props) {
         }`}>
         아이디어 추가하기
       </span>
-      <PlusCircleIcon fill="white" width={28} height={28} />
+      <PlusIcon fill="white" width={28} height={28} />
     </div>
   );
 }
