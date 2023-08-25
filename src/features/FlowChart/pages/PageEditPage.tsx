@@ -198,10 +198,10 @@ function ChoiceForm({
 
   const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
-  const onSuccessToDelete = () => {
+  const onSuccessToDelete = async () => {
     queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
     queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
-  }
+  };
 
   const _onInputContent = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.currentTarget.value.length > 100) return;
