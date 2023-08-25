@@ -1,5 +1,6 @@
 import {ReactComponent as CloseModalIcon} from "assets/icons/close-modal.svg";
 import {ReactComponent as ViewedIcon} from "assets/icons/viewed.svg";
+import classNames from "classnames";
 import {ChangeEvent, KeyboardEvent, useState} from "react";
 import ReactModal from "react-modal";
 
@@ -13,7 +14,7 @@ type Props = ReactModal.Props & {
   onCancel?: () => void;
 };
 
-const INVALID_CHARS = ["-", "+", "E", "e"];
+const INVALID_CHARS = ["-", "+", "E", "e", "."];
 
 export default function PasswordPrompt({
   title = "입력",
@@ -68,9 +69,9 @@ export default function PasswordPrompt({
       <div className="w-full px-6 py-2 mb-2">
         <div className="relative">
           <input
-            className={`w-full border-b border-gray ${
-              exposePassword ? "" : "number-password-input"
-            }`}
+            className={classNames("w-full border-b border-gray", {
+              "number-password-input": !exposePassword,
+            })}
             type="number"
             inputMode="numeric"
             placeholder="숫자 4~8자리"
