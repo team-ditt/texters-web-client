@@ -3,11 +3,12 @@ import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useProfile} from "@/features/Member/hooks";
 import {useAuthGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useLayoutEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -23,14 +24,14 @@ export default function BookDemoReaderPage() {
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
 
   const {data: introPage, refetch: refetchIntroPage} = useQuery(
-    [keys.GET_INTRO_PAGE],
+    [keys.GET_DASHBOARD_INTRO_PAGE],
     () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
     {
       enabled: Boolean(profile && book),
     },
   );
   const {data: page, isFetching} = useQuery(
-    [keys.GET_PAGE, currentPageId],
+    [keys.GET_DASHBOARD_PAGE, currentPageId],
     () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
     {
       enabled: Boolean(profile && book && currentPageId),
@@ -54,6 +55,13 @@ export default function BookDemoReaderPage() {
   useLayoutEffect(() => {
     refetchIntroPage();
   }, []);
+
+  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+  }, [actionQueue.length]);
 
   const {RequestSignInDialog} = useAuthGuard();
   useEffect(() => {

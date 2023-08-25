@@ -1,8 +1,8 @@
 import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
-import {useBookDescriptionRef, useBookTitleRef, usePublishedBookInfo} from "@/features/Book/hooks";
-import CommentButton from "@/features/Comment/components/CommentButton";
-import {useModal} from "@/hooks";
+import {useBookTitleRef, usePublishedBookInfo} from "@/features/Book/hooks";
+import {CommentButton} from "@/features/Comment/components";
+import {useExpandableParagraphRef, useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {toCompactNumber, toDateString} from "@/utils/formatter";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
@@ -19,7 +19,7 @@ export default function BookInfoPage() {
   const {hasHistory, resetHistory} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title, 32);
-  const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
+  const {paragraphRef, hasEllipsis, isExpanded, toggleExpand} = useExpandableParagraphRef();
 
   const onGoBack = () => navigate(-1);
   const onGoReader = () => {
@@ -77,7 +77,7 @@ export default function BookInfoPage() {
         </div>
         <SizedBox height={8} />
         <p
-          ref={descriptionRef}
+          ref={paragraphRef}
           className={classNames(
             "flex-1 text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem] whitespace-pre-wrap",
             {

@@ -78,10 +78,10 @@ export type Page = {
   createdAt: string;
   updatedAt: string;
   choices: Choice[];
+  isIntro: boolean;
 };
 
 export type PageView = Page & {
-  isIntro: boolean;
   isEnding: boolean;
 };
 

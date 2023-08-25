@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 
-export default function useCommentContentRef() {
-  const contentRef = useCallback((node: HTMLParagraphElement) => {
+export default function useExpandableParagraphRef() {
+  const paragraphRef = useCallback((node: HTMLParagraphElement) => {
     if (!node) return;
     const isOverflowed = node.scrollHeight > node.clientHeight;
     setHasEllipsis(isOverflowed);
@@ -15,7 +15,7 @@ export default function useCommentContentRef() {
   };
 
   return {
-    contentRef,
+    paragraphRef,
     hasEllipsis,
     isExpanded,
     toggleExpand,

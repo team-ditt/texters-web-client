@@ -105,10 +105,18 @@ body,
 }
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
   button,
   input,
   textarea {
     @apply outline-none;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
 
@@ -176,5 +184,10 @@ body,
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  /* Number Password Input */
+  .number-password-input {
+    -webkit-text-security: disc;
   }
 }

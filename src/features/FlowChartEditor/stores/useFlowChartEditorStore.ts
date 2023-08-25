@@ -560,6 +560,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             createdAt: "",
             updatedAt: "",
             choices: [],
+            isIntro: false,
           };
           set(state => {
             const lane = state.modelLanes[laneOrder];
@@ -635,23 +636,6 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               page.order = pageIndex;
               pageLaneOrder[page.id] = laneOrder;
             }
-          }
-          let isValid = true;
-          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
-            const lane = lanes[laneOrder];
-            for (let pageIndex = 0; pageIndex < lane.pages.length; ++pageIndex) {
-              const page = lane.pages[pageIndex];
-              for (let choice of page.choices) {
-                if (!choice.destinationPageId) continue;
-                if (pageLaneOrder[choice.destinationPageId] <= laneOrder) {
-                  isValid = false;
-                }
-              }
-            }
-          }
-          if (!isValid) {
-            get().setViewLanes(get().modelLanes);
-            return;
           }
           get().pushAction(() =>
             useFlowChartStore.getState().updatePageOrder({
