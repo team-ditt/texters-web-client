@@ -20,6 +20,7 @@ export default function BookHelpCard() {
         <div className="p-[5px] flex flex-col min-[480px]:flex-row gap-3">
           <a
             href="https://www.notion.so/texters/620859e89f6d49ebbbe92fd28a2b7a5f?pvs=4#f34071603e1943ee9e85083f5680415e"
+            target="_blank"
             className={`text-white font-bold text-[16px] w-full bg-[#4A5468] px-4 py-2 rounded-md text-center`}>
             작품 쓰는 법!
           </a>
