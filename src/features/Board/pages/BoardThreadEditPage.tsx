@@ -65,7 +65,7 @@ export default function BoardThreadEditPage() {
     submitThread({
       title,
       content,
-      isFixed: false,
+      isFixed,
       password,
     });
   };
