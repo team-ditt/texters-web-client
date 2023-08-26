@@ -7,8 +7,8 @@ export default function BookHelpCard() {
   };
 
   return (
-    <div className="w-full bg-[#E2E7F0] flex justify-center p-10">
-      <div className="flex flex-col">
+    <div className="bg-[#E2E7F0] flex justify-center">
+      <div className="self-center w-full max-w-[560px] p-10 flex flex-col">
         <span className={`text-[32px] font-bold text-[#191919] mb-[12px]`}>
           작품 만들기가 처음이세요...?
         </span>
