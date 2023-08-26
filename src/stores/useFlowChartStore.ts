@@ -65,7 +65,7 @@ const useFlowChartStore = create<FlowChartStoreState & FlowChartStoreAction>()((
     set({isLoading: true});
     try {
       const flowChart = await api.books.fetchFlowChart(bookId);
-      set({flowChart, isLoading: false});
+      set({flowChart, isLoading: false, updatedAt: flowChart.updatedAt});
       useFlowChartEditorStore.getState().loadFlowChart(flowChart);
     } catch (error) {
       set({isLoading: false, error: (error as AxiosError<TextersError>).response?.data});

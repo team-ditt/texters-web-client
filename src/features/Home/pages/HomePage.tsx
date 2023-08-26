@@ -2,14 +2,14 @@ import {api} from "@/api";
 import {MobileFooter, SizedBox} from "@/components";
 import {keys} from "@/constants";
 import {BookList} from "@/features/Book/components";
-import {WeeklyMostViewedCarousel} from "@/features/Home/components";
+import {BookHelpBanner, IdeaRoomBanner, WeeklyMostViewedCarousel} from "@/features/Home/components";
 import {useQuery} from "@tanstack/react-query";
 import {Link} from "react-router-dom";
 
 export default function HomePage() {
   const {data: paginatedBooks} = useQuery(
     [keys.GET_BOOKS, {page: 1, limit: 10, order: "published-date"}],
-    () => api.books.fetchBooks({page: 1, limit: 10, order: "published-date"}),
+    () => api.books.fetchPublishedBooks({page: 1, limit: 10, order: "published-date"}),
   );
 
   return (
@@ -25,8 +25,11 @@ export default function HomePage() {
           </div>
           <SizedBox height={8} />
           <BookList books={paginatedBooks.data} />
+          <SizedBox height={8} />
         </div>
       ) : null}
+      <BookHelpBanner />
+      <IdeaRoomBanner />
       <MobileFooter />
     </div>
   );

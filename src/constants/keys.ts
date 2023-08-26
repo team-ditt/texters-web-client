@@ -8,7 +8,12 @@ export const keys = {
   GET_MY_BOOKS: "/studio/dashboard",
   GET_MY_BOOK: "/studio/dashboard/books",
   GET_FLOW_CHART: "/studio/books/flow-chart",
-  GET_FLOW_CHART_PAGE: "/studio/books/flow-chart/pages",
+  GET_DASHBOARD_INTRO_PAGE: "/studio/books/pages/intro",
+  GET_DASHBOARD_PAGE: "/studio/books/pages",
   GET_INTRO_PAGE: "/books/pages/intro",
   GET_PAGE: "/books/pages",
+  GET_BOARD_THREADS: "/boards/threads",
+  GET_BOARD_THREAD: "/boards/thread",
+  GET_BOARD_FIXED_THREADS: "/boards/threads/fixed",
+  GET_BOARD_THREAD_COMMENTS: "/boards/threads/comments",
 };

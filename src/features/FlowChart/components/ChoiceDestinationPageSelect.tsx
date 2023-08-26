@@ -13,11 +13,11 @@ type Props = {
 
 export default function ChoiceDestinationPageSelect({bookId, pageId, choice}: Props) {
   const {isOpen, openModal, closeModal} = useModal();
-  const {allPossibleDestinationPages} = useDestinationPages(pageId, choice.id);
+  const {allPages} = useDestinationPages();
 
   const getPageTitle = (pageId: number | null) => {
     if (!pageId) return "";
-    return allPossibleDestinationPages.find(page => page.id === pageId)?.title;
+    return allPages.find(page => page.id === pageId)?.title;
   };
 
   return (
@@ -36,7 +36,7 @@ export default function ChoiceDestinationPageSelect({bookId, pageId, choice}: Pr
         bookId={bookId}
         pageId={pageId}
         choice={choice}
-        pages={allPossibleDestinationPages}
+        pages={allPages}
         onRequestClose={closeModal}
       />
     </>

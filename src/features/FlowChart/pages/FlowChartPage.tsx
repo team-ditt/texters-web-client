@@ -4,10 +4,8 @@ import FlowChartEditor from "@/features/FlowChartEditor/components/FlowChartEdit
 import {useAuthGuard, useMobileViewGuard} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {AnimatePresence, motion} from "framer-motion";
-import {useParams} from "react-router-dom";
 
 export default function FlowChartPage() {
-  const {bookId} = useParams();
   const {flowChart} = useFlowChartStore();
 
   const {RequestSignInDialog} = useAuthGuard();

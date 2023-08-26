@@ -107,3 +107,10 @@ axiosAuthenticated.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const getAxiosInstance = (password?: string) => {
+  const {accessToken} = useAuthStore.getState();
+  const didSignIn = !!accessToken;
+  if (!didSignIn || password !== undefined) return axiosPublic;
+  return axiosAuthenticated;
+};

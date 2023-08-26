@@ -3,11 +3,13 @@ import {SizedBox, SpinningLoader} from "@/components";
 import {keys} from "@/constants";
 import {BookCoverImage, BookReaderAppBar} from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
-import {useAuthGuard, useMobileViewGuard} from "@/hooks";
+import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import {useProfile} from "@/features/Member/hooks";
+import {useAuthGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {PageView} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {useEffect, useState} from "react";
+import {useEffect, useLayoutEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function BookDemoReaderPage() {
@@ -18,23 +20,21 @@ export default function BookDemoReaderPage() {
 
   const {recordHistory, findLastHistory, hasHistory, canGoBack, popHistory, resetHistory} =
     useBookReaderStore();
+  const {profile} = useProfile();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
 
-  const queryClient = useQueryClient();
-  const {data: introPage} = useQuery(
-    [keys.GET_INTRO_PAGE],
-    () => api.pages.fetchIntroPage(book!.id),
+  const {data: introPage, refetch: refetchIntroPage} = useQuery(
+    [keys.GET_DASHBOARD_INTRO_PAGE],
+    () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
     {
-      enabled: !!book,
-      refetchOnWindowFocus: false,
+      enabled: Boolean(profile && book),
     },
   );
   const {data: page, isFetching} = useQuery(
-    [keys.GET_PAGE, currentPageId],
-    () => api.pages.fetchPage(book!.id, currentPageId!),
+    [keys.GET_DASHBOARD_PAGE, currentPageId],
+    () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
     {
-      enabled: Boolean(book && currentPageId),
-      refetchOnWindowFocus: false,
+      enabled: Boolean(profile && book && currentPageId),
     },
   );
 
@@ -46,14 +46,24 @@ export default function BookDemoReaderPage() {
     resetHistory(bookId!);
     setCurrentPageId(undefined);
   };
-  const onGoBack = () => navigate(`/studio/books/${bookId}/flow-chart`, {replace: true});
+  const onGoBack = () => navigate(`/studio/books/${bookId}/editor`, {replace: true});
   const onPopHistory = () => {
     popHistory(bookId!);
     setCurrentPageId(findLastHistory(bookId!)?.pageId);
   };
 
+  useLayoutEffect(() => {
+    refetchIntroPage();
+  }, []);
+
+  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+  }, [actionQueue.length]);
+
   const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
   useEffect(() => {
     if (!bookId) return;
 
@@ -64,7 +74,7 @@ export default function BookDemoReaderPage() {
   }, [bookId]);
   useEffect(() => {
     if (page) return setCurrentPage({...page});
-    if (findLastHistory(bookId!)?.isIntro) return;
+    if (findLastHistory(bookId!)?.isIntro && introPage) return setCurrentPage({...introPage});
     if (!hasHistory(bookId!) && introPage) {
       recordHistory(bookId!, {pageId: introPage.id, isIntro: true});
       return setCurrentPage({...introPage});
@@ -79,14 +89,13 @@ export default function BookDemoReaderPage() {
     return (
       <div className="mobile-view justify-center items-center">
         <SpinningLoader color="#888888" />
-        <MobileViewAlert />
         <RequestSignInDialog />
       </div>
     );
 
   return (
     <div className="mobile-view pt-16 pb-4">
-      <BookReaderAppBar book={book} />
+      <BookReaderAppBar book={book} showLike={false} />
       <div className="flex-1 p-6 flex flex-col items-stretch">
         {findLastHistory(bookId!)?.isIntro ? (
           <>
@@ -142,7 +151,6 @@ export default function BookDemoReaderPage() {
         </div>
       </div>
 
-      <MobileViewAlert />
       <RequestSignInDialog />
       <NotAuthorAlert />
     </div>

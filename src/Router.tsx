@@ -16,6 +16,10 @@ const PageEditPage = lazy(() => import("@/features/FlowChart/pages/PageEditPage"
 const BookReaderPage = lazy(() => import("@/features/Book/pages/BookReaderPage"));
 const BookDemoReaderPage = lazy(() => import("@/features/Book/pages/BookDemoReaderPage"));
 const CommentPage = lazy(() => import("@/features/Comment/pages/CommentPage"));
+const BoardThreadListPage = lazy(() => import("@/features/Board/pages/BoardThreadListPage"));
+const BoardThreadFormPage = lazy(() => import("@/features/Board/pages/BoardThreadFormPage"));
+const BoardThreadPage = lazy(() => import("@/features/Board/pages/BoardThreadPage"));
+const BoardThreadEditPage = lazy(() => import("@/features/Board/pages/BoardThreadEditPage"));
 const NotFoundPage = lazy(() => import("@/features/Error/pages/NotFoundPage"));
 
 export function Router() {
@@ -34,9 +38,13 @@ export function Router() {
         <Route path="/studio/dashboard" element={<DashboardPage />} />
         <Route path="/studio/books/info" element={<BookInfoFormPage />} />
         <Route path="/studio/books/:bookId" element={<BookInfoEditPage />} />
-        <Route path="/studio/books/:bookId/flow-chart" element={<FlowChartPage />} />
-        <Route path="/studio/books/:bookId/flow-chart/pages/:pageId" element={<PageEditPage />} />
+        <Route path="/studio/books/:bookId/editor" element={<FlowChartPage />} />
+        <Route path="/studio/books/:bookId/editor/pages/:pageId" element={<PageEditPage />} />
         <Route path="/studio/books/:bookId/read" element={<BookDemoReaderPage />} />
+        <Route path="/boards/:boardId/threads" element={<BoardThreadListPage />} />
+        <Route path="/boards/:boardId/threads/new" element={<BoardThreadFormPage />} />
+        <Route path="/boards/:boardId/threads/:threadId" element={<BoardThreadPage />} />
+        <Route path="/boards/:boardId/threads/:threadId/edit" element={<BoardThreadEditPage />} />
         <Route
           path="/terms-and-conditions"
           element={<OfficialDocumentPage type="terms and conditions" />}

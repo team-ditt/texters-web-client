@@ -1,10 +1,10 @@
 import {axiosAuthenticated, axiosPublic} from "@/api/config";
 import {
-  Book,
   BookForm,
   BookQuery,
   DashboardBook,
   FlowChart,
+  PublishedBook,
   WeeklyMostViewedBook,
 } from "@/types/book";
 import {Paginated, PaginationQuery} from "@/types/pagination";
@@ -22,12 +22,12 @@ export function fetchWeeklyMostViewedBooks() {
   });
 }
 
-export function fetchBooks({query, order, page, limit}: BookQuery & PaginationQuery) {
-  return axiosPublic.get<Paginated<Book>>("/books", {params: {query, order, page, limit}});
+export function fetchPublishedBooks({query, order, page, limit}: BookQuery & PaginationQuery) {
+  return axiosPublic.get<Paginated<PublishedBook>>("/books", {params: {query, order, page, limit}});
 }
 
-export function fetchBook(id: number) {
-  return axiosPublic.get<Book>(`/books/${id}`);
+export function fetchPublishedBook(id: number) {
+  return axiosPublic.get<PublishedBook>(`/books/${id}`);
 }
 
 export function fetchMyBooks({memberId, page, limit}: {memberId: number} & PaginationQuery) {
@@ -37,7 +37,7 @@ export function fetchMyBooks({memberId, page, limit}: {memberId: number} & Pagin
 }
 
 export function fetchMyBook(memberId: number, bookId: number) {
-  return axiosAuthenticated.get<Book>(`/members/${memberId}/books/${bookId}`);
+  return axiosAuthenticated.get<DashboardBook>(`/members/${memberId}/books/${bookId}`);
 }
 
 export function fetchFlowChart(bookId: number) {
@@ -52,7 +52,11 @@ export async function updateBookInfo(bookId: number, {coverImage, title, descrip
 }
 
 export function publishBook(bookId: number) {
-  return axiosAuthenticated.put(`/books/${bookId}/publish`);
+  return axiosAuthenticated.post(`/books/${bookId}/publish`);
+}
+
+export function unpublishBook(bookId: number) {
+  return axiosAuthenticated.post(`/books/${bookId}/unpublish`);
 }
 
 export function deleteBook(bookId: number) {

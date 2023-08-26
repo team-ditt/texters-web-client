@@ -8,8 +8,8 @@ import {
   usePageContentTextArea,
   usePageTitleInput,
 } from "@/features/FlowChart/hooks";
-import usePublishedGuard from "@/features/FlowChart/hooks/usePublishedGuard";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import {useProfile} from "@/features/Member/hooks";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
 import {Choice, Page} from "@/types/book";
@@ -23,14 +23,15 @@ import {useParams} from "react-router-dom";
 
 export default function PageEditPage() {
   const didSignIn = useDidSignIn();
+  const {profile} = useProfile();
   const {bookId, pageId} = useParams();
   const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
   const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
 
   const {data: page} = useQuery(
-    [keys.GET_FLOW_CHART_PAGE, pageId],
-    () => api.pages.fetchPage(+bookId!, +pageId!),
-    {enabled: didSignIn, refetchOnWindowFocus: false, retry: false},
+    [keys.GET_DASHBOARD_PAGE, pageId],
+    () => api.pages.fetchDashboardPage(profile!.id, +bookId!, +pageId!),
+    {enabled: !!profile && didSignIn, refetchOnWindowFocus: false, retry: false},
   );
 
   const _onInputTitle = (event: ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +45,6 @@ export default function PageEditPage() {
 
   const {RequestSignInDialog} = useAuthGuard();
   const {MobileViewAlert} = useMobileViewGuard();
-  const {PublishedBookAlert} = usePublishedGuard(+bookId!);
   useEffect(() => {
     document.body.style.backgroundColor = "#EFEFEF";
     return () => {
@@ -56,12 +56,6 @@ export default function PageEditPage() {
     setTitle(page.title);
     setContent(page.content ?? "");
   }, [page]);
-
-  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
-  }, [actionQueue.length]);
 
   if (!page)
     return (
@@ -79,7 +73,6 @@ export default function PageEditPage() {
 
         <MobileViewAlert />
         <RequestSignInDialog />
-        <PublishedBookAlert />
       </div>
     );
 
@@ -119,7 +112,6 @@ export default function PageEditPage() {
 
       <MobileViewAlert />
       <RequestSignInDialog />
-      <PublishedBookAlert />
     </div>
   );
 }
@@ -153,7 +145,8 @@ function ChoiceList({page}: {page: Page}) {
       order: newOrder,
     });
     loadChoiceOrder(choiceId, newOrder);
-    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
     setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
   };
 
@@ -205,7 +198,10 @@ function ChoiceForm({
 
   const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
-  const onSuccessToDelete = () => queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+  const onSuccessToDelete = async () => {
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+  };
 
   const _onInputContent = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.currentTarget.value.length > 100) return;
@@ -331,7 +327,8 @@ function AddChoiceButton() {
     useFlowChartEditorStore
       .getState()
       .loadNewChoice(choice.sourcePageId, choice.id, choice.content);
-    queryClient.invalidateQueries([keys.GET_FLOW_CHART_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
   };
 
   return (

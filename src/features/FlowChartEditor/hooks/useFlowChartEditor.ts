@@ -22,7 +22,7 @@ export default function useFlowChartEditor() {
   const showNewLaneButton = useFlowChartEditorStore(state => state.showNewLaneButton);
   const hideNewLaneButton = useFlowChartEditorStore(state => state.hideNewLaneButton);
 
-  /* update element transtisions on request anim frame */
+  /* update element transitions on request anim frame */
   useRequestAnimationFrame(updateTransitions);
 
   /* finish drag on mouse up*/
@@ -50,7 +50,6 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
-          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "page" || draggingState.sourceId === null) return;
           const draggingPageId = draggingState.sourceId;
 
@@ -75,7 +74,7 @@ export default function useFlowChartEditor() {
           const {pages: pageBoxes} = calcElementBoxesModel(lanes);
 
           let inserted = false;
-          for (let laneOrder = 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             if (inserted) break;
             const lane = lanes[laneOrder];
             if (
@@ -130,7 +129,6 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
-          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "choice" || draggingState.sourceId === null) return;
           const draggingChoiceId = draggingState.sourceId;
 
@@ -193,7 +191,6 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
-          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging !== "path") return;
           const sourceChoiceId = draggingState.sourceId;
 
@@ -227,7 +224,7 @@ export default function useFlowChartEditor() {
           };
 
           const {pages: pageBoxes} = calcElementBoxesModel(lanes);
-          for (let laneOrder = choiceLaneOrder + 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             const lane = lanes[laneOrder];
             for (let page of lane.pages) {
               const pageBox = pageBoxes[page.id];
@@ -261,7 +258,6 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
-          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging) return;
           if (useFlowChartEditorStore.getState().viewStates.newLaneButton.toPresent) return;
           if (useFlowChartEditorStore.getState().openedMoreMenuPageId !== null) return;
@@ -273,7 +269,7 @@ export default function useFlowChartEditor() {
             showNewLanePageButton(1);
             return;
           }
-          for (let laneOrder = 1; laneOrder < lanes.length; ++laneOrder) {
+          for (let laneOrder = 0; laneOrder < lanes.length; ++laneOrder) {
             const lane = lanes[laneOrder];
             if (laneOrder === lanes.length - 1 && PAGE_WIDTH * lanes.length <= dragPosition.x) {
               showNewLanePageButton(lanes.length);
@@ -325,7 +321,6 @@ export default function useFlowChartEditor() {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
-          if (!useFlowChartEditorStore.getState().isEditable()) return;
           if (draggingState.isDragging) return;
           if (useFlowChartEditorStore.getState().openedMoreMenuPageId !== null) return;
 

@@ -105,10 +105,18 @@ body,
 }
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
   button,
   input,
   textarea {
     @apply outline-none;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
 
@@ -147,6 +155,15 @@ body,
     @apply bg-black-300 rounded-[8px];
   }
 
+  .disable-scrollbar::-webkit-scrollbar {
+    background: transparent;
+    width: 0;
+  }
+
+  .disable-scrollbar {
+    scrollbar-width: none;
+  }
+
   /* Loader */
   .spinning-loader div {
     animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
@@ -167,5 +184,10 @@ body,
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  /* Number Password Input */
+  .number-password-input {
+    -webkit-text-security: disc;
   }
 }

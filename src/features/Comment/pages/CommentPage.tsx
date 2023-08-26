@@ -1,11 +1,9 @@
 import {api} from "@/api";
 import {keys} from "@/constants";
-import CommentEditor from "@/features/Comment/components/CommentEditor";
-import CommentList from "@/features/Comment/components/CommentList";
-import {useInfiniteScroll} from "@/hooks";
+import {CommentEditor, CommentList} from "@/features/Comment/components";
+import {useFullHeight, useInfiniteScroll} from "@/hooks";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
-import {useEffect, useRef} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 export default function CommentPage() {
@@ -25,30 +23,9 @@ export default function CommentPage() {
   const comments = data?.pages?.flatMap(page => page.data);
 
   const {triggerRef} = useInfiniteScroll(fetchNext);
+  const {containerRef} = useFullHeight();
 
   const onGoBack = () => navigate(-1);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const currentElement = containerRef.current;
-    for (
-      let element: HTMLElement | null = currentElement;
-      element;
-      element = element.parentElement
-    ) {
-      element.style.height = "100%";
-    }
-    return () => {
-      for (
-        let element: HTMLElement | null = currentElement;
-        element;
-        element = element.parentElement
-      ) {
-        element.style.height = "";
-      }
-    };
-  }, [containerRef, containerRef.current]);
 
   return (
     <div

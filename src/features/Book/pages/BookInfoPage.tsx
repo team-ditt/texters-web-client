@@ -1,8 +1,8 @@
 import {FlatButton, MobileFooter, Modal, SizedBox, SpinningLoader} from "@/components";
 import {BookCoverImage, BookLikeButton} from "@/features/Book/components";
-import {useBookDescriptionRef, useBookInfo, useBookTitleRef} from "@/features/Book/hooks";
-import CommentButton from "@/features/Comment/components/CommentButton";
-import {useModal} from "@/hooks";
+import {useBookTitleRef, usePublishedBookInfo} from "@/features/Book/hooks";
+import {CommentButton} from "@/features/Comment/components";
+import {useExpandableParagraphRef, useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {toCompactNumber, toDateString} from "@/utils/formatter";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
@@ -15,11 +15,11 @@ export default function BookInfoPage() {
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {book} = useBookInfo(+bookId!);
+  const {book} = usePublishedBookInfo(+bookId!);
   const {hasHistory, resetHistory} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title, 32);
-  const {descriptionRef, hasEllipsis, isExpanded, toggleExpand} = useBookDescriptionRef();
+  const {paragraphRef, hasEllipsis, isExpanded, toggleExpand} = useExpandableParagraphRef();
 
   const onGoBack = () => navigate(-1);
   const onGoReader = () => {
@@ -72,12 +72,12 @@ export default function BookInfoPage() {
             조회수 {toCompactNumber(book.viewed)}
           </span>
           <span className="ms-0.5 text-[12px] text-[#999999]">
-            작품 공개일 {toDateString(new Date(book.updatedAt))}
+            작품 공개일 {toDateString(new Date(book.publishedAt))}
           </span>
         </div>
         <SizedBox height={8} />
         <p
-          ref={descriptionRef}
+          ref={paragraphRef}
           className={classNames(
             "flex-1 text-[#2D3648] overflow-hidden text-ellipsis leading-[2rem] whitespace-pre-wrap",
             {
