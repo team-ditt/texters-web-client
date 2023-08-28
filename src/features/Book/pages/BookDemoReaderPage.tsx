@@ -118,7 +118,7 @@ export default function BookDemoReaderPage() {
         <div className="flex flex-col items-stretch gap-3">
           {canGoBack(bookId!) ? (
             <button
-              className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
+              className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#717D96] font-medium leading-[2rem] text-white disabled:opacity-50"
               onClick={onPopHistory}
               disabled={isFetching}>
               뒤로가기
