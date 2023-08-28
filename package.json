@@ -1,7 +1,7 @@
 {
   "name": "texters-web-client",
   "private": true,
-  "version": "1.2.2",
+  "version": "1.2.3",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build --mode production && zip -r dist/web.zip dist/*",
