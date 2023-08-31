@@ -74,7 +74,7 @@ export default function AdminStatisticsPage() {
               key={day}
               className="self-stretch flex flex-row justify-between px-4 py-1 border-b border-[#888]">
               <span className="flex-1 text-center">{toDateString(new Date(day))}</span>
-              <span className="flex-1 text-center">{count}명</span>
+              <span className="flex-1 text-center">{count}개</span>
             </div>
           ))}
         </div>
