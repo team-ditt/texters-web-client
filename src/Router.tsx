@@ -1,3 +1,4 @@
+import AdminStatisticsPage from "@/features/Admin/pages/AdminStatisticsPage";
 import SignInPage from "@/features/Auth/pages/SignInPage";
 import HomePage from "@/features/Home/pages/HomePage";
 import OfficialDocumentPage from "@/features/OfficialDocuments/pages/OfficialDocumentPage";
@@ -50,6 +51,7 @@ export function Router() {
           element={<OfficialDocumentPage type="terms and conditions" />}
         />
         <Route path="/privacy-policy" element={<OfficialDocumentPage type="privacy policy" />} />
+        <Route path="/admin/statistics" element={<AdminStatisticsPage />} />
         <Route path="/error/not-found" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/error/not-found" replace />} />
       </Routes>

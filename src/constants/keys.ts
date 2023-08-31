@@ -16,4 +16,6 @@ export const keys = {
   GET_BOARD_THREAD: "/boards/thread",
   GET_BOARD_FIXED_THREADS: "/boards/threads/fixed",
   GET_BOARD_THREAD_COMMENTS: "/boards/threads/comments",
+  GET_NEW_USERS_STATISTICS: "/admin/statistics/new-users",
+  GET_NEW_BOOKS_STATISTICS: "/admin/statistics/new-books",
 };
