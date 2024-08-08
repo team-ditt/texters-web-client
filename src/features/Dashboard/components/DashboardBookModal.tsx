@@ -6,12 +6,14 @@ import {BookCoverImage} from "@/features/Book/components";
 import BookStatusChip from "@/features/Dashboard/components/BookStatusChip";
 import BookUpdatableChip from "@/features/Dashboard/components/BookUpdatableChip";
 import DeleteBookDialog from "@/features/Dashboard/components/DeleteBookDialog";
+import CopyBookDialog from "@/features/Dashboard/components/CopyBookDialog";
 import PublishBookDialog from "@/features/Dashboard/components/PublishBookDialog";
 import UnpublishBookDialog from "@/features/Dashboard/components/UnpublishBookDialog";
 import UpdateBookDialog from "@/features/Dashboard/components/UpdateBookDialog";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useModal} from "@/hooks";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
+import useDashboardStore from "@/stores/useDashboardStore";
 import {DashboardBook} from "@/types/book";
 import {Validator} from "@/utils";
 import {toCompactNumber} from "@/utils/formatter";
@@ -76,9 +78,9 @@ export default function DashboardBookModal({book, onRequestClose, ...props}: Pro
           <div className="flex flex-col">
             <BookCoverImage
               className="w-full min-[480px]:max-w-[200px] min-[480px]:self-center aspect-square rounded-lg"
-              src={book.coverImageUrl ?? undefined}
+              src={undefined}
             />
-            <BookStatistics className="hidden min-[480px]:flex" book={book} />
+            {/* <BookStatistics className="hidden min-[480px]:flex" book={book} /> */}
           </div>
 
           <div className="flex flex-col">
@@ -90,16 +92,16 @@ export default function DashboardBookModal({book, onRequestClose, ...props}: Pro
                 <PlayBoldIcon width={16} height={16} />
                 미리 읽어보기
               </button>
-              {book.isPublished ? (
+              {/* {book.isPublished ? (
                 <button
                   className="px-2 py-1 border-[1.5px] border-[#242424] rounded-lg text-[14px] font-medium flex items-center gap-2"
                   onClick={onClick.toPublishedBookInfo}>
                   <LinkBoldIcon width={18} height={18} />
                   공개된 작품 보러가기
                 </button>
-              ) : null}
+              ) : null} */}
             </div>
-            <BookStatistics className="min-[480px]:hidden" book={book} />
+            {/* <BookStatistics className="min-[480px]:hidden" book={book} /> */}
             <BookActions className="mt-2" book={book} />
           </div>
         </div>
@@ -122,10 +124,10 @@ export default function DashboardBookModal({book, onRequestClose, ...props}: Pro
 function BookInfo({book}: {book: DashboardBook}) {
   return (
     <div className="flex-1 flex flex-col items-stretch self-stretch">
-      <div className="flex gap-1">
+      {/* <div className="flex gap-1">
         <BookStatusChip isPublished={book.isPublished} />
         {book.canUpdate ? <BookUpdatableChip /> : null}
-      </div>
+      </div> */}
       <div className="py-1">
         <span className="text-left font-bold text-[18px] text-[#2D3648] text-ellipsis">
           {book.title}
@@ -138,44 +140,49 @@ function BookInfo({book}: {book: DashboardBook}) {
   );
 }
 
-function BookStatistics({book, className}: HTMLAttributes<HTMLDivElement> & {book: DashboardBook}) {
-  return (
-    <div
-      className={`mt-2 px-4 py-2 w-full min-[480px]:max-w-[200px] rounded-lg bg-[#EFEFEF] flex flex-row justify-between items-center gap-1 ${className}`}>
-      <p className="w-8 flex flex-col items-center">
-        <span className="text-[12px] text-[#999999]">조회수</span>
-        <span
-          className={classNames("text-[14px] font-bold text-[#999999]", {
-            "!text-[#242424]": book.viewed > 0,
-          })}>
-          {book.viewed > 0 ? toCompactNumber(book.viewed) : "-"}
-        </span>
-      </p>
-      <SizedBox width={12} />
-      <p className="w-8 flex flex-col items-center">
-        <span className="text-[12px] text-[#999999]">좋아요</span>
-        <span
-          className={classNames("text-[14px] font-bold text-[#999999]", {
-            "!text-[#242424]": book.liked > 0,
-          })}>
-          {book.liked > 0 ? toCompactNumber(book.liked) : "-"}
-        </span>
-      </p>
-      <SizedBox width={12} />
-      <p className="w-8 flex flex-col items-center">
-        <span className="text-[12px] text-[#999999]">댓글</span>
-        <span
-          className={classNames("text-[14px] font-bold text-[#999999]", {
-            "!text-[#242424]": book.commentsCount > 0,
-          })}>
-          {book.commentsCount > 0 ? toCompactNumber(book.commentsCount) : "-"}
-        </span>
-      </p>
-    </div>
-  );
-}
+// function BookStatistics({book, className}: HTMLAttributes<HTMLDivElement> & {book: DashboardBook}) {
+//   return (
+//     <div
+//       className={`mt-2 px-4 py-2 w-full min-[480px]:max-w-[200px] rounded-lg bg-[#EFEFEF] flex flex-row justify-between items-center gap-1 ${className}`}>
+//       <p className="w-8 flex flex-col items-center">
+//         <span className="text-[12px] text-[#999999]">조회수</span>
+//         <span
+//           className={classNames("text-[14px] font-bold text-[#999999]", {
+//             "!text-[#242424]": book.viewed > 0,
+//           })}>
+//           {book.viewed > 0 ? toCompactNumber(book.viewed) : "-"}
+//         </span>
+//       </p>
+//       <SizedBox width={12} />
+//       <p className="w-8 flex flex-col items-center">
+//         <span className="text-[12px] text-[#999999]">좋아요</span>
+//         <span
+//           className={classNames("text-[14px] font-bold text-[#999999]", {
+//             "!text-[#242424]": book.liked > 0,
+//           })}>
+//           {book.liked > 0 ? toCompactNumber(book.liked) : "-"}
+//         </span>
+//       </p>
+//       <SizedBox width={12} />
+//       <p className="w-8 flex flex-col items-center">
+//         <span className="text-[12px] text-[#999999]">댓글</span>
+//         <span
+//           className={classNames("text-[14px] font-bold text-[#999999]", {
+//             "!text-[#242424]": book.commentsCount > 0,
+//           })}>
+//           {book.commentsCount > 0 ? toCompactNumber(book.commentsCount) : "-"}
+//         </span>
+//       </p>
+//     </div>
+//   );
+// }
 
 function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: DashboardBook}) {
+  const {
+    isOpen: isCopyModalOpen,
+    openModal: openCopyModal,
+    closeModal: closeCopyModal,
+  } = useModal();
   const {
     isOpen: isPublishModalOpen,
     openModal: openPublishModal,
@@ -197,63 +204,66 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
     closeModal: closeDeleteModal,
   } = useModal();
 
+  const {removeBook} = useDashboardStore();
+
   const queryClient = useQueryClient();
-  const {mutate: publishBook, isLoading: isPublishing} = useMutation(
-    () => api.books.publishBook(book.id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
-        closePublishModal();
-      },
-      onError: () => {
-        alert("작품을 공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
-        closePublishModal();
-      },
-    },
-  );
-  const {mutate: updateBook, isLoading: isUpdating} = useMutation(
-    () => api.books.publishBook(book.id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
-        closeUpdateModal();
-      },
-      onError: () => {
-        alert("작품을 업데이트하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
-        closeUpdateModal();
-      },
-    },
-  );
-  const {mutate: unpublishBook, isLoading: isUnpublishing} = useMutation(
-    () => api.books.unpublishBook(book.id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
-        closeUnpublishModal();
-      },
-      onError: () => {
-        alert("작품을 비공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
-        closeUnpublishModal();
-      },
-    },
-  );
-  const {mutate: deleteBook, isLoading: isDeleting} = useMutation(
-    () => api.books.deleteBook(book.id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-        queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
-        closeDeleteModal();
-      },
-      onError: () => {
-        alert("작품을 삭제하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
-        closeDeleteModal();
-      },
-    },
-  );
+  // const {mutate: publishBook, isLoading: isPublishing} = useMutation(
+  //   () => api.books.publishBook(book.id),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  //       queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+  //       closePublishModal();
+  //     },
+  //     onError: () => {
+  //       alert("작품을 공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+  //       closePublishModal();
+  //     },
+  //   },
+  // );
+  // const {mutate: updateBook, isLoading: isUpdating} = useMutation(
+  //   () => api.books.publishBook(book.id),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  //       queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+  //       closeUpdateModal();
+  //     },
+  //     onError: () => {
+  //       alert("작품을 업데이트하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+  //       closeUpdateModal();
+  //     },
+  //   },
+  // );
+  // const {mutate: unpublishBook, isLoading: isUnpublishing} = useMutation(
+  //   () => api.books.unpublishBook(book.id),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  //       queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+  //       closeUnpublishModal();
+  //     },
+  //     onError: () => {
+  //       alert("작품을 비공개하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+  //       closeUnpublishModal();
+  //     },
+  //   },
+  // );
+  // const {mutate: deleteBook, isLoading: isDeleting} = useMutation(
+  //   () => api.books.deleteBook(book.id),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  //       queryClient.invalidateQueries([keys.GET_BOOKS], {refetchType: "all"});
+  //       closeDeleteModal();
+  //     },
+  //     onError: () => {
+  //       alert("작품을 삭제하는데 실패했어요... 이 현상이 반복되면 관리자에게 문의해주세요!");
+  //       closeDeleteModal();
+  //     },
+  //   },
+  // );
+  const deleteBook = () => removeBook(book.id);
 
   const navigate = useNavigate();
   const onEditBookInfo = () => navigate(`/studio/books/${book.id}`);
@@ -269,7 +279,13 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
           <BookOpenIcon width={16} height={16} fill="#242424" />
           작품 개요 수정하기
         </button>
-        {book.isPublished ? null : (
+        <button
+          className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white"
+          onClick={openCopyModal}>
+          <EyeIcon width={16} height={16} fill="white" />
+          작품 내보내기
+        </button>
+        {/* {book.isPublished ? null : (
           <button
             className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white"
             onClick={openPublishModal}>
@@ -292,7 +308,7 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
             <EyeOffIcon width={16} height={16} fill="white" />
             작품 비공개하기
           </button>
-        ) : null}
+        ) : null} */}
         <button
           className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#F04438] text-white"
           onClick={openDeleteModal}>
@@ -301,7 +317,7 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
         </button>
       </div>
 
-      <PublishBookDialog
+      {/* <PublishBookDialog
         isOpen={isPublishModalOpen}
         isPublishing={isPublishing}
         onConfirm={publishBook}
@@ -318,10 +334,11 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
         isUnpublishing={isUnpublishing}
         onConfirm={unpublishBook}
         onRequestClose={closeUnpublishModal}
-      />
+      /> */}
+      <CopyBookDialog bookId={book.id} isOpen={isCopyModalOpen} onRequestClose={closeCopyModal} />
       <DeleteBookDialog
         isOpen={isDeleteModalOpen}
-        isDeleting={isDeleting}
+        isDeleting={false}
         onConfirm={deleteBook}
         onRequestClose={closeDeleteModal}
       />

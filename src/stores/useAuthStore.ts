@@ -11,17 +11,18 @@ type AuthStoreAction = {
 };
 
 const useAuthStore = create<AuthStoreState & AuthStoreAction>()(
-  persist(
-    set => ({
-      accessToken: null,
-      saveToken: accessToken => set({accessToken}),
-      removeToken: () => set({accessToken: null}),
-    }),
-    {
-      name: "auth-storage",
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
+  // persist(
+  set => ({
+    accessToken: "something",
+    saveToken: accessToken => set({accessToken}),
+    removeToken: () => set({accessToken: null}),
+  }),
+  // ,
+  // {
+  //   name: "auth-storage",
+  //   storage: createJSONStorage(() => localStorage),
+  // },
+  // ),
 );
 
 export default useAuthStore;

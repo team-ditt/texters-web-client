@@ -10,8 +10,8 @@ export type Book = {
   id: number;
   title: string;
   description: string;
-  coverImageUrl: string | null;
-  author: Author;
+  // coverImageUrl: string | null;
+  // author: Author;
 };
 
 export type WeeklyMostViewedBook = Book & {
@@ -19,13 +19,13 @@ export type WeeklyMostViewedBook = Book & {
   weeklyViewed: number;
 };
 
-export type DashboardBook = Book &
-  BookStatistics & {
-    createdAt: string;
-    updatedAt: string;
-    isPublished: boolean;
-    canUpdate: boolean;
-  };
+export type DashboardBook = Book; // &
+// BookStatistics & {
+//   createdAt: string;
+//   updatedAt: string;
+//   isPublished: boolean;
+//   canUpdate: boolean;
+// };
 
 export type PublishedBook = Book &
   BookStatistics & {
@@ -46,8 +46,8 @@ export type BookForm = {
 };
 
 export type FlowChart = Omit<Book, "viewed" | "liked" | "coverImageUrl"> & {
-  createdAt: string;
-  updatedAt: string;
+  // createdAt: string;
+  // updatedAt: string;
   lanes: Lane[];
 };
 
@@ -75,8 +75,8 @@ export type Page = {
   order: number;
   title: string;
   content: string | null;
-  createdAt: string;
-  updatedAt: string;
+  // createdAt: string;
+  // updatedAt: string;
   choices: Choice[];
   isIntro: boolean;
 };

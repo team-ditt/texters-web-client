@@ -44,13 +44,13 @@ function CarouselSlide({book}: {book: Book}) {
     <Link className="relative w-full h-full flex" to={`/books/${book.id}`}>
       <BookCoverImage
         className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
-        src={book.coverImageUrl ?? undefined}
+        src={undefined}
       />
       <div className="w-full h-full px-4 py-6 flex flex-col justify-end bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.7)]">
         <span ref={titleRef} className="font-bold text-[20px] text-white">
           {book.title}
         </span>
-        <span className="text-white">{book.author.penName}</span>
+        {/* <span className="text-white">{book.author.penName}</span> */}
       </div>
     </Link>
   );

@@ -1,9 +1,11 @@
 import {Modal, SizedBox} from "@/components";
 import AutoSaveMarker from "@/components/AutoSaveMarker";
 import {keys} from "@/constants";
+import CopyBookDialog from "@/features/Dashboard/components/CopyBookDialog";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import useFlowChartEditor from "@/features/FlowChartEditor/hooks/useFlowChartEditor";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
+import {useModal} from "@/hooks";
 import {useBookReaderStore, useFlowChartStore} from "@/stores";
 import {TextersErrorCode} from "@/types/error";
 import {useQueryClient} from "@tanstack/react-query";
@@ -17,24 +19,24 @@ export default function FlowChartAppBar() {
   const {recordHistory, resetHistory} = useBookReaderStore();
   const {
     flowChart,
-    isSaving,
-    updatedAt,
-    error: flowChartError,
+    // isSaving,
+    // updatedAt,
+    // error: flowChartError,
     loadFlowChart,
   } = useFlowChartStore();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
-  const isLockedFlowChart = flowChartError?.code === TextersErrorCode.LOCKED_FLOW_CHART;
-  const isFailedToAutoSave = Boolean(
-    flowChartError && flowChartError.code !== TextersErrorCode.LOCKED_FLOW_CHART,
-  );
+  // const isLockedFlowChart = flowChartError?.code === TextersErrorCode.LOCKED_FLOW_CHART;
+  // const isFailedToAutoSave = Boolean(
+  //   flowChartError && flowChartError.code !== TextersErrorCode.LOCKED_FLOW_CHART,
+  // );
 
   const onGoBack = () => navigate(-1);
-  const onRefresh = () => {
-    window.location.reload();
-  };
-  const onGoHome = () => {
-    window.location.href = "/";
-  };
+  // const onRefresh = () => {
+  //   window.location.reload();
+  // };
+  // const onGoHome = () => {
+  //   window.location.href = "/";
+  // };
   const onDemoRead = () => {
     resetHistory(bookId!);
     navigate(`/studio/books/${bookId}/read`);
@@ -50,12 +52,17 @@ export default function FlowChartAppBar() {
     if (!flowChart) loadFlowChart(+bookId!);
   }, [flowChart, book]);
 
-  const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
-    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
-  }, [actionQueue.length]);
+  // const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
+  //   queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+  //   queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+  // }, [actionQueue.length]);
+  const {
+    isOpen: isCopyModalOpen,
+    openModal: openCopyModal,
+    closeModal: closeCopyModal,
+  } = useModal();
 
   return (
     <nav className="fixed inset-0 mx-auto my-0 min-w-[800px] h-14 ps-6 pe-4 bg-white flex justify-between items-center z-[1000] drop-shadow-sm">
@@ -63,10 +70,15 @@ export default function FlowChartAppBar() {
         <button onClick={onGoBack}>
           <LeftArrowIcon fill="#939393" />
         </button>
-        <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1>
+        {/* <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1> */}
       </div>
       <div className="flex items-center gap-1">
-        <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} />
+        {/* <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} /> */}
+        <button
+          className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white"
+          onClick={openCopyModal}>
+          작품 내보내기
+        </button>
         <SizedBox width={12} />
         <button
           className="max-h-10 border-2 border-[#242424] rounded-full px-4 py-1.5 font-bold text-ellipsis whitespace-nowrap"
@@ -82,7 +94,11 @@ export default function FlowChartAppBar() {
         ) : null}
       </div>
 
-      <NotAuthorAlert />
+      {book && (
+        <CopyBookDialog bookId={book.id} isOpen={isCopyModalOpen} onRequestClose={closeCopyModal} />
+      )}
+
+      {/* <NotAuthorAlert />
       <Modal.Dialog
         isOpen={isLockedFlowChart}
         title="잠깐, 여러 창을 띄워 두고 작업 중이신가요?"
@@ -100,7 +116,7 @@ export default function FlowChartAppBar() {
         onConfirm={onRefresh}
         cancelMessage="홈으로 가기"
         onCancel={onGoHome}
-      />
+      /> */}
     </nav>
   );
 }

@@ -8,8 +8,8 @@ import {AnimatePresence, motion} from "framer-motion";
 export default function FlowChartPage() {
   const {flowChart} = useFlowChartStore();
 
-  const {RequestSignInDialog} = useAuthGuard();
-  const {MobileViewAlert} = useMobileViewGuard();
+  // const {RequestSignInDialog} = useAuthGuard();
+  // const {MobileViewAlert} = useMobileViewGuard();
 
   if (!flowChart)
     return (
@@ -25,8 +25,8 @@ export default function FlowChartPage() {
           </motion.div>
         </AnimatePresence>
 
-        <MobileViewAlert />
-        <RequestSignInDialog />
+        {/* <MobileViewAlert /> */}
+        {/* <RequestSignInDialog /> */}
       </div>
     );
 
@@ -37,8 +37,8 @@ export default function FlowChartPage() {
         <FlowChartEditor />
       </div>
 
-      <MobileViewAlert />
-      <RequestSignInDialog />
+      {/* <MobileViewAlert /> */}
+      {/* <RequestSignInDialog /> */}
     </div>
   );
 }

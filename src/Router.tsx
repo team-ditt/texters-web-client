@@ -29,7 +29,7 @@ export function Router() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route index element={<HomePage />} />
+        <Route index element={<DashboardPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/books" element={<BookSearchPage />} />

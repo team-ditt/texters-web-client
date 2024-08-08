@@ -32,7 +32,7 @@ function BookListItem({book}: ListItemProps) {
       <Link className="border border-black rounded-lg flex" to={`/books/${book.id}`}>
         <BookCoverImage
           className="h-full max-h-[112px] aspect-square rounded-s-lg"
-          src={book.coverImageUrl ?? undefined}
+          src={undefined}
         />
         <div className="flex-1 flex flex-col justify-between px-3 py-2">
           <span className="font-bold text-[18px] text-[#2D3648] text-ellipsis line-clamp-1">
@@ -52,7 +52,7 @@ function BookListItem({book}: ListItemProps) {
               {toCompactNumber(book.commentsCount)}
             </span>
           </div>
-          <span className="font-semibold text-[14px] text-[#1A202C]">{book.author.penName}</span>
+          {/* <span className="font-semibold text-[14px] text-[#1A202C]">{book.author.penName}</span> */}
           <span className="text-[14px] text-[#717D96] text-ellipsis line-clamp-1">
             {book.description}
           </span>

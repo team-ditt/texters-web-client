@@ -24,7 +24,8 @@ export default function ChoiceDestinationPageSelect({bookId, pageId, choice}: Pr
     <>
       <button
         className="relative flex justify-between items-center w-[300px] px-4 bg-[#D1D1D1] border-2 border-black rounded-lg"
-        onClick={openModal}>
+        onClick={openModal}
+        disabled={true}>
         <DownArrowCircleIcon className="-rotate-90" fill="#2D2D2D" />
         <SizedBox width={8} />
         <span className="flex-1 text-left line-clamp-1">

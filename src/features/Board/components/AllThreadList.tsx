@@ -48,14 +48,14 @@ export default function AllThreadList({boardId}: Props) {
 
   const navigate = useNavigate();
   const onNavigate = (event: MouseEvent, thread: Thread) => {
-    if (!isThreadAccessible(thread)) return;
+    // if (!isThreadAccessible(thread)) return;
     const overlay = document.querySelector(".ReactModal__Overlay");
     if (overlay?.contains(event.target as Node)) return;
     navigate(`/boards/${boardId}/threads/${thread.id}`);
   };
 
-  const isThreadAccessible = (thread: Thread) =>
-    !thread.isHidden || thread.isAuthor || profile?.role === "ROLE_ADMIN";
+  // const isThreadAccessible = (thread: Thread) =>
+  //   !thread.isHidden || thread.isAuthor || profile?.role === "ROLE_ADMIN";
 
   if (!isFetching && threads.length === 0)
     return (
@@ -88,9 +88,9 @@ export default function AllThreadList({boardId}: Props) {
       {threads.map(thread => (
         <div
           key={thread.id}
-          className={`rounded-lg flex flex-col ${
-            isThreadAccessible(thread) ? "cursor-pointer" : ""
-          }`}
+          // className={`rounded-lg flex flex-col ${
+          // isThreadAccessible(thread) ? "cursor-pointer" : ""
+          // }`}
           onClick={(event: MouseEvent) => onNavigate(event, thread)}>
           <ThreadItem boardId={boardId} thread={thread} />
         </div>

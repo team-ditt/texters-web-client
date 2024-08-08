@@ -24,10 +24,10 @@ axiosAuthenticated.interceptors.request.use(
       request.headers.Authorization = accessToken;
     }
 
-    const {flowChartLockKey} = useFlowChartStore.getState();
-    if (flowChartLockKey) {
-      request.headers["x-flow-chart-lock-key"] = flowChartLockKey;
-    }
+    // const {flowChartLockKey} = useFlowChartStore.getState();
+    // if (flowChartLockKey) {
+    // request.headers["x-flow-chart-lock-key"] = flowChartLockKey;
+    // }
 
     return request;
   },
@@ -54,7 +54,7 @@ axiosAuthenticated.interceptors.response.use(
     }
     if (response.config.url?.endsWith("flow-chart")) {
       const key = response.headers["x-flow-chart-lock-key"];
-      useFlowChartStore.getState().updateFlowChartLockKey(key);
+      // useFlowChartStore.getState().updateFlowChartLockKey(key);
     }
 
     return response.data;

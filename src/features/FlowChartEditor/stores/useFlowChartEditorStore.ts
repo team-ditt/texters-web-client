@@ -1,4 +1,4 @@
-import useIdProviderStore from "@/features/FlowChartEditor/stores/useIdProviderStore";
+// import useIdProviderStore from "@/features/FlowChartEditor/stores/useIdProviderStore";
 import {
   calcCurrentState,
   calcDynamicElementBoxes,
@@ -6,7 +6,8 @@ import {
   findOrder,
   isSameBox,
 } from "@/features/FlowChartEditor/utils/calculator";
-import {useFlowChartStore} from "@/stores";
+// import {useFlowChartStore} from "@/stores";
+import useFlowChartListStore from "@/stores/useFlowChartListStore";
 import {Choice, FlowChart, Lane, Page} from "@/types/book";
 import {
   Action,
@@ -24,7 +25,7 @@ import {create} from "zustand";
 import {subscribeWithSelector} from "zustand/middleware";
 import {immer} from "zustand/middleware/immer";
 
-const idProvider = () => useIdProviderStore.getState();
+// const idProvider = () => useIdProviderStore.getState();
 
 type FlowChartStoreState = {
   bookId: number | null;
@@ -79,8 +80,9 @@ type FlowChartStoreAction = {
   deleteChoice: (choiceId: number) => void;
   setFrameSize: (size: Size) => void;
   scrollViewPort: (offset: Coordinate) => void;
-  pushAction: (runnable: () => Promise<any>) => void;
-  updateActionQueue: () => void;
+  // pushAction: (runnable: () => Promise<any>) => void;
+  // updateActionQueue: () => void;
+  commitModelLanes: () => void;
 };
 
 const emptyViewState = <T>(data: T, toPresent: boolean = true): ViewState<T> => ({
@@ -136,7 +138,8 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           get().clearFlowChart();
           set({bookId: flowChart.id});
           const lanes = deepCopyLanes(flowChart.lanes);
-          get().setModelLanes(idProvider().convertFlowChart(lanes));
+          // get().setModelLanes(idProvider().convertFlowChart(lanes));
+          get().setModelLanes(lanes);
         },
         clearFlowChart: () => {
           set(state => ({
@@ -492,16 +495,17 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
         insertNewLane: laneOrder => {
           const bookId = get().bookId;
           if (!bookId) return;
-          const newId = idProvider().generateNewFakeId();
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .createLane({
-                bookId,
-                order: laneOrder,
-              })
-              .then(lane => idProvider().register("lane", newId, lane.id)),
-          );
+          // const newId = idProvider().generateNewFakeId();
+          const newId = useFlowChartListStore.getState().getNextId();
+          // get().pushAction(() =>
+          //   useFlowChartStore
+          //     .getState()
+          //     .createLane({
+          //       bookId,
+          //       order: laneOrder,
+          //     })
+          //     .then(lane => idProvider().register("lane", newId, lane.id)),
+          // );
           const newLane: Lane = {
             bookId,
             id: newId,
@@ -512,16 +516,17 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             state.modelLanes.splice(laneOrder, 0, newLane);
             state.modelLanes = state.modelLanes.map((l, o) => ({...l, order: o}));
           });
+          get().commitModelLanes();
           return newLane;
         },
         deleteLane: laneId => {
           const bookId = get().bookId;
           if (!bookId) return;
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .deleteLane({bookId, laneId: idProvider().getRealId(laneId)!}),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore
+          //     .getState()
+          //     .deleteLane({bookId, laneId: idProvider().getRealId(laneId)!}),
+          // );
           set(state => {
             const laneIndex = state.modelLanes.findIndex(l => l.id === laneId);
             if (laneIndex !== -1) {
@@ -529,6 +534,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }
             state.modelLanes = state.modelLanes.map((l, o) => ({...l, order: o}));
           });
+          get().commitModelLanes();
           get().hideNewLaneButton();
           get().hideNewPageButton();
           get().hideNewLanePageButton();
@@ -538,18 +544,19 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
           const bookId = get().bookId;
           if (!bookId) return;
           const lane = get().modelLanes[laneOrder] ?? get().insertNewLane(laneOrder);
-          const newId = idProvider().generateNewFakeId();
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .createPage({
-                bookId,
-                laneId: idProvider().getRealId(lane.id)!,
-                title: "페이지 제목을 입력해주세요",
-                order: pageOrder,
-              })
-              .then(page => idProvider().register("page", newId, page.id)),
-          );
+          // const newId = idProvider().generateNewFakeId();
+          const newId = useFlowChartListStore.getState().getNextId();
+          // get().pushAction(() =>
+          //   useFlowChartStore
+          //     .getState()
+          //     .createPage({
+          //       bookId,
+          //       laneId: idProvider().getRealId(lane.id)!,
+          //       title: "페이지 제목을 입력해주세요",
+          //       order: pageOrder,
+          //     })
+          //     .then(page => idProvider().register("page", newId, page.id)),
+          // );
           const newPage: Page = {
             bookId,
             id: newId,
@@ -557,8 +564,8 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             order: pageOrder,
             title: `페이지 제목을 입력해주세요`,
             content: "",
-            createdAt: "",
-            updatedAt: "",
+            // createdAt: "",
+            // updatedAt: "",
             choices: [],
             isIntro: false,
           };
@@ -570,6 +577,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               order: o,
             }));
           });
+          get().commitModelLanes();
           get().hideNewPageButton();
           get().hideNewLanePageButton();
           return newPage;
@@ -587,34 +595,37 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }
           }
           get().setModelLanes(lanes);
-          const realPageId = idProvider().getRealId(pageId)!;
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .updatePageInfo({bookId, pageId: realPageId, title, content}),
-          );
+          // const realPageId = idProvider().getRealId(pageId)!;
+          // get().pushAction(() =>
+          //   useFlowChartStore
+          //     .getState()
+          //     .updatePageInfo({bookId, pageId: realPageId, title, content}),
+          // );
+          get().commitModelLanes();
         },
         loadPageTitle: (realPageId, title) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
-              if (realPageId === idProvider().getRealId(page.id)) {
+              if (realPageId === page.id) {
                 page.title = title;
               }
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         loadPageContent: (realPageId, content) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
-              if (realPageId === idProvider().getRealId(page.id)) {
+              if (realPageId === page.id) {
                 page.content = content;
               }
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         movePage: (pageId, laneId, pageOrder) => {
           const bookId = get().bookId;
@@ -637,26 +648,25 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               pageLaneOrder[page.id] = laneOrder;
             }
           }
-          get().pushAction(() =>
-            useFlowChartStore.getState().updatePageOrder({
-              bookId,
-              laneId: idProvider().getRealId(laneId)!,
-              pageId: idProvider().getRealId(pageId)!,
-              order: pageOrder,
-            }),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().updatePageOrder({
+          //     bookId,
+          //     laneId: laneId!,
+          //     pageId: pageId!,
+          //     order: pageOrder,
+          //   }),
+          // );
           set(state => {
             state.modelLanes = lanes;
           });
+          get().commitModelLanes();
         },
         deletePage: pageId => {
           const bookId = get().bookId;
           if (!bookId) return;
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .deletePage({bookId, pageId: idProvider().getRealId(pageId)!}),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().deletePage({bookId, pageId: pageId!}),
+          // );
           set(state => {
             const lane = state.modelLanes.find(lane => lane.pages.some(p => p.id === pageId));
             if (!lane) return;
@@ -674,6 +684,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
               }));
             }
           });
+          get().commitModelLanes();
         },
         openPageMoreMenu: pageId => {
           set(state => {
@@ -692,17 +703,18 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             .modelLanes.flatMap(l => l.pages)
             .find(p => p.id === pageId);
           if (!page) return;
-          const newId = idProvider().generateNewFakeId();
-          get().pushAction(() =>
-            useFlowChartStore
-              .getState()
-              .createChoice({
-                bookId,
-                pageId: idProvider().getRealId(page.id)!,
-                content: "선택지를 작성해주세요",
-              })
-              .then(choice => idProvider().register("choice", newId, choice.id)),
-          );
+          // const newId = idProvider().generateNewFakeId();
+          const newId = useFlowChartListStore.getState().getNextId();
+          // get().pushAction(() =>
+          //   useFlowChartStore
+          //     .getState()
+          //     .createChoice({
+          //       bookId,
+          //       pageId: idProvider().getRealId(page.id)!,
+          //       content: "선택지를 작성해주세요",
+          //     })
+          //     .then(choice => idProvider().register("choice", newId, choice.id)),
+          // );
           const newChoice: Choice = {
             id: newId,
             sourcePageId: pageId,
@@ -714,6 +726,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             const page = state.modelLanes.flatMap(l => l.pages).find(p => p.id === pageId);
             page?.choices.push(newChoice);
           });
+          get().commitModelLanes();
         },
         updateChoiceContent: (choiceId, content) => {
           const bookId = get().bookId;
@@ -729,26 +742,26 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }
           }
           get().setModelLanes(lanes);
-          const realPageId = idProvider().getRealId(
-            get().viewStates.choices[choiceId].data.sourcePageId,
-          )!;
-          const realChoiceId = idProvider().getRealId(choiceId)!;
-          get().pushAction(() =>
-            useFlowChartStore.getState().updateChoiceContent({
-              bookId,
-              pageId: realPageId,
-              choiceId: realChoiceId,
-              content: content ?? "",
-            }),
-          );
+          get().commitModelLanes();
+          const realPageId = get().viewStates.choices[choiceId].data.sourcePageId!;
+          const realChoiceId = choiceId!;
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().updateChoiceContent({
+          //     bookId,
+          //     pageId: realPageId,
+          //     choiceId: realChoiceId,
+          //     content: content ?? "",
+          //   }),
+          // );
         },
         loadNewChoice: (realPageId, realChoiceId, content) => {
-          const newChoiceId = idProvider().generateNewFakeId();
-          idProvider().register("choice", newChoiceId, realChoiceId);
+          // const newChoiceId = idProvider().generateNewFakeId();
+          const newChoiceId = useFlowChartListStore.getState().getNextId();
+          // idProvider().register("choice", newChoiceId, realChoiceId);
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
-              if (realPageId === idProvider().getRealId(page.id)) {
+              if (realPageId === page.id) {
                 page.choices.push({
                   id: newChoiceId,
                   order: page.choices.length,
@@ -760,14 +773,13 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         loadChoiceOrder: (realChoiceId, order) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
-              const choice = page.choices.find(
-                choice => realChoiceId === idProvider().getRealId(choice.id),
-              );
+              const choice = page.choices.find(choice => realChoiceId === choice.id);
               if (!choice) continue;
               page.choices.splice(
                 page.choices.findIndex(c => c.id === choice.id),
@@ -778,60 +790,60 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         loadChoiceContent: (realChoiceId, content) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
               for (let choice of page.choices) {
-                if (realChoiceId === idProvider().getRealId(choice.id)) {
+                if (realChoiceId === choice.id) {
                   choice.content = content;
                 }
               }
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         loadChoiceDestination: (realChoiceId, destinationPageId) => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
               for (let choice of page.choices) {
-                if (realChoiceId === idProvider().getRealId(choice.id)) {
-                  choice.destinationPageId = destinationPageId
-                    ? idProvider().getFakeId("page", destinationPageId) ?? null
-                    : null;
+                if (realChoiceId === choice.id) {
+                  choice.destinationPageId = destinationPageId ? destinationPageId ?? null : null;
                 }
               }
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         unloadChoice: realChoiceId => {
           const lanes = deepCopyLanes(get().modelLanes);
           for (let lane of lanes) {
             for (let page of lane.pages) {
-              const index = page.choices.findIndex(
-                choice => realChoiceId === idProvider().getRealId(choice.id),
-              );
+              const index = page.choices.findIndex(choice => realChoiceId === choice.id);
               if (index === -1) continue;
               page.choices.splice(index, 1);
             }
           }
           get().setModelLanes(lanes);
+          get().commitModelLanes();
         },
         moveChoice: (choiceId, choiceOrder) => {
           const bookId = get().bookId;
           if (!bookId) return;
           const pageId = get().viewStates.choices[choiceId].data.sourcePageId;
-          get().pushAction(() =>
-            useFlowChartStore.getState().updateChoiceOrder({
-              bookId,
-              pageId: idProvider().getRealId(pageId)!,
-              choiceId: idProvider().getRealId(choiceId)!,
-              order: choiceOrder,
-            }),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().updateChoiceOrder({
+          //     bookId,
+          //     pageId: idProvider().getRealId(pageId)!,
+          //     choiceId: idProvider().getRealId(choiceId)!,
+          //     order: choiceOrder,
+          //   }),
+          // );
           set(state => {
             const lanes = deepCopyLanes(state.modelLanes);
             const page = lanes.flatMap(l => l.pages).find(p => p.id === pageId)!;
@@ -844,19 +856,20 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             page.choices = page.choices.map((c, o) => ({...c, order: o}));
             state.modelLanes = lanes;
           });
+          get().commitModelLanes();
         },
         setChoiceDestination: (choiceId, destinationPageId) => {
           const bookId = get().bookId;
           if (!bookId) return;
           const pageId = get().viewStates.choices[choiceId].data.sourcePageId;
-          get().pushAction(() =>
-            useFlowChartStore.getState().updateChoiceDestinationPageId({
-              bookId,
-              pageId: idProvider().getRealId(pageId)!,
-              choiceId: idProvider().getRealId(choiceId)!,
-              destinationPageId: idProvider().getRealId(destinationPageId ?? 0) ?? null,
-            }),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().updateChoiceDestinationPageId({
+          //     bookId,
+          //     pageId: idProvider().getRealId(pageId)!,
+          //     choiceId: idProvider().getRealId(choiceId)!,
+          //     destinationPageId: idProvider().getRealId(destinationPageId ?? 0) ?? null,
+          //   }),
+          // );
           set(state => {
             const lanes = deepCopyLanes(state.modelLanes);
             const choice = lanes
@@ -866,21 +879,22 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             choice.destinationPageId = destinationPageId;
             state.modelLanes = lanes;
           });
+          get().commitModelLanes();
         },
         deleteChoice: choiceId => {
           const bookId = get().bookId;
           if (!bookId) return;
           const pageId = get().viewStates.choices[choiceId].data.sourcePageId;
-          get().pushAction(() =>
-            useFlowChartStore.getState().deleteChoice(
-              {
-                bookId,
-                pageId: idProvider().getRealId(pageId)!,
-                choiceId: idProvider().getRealId(choiceId)!,
-              },
-              async () => {},
-            ),
-          );
+          // get().pushAction(() =>
+          //   useFlowChartStore.getState().deleteChoice(
+          //     {
+          //       bookId,
+          //       pageId: idProvider().getRealId(pageId)!,
+          //       choiceId: idProvider().getRealId(choiceId)!,
+          //     },
+          //     async () => {},
+          //   ),
+          // );
           set(state => {
             const page = state.modelLanes.flatMap(l => l.pages).find(p => p.id === pageId);
             if (!page) return;
@@ -889,6 +903,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             page.choices.splice(choiceIndex, 1);
             page.choices = page.choices.map((c, o) => ({...c, order: o}));
           });
+          get().commitModelLanes();
         },
         setFrameSize: size => {
           set(state => {
@@ -920,26 +935,29 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
             state.draggingState.current.y += offset.y - oldOffset.y;
           });
         },
-        pushAction: (runnable: () => Promise<any>) => {
-          const action: Action = {
-            status: "queued",
-            runnable,
-          };
-          set(state => {
-            state.actionQueue.push(action);
-          });
-          get().updateActionQueue();
-        },
-        updateActionQueue: async () => {
-          if (get().actionQueue.length === 0 || get().actionQueue[0].status === "running") return;
-          set(state => {
-            state.actionQueue[0].status = "running";
-          });
-          await get().actionQueue[0].runnable();
-          set(state => {
-            state.actionQueue.splice(0, 1);
-          });
-          get().updateActionQueue();
+        // pushAction: (runnable: () => Promise<any>) => {
+        //   const action: Action = {
+        //     status: "queued",
+        //     runnable,
+        //   };
+        //   set(state => {
+        //     state.actionQueue.push(action);
+        //   });
+        //   get().updateActionQueue();
+        // },
+        // updateActionQueue: async () => {
+        //   if (get().actionQueue.length === 0 || get().actionQueue[0].status === "running") return;
+        //   set(state => {
+        //     state.actionQueue[0].status = "running";
+        //   });
+        //   await get().actionQueue[0].runnable();
+        //   set(state => {
+        //     state.actionQueue.splice(0, 1);
+        //   });
+        //   get().updateActionQueue();
+        // },
+        commitModelLanes: () => {
+          useFlowChartListStore.getState().updateFlowChartLanes(get().bookId!, get().modelLanes);
         },
       };
     }),

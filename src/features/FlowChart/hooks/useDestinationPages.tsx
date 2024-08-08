@@ -1,10 +1,11 @@
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import useIdProviderStore from "@/features/FlowChartEditor/stores/useIdProviderStore";
+// import useIdProviderStore from "@/features/FlowChartEditor/stores/useIdProviderStore";
 import {useMemo} from "react";
 
 export default function useDestinationPages() {
   const lanes = useFlowChartEditorStore(state => state.modelLanes);
-  const getRealId = useIdProviderStore(state => state.getRealId);
+  // const getRealId = useIdProviderStore(state => state.getRealId);
+  const getRealId = (id: number) => id;
   const allPages = useMemo(() => {
     const pages = lanes
       .flatMap(lane =>

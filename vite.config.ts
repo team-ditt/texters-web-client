@@ -10,6 +10,7 @@ export default ({mode}) => {
 
   return defineConfig({
     plugins: [react(), svgr(), tsconfigPaths()],
+    base: "/texters-web-client/",
     css: {
       postcss: {
         plugins: [tailwindcss],

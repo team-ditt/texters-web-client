@@ -38,6 +38,7 @@ export default function BookCoverImageUploader({coverImageUrl, setCoverImage}: P
   return (
     <button
       className="relative w-[250px] h-[250px] self-center rounded-lg overflow-hidden"
+      disabled={true}
       onClick={onOpenFileUploader}>
       <div className="absolute top-0 left-0 w-full h-full opacity-0 hover:opacity-75 transition-opacity flex flex-col justify-center items-center bg-black">
         <AddPhotoIcon width={72} height={72} />

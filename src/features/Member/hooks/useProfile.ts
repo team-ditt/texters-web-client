@@ -10,16 +10,16 @@ export default function useProfile({
   ...options
 }: UseQueryOptions<Profile, unknown, Profile, string[]> = {}) {
   const didSignIn = useDidSignIn();
-  const {data: profile, ...useQueryResult} = useQuery(
-    [keys.GET_MY_PROFILE],
-    api.members.fetchProfile,
-    {
-      enabled: didSignIn,
-      refetchOnWindowFocus,
-      retry,
-      ...options,
-    },
-  );
+  // const {data: profile, ...useQueryResult} = useQuery(
+  //   [keys.GET_MY_PROFILE],
+  //   api.members.fetchProfile,
+  //   {
+  //     enabled: didSignIn,
+  //     refetchOnWindowFocus,
+  //     retry,
+  //     ...options,
+  //   },
+  // );
 
-  return {profile, ...useQueryResult};
+  return {profile: {penName: "작가"}};
 }

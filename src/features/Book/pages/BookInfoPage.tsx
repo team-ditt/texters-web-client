@@ -4,6 +4,7 @@ import {useBookTitleRef, usePublishedBookInfo} from "@/features/Book/hooks";
 import {CommentButton} from "@/features/Comment/components";
 import {useExpandableParagraphRef, useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
+import useDashboardStore from "@/stores/useDashboardStore";
 import {toCompactNumber, toDateString} from "@/utils/formatter";
 import {ReactComponent as DownArrowIcon} from "assets/icons/down-arrow.svg";
 import {ReactComponent as LeftArrowIcon} from "assets/icons/left-arrow.svg";
@@ -15,7 +16,9 @@ export default function BookInfoPage() {
   const navigate = useNavigate();
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {book} = usePublishedBookInfo(+bookId!);
+  const {books} = useDashboardStore();
+  const book = books.find(b => b.id === +(bookId ?? -1));
+
   const {hasHistory, resetHistory} = useBookReaderStore();
 
   const {titleRef} = useBookTitleRef(book?.title, 32);
@@ -50,31 +53,28 @@ export default function BookInfoPage() {
           <LeftArrowIcon fill="#939393" />
         </button>
         <SizedBox height={12} />
-        <BookCoverImage
-          className="w-full max-w-[400px] self-center rounded-lg"
-          src={book.coverImageUrl ?? undefined}
-        />
+        <BookCoverImage className="w-full max-w-[400px] self-center rounded-lg" src={undefined} />
         <SizedBox height={12} />
         <div className="flex justify-between items-center self-stretch">
           <span ref={titleRef} className="font-bold text-[22px] leading-[32px] text-[#2D3648]">
             {book.title}
           </span>
           <div className="flex">
-            <CommentButton book={book} showCount />
-            <BookLikeButton book={book} showCount />
+            {/* <CommentButton book={book} showCount /> */}
+            {/* <BookLikeButton book={book} showCount /> */}
           </div>
         </div>
         <SizedBox height={2} />
-        <span className="font-bold text-[#494949]">{book.author.penName}</span>
+        <span className="font-bold text-[#494949]">{}</span>
         <SizedBox height={4} />
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <span className="ms-0.5 text-[12px] text-[#999999]">
             조회수 {toCompactNumber(book.viewed)}
           </span>
           <span className="ms-0.5 text-[12px] text-[#999999]">
             작품 공개일 {toDateString(new Date(book.publishedAt))}
           </span>
-        </div>
+        </div> */}
         <SizedBox height={8} />
         <p
           ref={paragraphRef}

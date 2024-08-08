@@ -6,8 +6,8 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 export default function useBookLike(bookId?: number) {
   const {profile} = useProfile();
   const {data: likedResult} = useQuery(
-    [keys.GET_BOOK_LIKED, profile?.id],
-    () => api.bookLiked.checkBookLiked(profile!.id, bookId!),
+    [keys.GET_BOOK_LIKED, 1],
+    () => api.bookLiked.checkBookLiked(1, bookId!),
     {
       enabled: !!profile && !!bookId,
       refetchOnWindowFocus: false,
@@ -18,7 +18,7 @@ export default function useBookLike(bookId?: number) {
   const {mutate: toggleLike} = useMutation(
     () => {
       if (!profile || !bookId) return Promise.reject();
-      return api.bookLiked.toggleBookLiked(profile.id, bookId);
+      return api.bookLiked.toggleBookLiked(1, bookId);
     },
     {
       onSuccess: () => {

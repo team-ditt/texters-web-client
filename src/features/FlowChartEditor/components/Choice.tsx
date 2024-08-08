@@ -4,7 +4,7 @@ import DynamicElementLocator from "@/features/FlowChartEditor/components/Dynamic
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {calcChoicePointOffset} from "@/features/FlowChartEditor/utils/calculator";
 import useDebounce from "@/hooks/useDebounce";
-import {Choice} from "@/types/book";
+import type {Choice} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
 import {ChangeEvent, useEffect, useState} from "react";
 
@@ -21,6 +21,7 @@ export default function Choice({viewState}: Props) {
   const draggingState = useFlowChartEditorStore(state => state.draggingState);
   const hoveringState = useFlowChartEditorStore(state => state.hoveringState);
   const updateChoiceContent = useFlowChartEditorStore(state => state.updateChoiceContent);
+  const loadChoiceContent = useFlowChartEditorStore(state => state.loadChoiceContent);
   const startDragPath = useFlowChartEditorStore(state => state.startDragPath);
   const startHover = useFlowChartEditorStore(state => state.startHover);
   const finishHover = useFlowChartEditorStore(state => state.finishHover);
@@ -31,18 +32,21 @@ export default function Choice({viewState}: Props) {
     if (event.currentTarget.value.length > 100) return;
     setContent(event.target.value);
   };
-  useDebounce(
-    current => {
-      updateChoiceContent(choice.id, current);
-    },
-    1500,
-    content,
-    undefined,
-    !content,
-  );
+  // useDebounce(
+  //   current => {
+  //     updateChoiceContent(choice.id, current);
+  //   },
+  //   1500,
+  //   content,
+  //   undefined,
+  //   !content,
+  // );
   useEffect(() => {
     setContent(choice.content);
   }, [choice.content]);
+  useEffect(() => {
+    loadChoiceContent(choice.id, content);
+  }, [content]);
 
   const isDragging = draggingState.isDragging === "choice" && draggingState.sourceId === choice.id;
   const isDraggingSourcePage =

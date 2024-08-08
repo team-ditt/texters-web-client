@@ -9,7 +9,7 @@ import {
   PAGE_POINT_OFFSET_Y,
 } from "@/features/FlowChartEditor/utils/calculator";
 import useDebounce from "@/hooks/useDebounce";
-import {Page} from "@/types/book";
+import type {Page} from "@/types/book";
 import {ViewState} from "@/types/flowChartEditor";
 import {ReactComponent as MoreVerticalIcon} from "assets/icons/more-vertical.svg";
 import {ReactComponent as PlusCircleIcon} from "assets/icons/plus-circle.svg";
@@ -28,6 +28,7 @@ export default function Page({viewState}: Props) {
   const hoveringState = useFlowChartEditorStore(state => state.hoveringState);
   const openedMoreMenuPageId = useFlowChartEditorStore(state => state.openedMoreMenuPageId);
   const updatePageInfo = useFlowChartEditorStore(state => state.updatePageInfo);
+  const loadPageTitle = useFlowChartEditorStore(state => state.loadPageTitle);
   const startHover = useFlowChartEditorStore(state => state.startHover);
   const finishHover = useFlowChartEditorStore(state => state.finishHover);
   const appendChoice = useFlowChartEditorStore(state => state.appendChoice);
@@ -39,16 +40,20 @@ export default function Page({viewState}: Props) {
     if (event.currentTarget.value.length > 30) return;
     setTitle(event.target.value);
   };
-  useDebounce(
-    current => {
-      updatePageInfo(page.id, {title: current});
-    },
-    1500,
-    title,
-    undefined,
-    !title,
-  );
+  // useDebounce(
+  //   current => {
+  //     updatePageInfo(page.id, {title: current});
+  //   },
+  //   1500,
+  //   title,
+  //   undefined,
+  //   !title,
+  // );
   useEffect(() => {
+    loadPageTitle(page.id, title);
+  }, [title]);
+  useEffect(() => {
+    updatePageInfo(page.id, {title: page.title});
     setTitle(page.title);
   }, [page.title]);
 

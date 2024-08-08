@@ -9,6 +9,7 @@ import {
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
 import {useAuthGuard, useTextInput} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
+import useDashboardStore from "@/stores/useDashboardStore";
 import {Book} from "@/types/book";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -24,19 +25,27 @@ export default function BookInfoFormPage() {
 
   const loadFlowChart = useFlowChartStore(state => state.loadFlowChart);
   const clearFlowChart = useFlowChartEditorStore(state => state.clearFlowChart);
-  const {mutate: submitBookInfo, isLoading} = useMutation(api.books.createBook, {
-    onSuccess: (book: Book) => {
-      queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  // const {mutate: submitBookInfo, isLoading} = useMutation(api.books.createBook, {
+  //   onSuccess: (book: Book) => {
+  //     queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
 
-      clearFlowChart();
-      loadFlowChart(book.id);
-      navigate(`/studio/books/${book.id}/editor`, {replace: true});
-    },
-  });
+  //     clearFlowChart();
+  //     loadFlowChart(book.id);
+  //     navigate(`/studio/books/${book.id}/editor`, {replace: true});
+  //   },
+  // });
+
+  const {createBook} = useDashboardStore();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const onSubmit = () => submitBookInfo({title, description, coverImage});
+  // const onSubmit = () => submitBookInfo({title, description, coverImage});
+  const onSubmit = () => {
+    const book = createBook({title, description});
+    clearFlowChart();
+    loadFlowChart(book.id);
+    navigate(`/studio/books/${book.id}/editor`, {replace: true});
+  };
   const onCancel = () => navigate(-1);
 
   const {RequestSignInDialog} = useAuthGuard();
@@ -72,7 +81,7 @@ export default function BookInfoFormPage() {
         </button>
       </div>
 
-      {isLoading ? (
+      {/* {isLoading ? (
         <motion.div
           className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
           initial={{opacity: 0}}
@@ -80,7 +89,7 @@ export default function BookInfoFormPage() {
           exit={{opacity: 0}}>
           <SpinningLoader color="#BDBDBD" />
         </motion.div>
-      ) : null}
+      ) : null} */}
 
       <RequestSignInDialog />
     </div>

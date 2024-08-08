@@ -73,7 +73,7 @@ export default function BoardThreadFormPage() {
       </div>
       <div className="grow p-6 flex flex-col gap-4">
         <ThreadTitleInput title={title} onInput={onInputTitle} />
-        <ThreadContentTextarea content={content} onInput={onInputContent as ChangeEventHandler} />
+        {/* <ThreadContentTextarea content={content} onInput={onInputContent as ChangeEventHandler} />
         {profile?.role ? (
           <div className="flex flex-row gap-6 items-center">
             {profile?.role === "ROLE_USER" ? (
@@ -83,7 +83,7 @@ export default function BoardThreadFormPage() {
               <ThreadFixedCheckBox isFixed={isFixed} onToggle={toggleFixed} />
             ) : null}
           </div>
-        ) : null}
+        ) : null} */}
       </div>
       <div className="flex flex-row">
         <button

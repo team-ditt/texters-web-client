@@ -12,6 +12,7 @@ import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowCh
 import {useProfile} from "@/features/Member/hooks";
 import {useAuthGuard, useMobileViewGuard, useModal} from "@/hooks";
 import {useFlowChartStore} from "@/stores";
+import useFlowChartListStore from "@/stores/useFlowChartListStore";
 import {Choice, Page} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {ReactComponent as DragHandleIcon} from "assets/icons/drag-handle.svg";
@@ -26,13 +27,15 @@ export default function PageEditPage() {
   const {profile} = useProfile();
   const {bookId, pageId} = useParams();
   const {title, setTitle, onInputTitle} = usePageTitleInput(+bookId!, +pageId!);
-  const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
 
-  const {data: page} = useQuery(
-    [keys.GET_DASHBOARD_PAGE, pageId],
-    () => api.pages.fetchDashboardPage(profile!.id, +bookId!, +pageId!),
-    {enabled: !!profile && didSignIn, refetchOnWindowFocus: false, retry: false},
-  );
+  // const {data: page} = useQuery(
+  //   [keys.GET_DASHBOARD_PAGE, pageId],
+  //   () => api.pages.fetchDashboardPage(profile!.id, +bookId!, +pageId!),
+  //   {enabled: !!profile && didSignIn, refetchOnWindowFocus: false, retry: false},
+  // );
+  const flowChart = useFlowChartListStore().getFlowChart(+bookId!);
+  const page = flowChart.lanes.flatMap(lane => lane.pages).find(page => page.id === +pageId!);
+  const {content, setContent, onInputContent} = usePageContentTextArea(+bookId!, +pageId!);
 
   const _onInputTitle = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.currentTarget.value.length > 30) return;
@@ -83,7 +86,7 @@ export default function PageEditPage() {
         <div className="flex flex-col items-stretch border-t-[3px] border-black">
           <input
             className="h-[50px] px-6 font-medium text-[18px] placeholder:text-[#BDBDBD]"
-            value={title}
+            value={title ?? ""}
             placeholder="페이지 제목"
             maxLength={30}
             onInput={_onInputTitle}
@@ -92,7 +95,7 @@ export default function PageEditPage() {
             <textarea
               className="min-h-[600px] flex-1 border-y-2 border-[#BDBDBD] placeholder:text-[#BDBDBD] resize-none leading-7 px-6 py-3"
               placeholder="페이지 본문"
-              value={content ?? undefined}
+              value={content ?? ""}
               onInput={_onInputContent}
               maxLength={20000}
             />
@@ -106,7 +109,7 @@ export default function PageEditPage() {
         <div className="flex flex-col gap-2 pt-4">
           <span className="font-bold text-[18px] mb-2">선택지 만들기</span>
           <ChoiceList page={page} />
-          {page.choices.length < 5 ? <AddChoiceButton /> : null}
+          {/* {page.choices.length < 5 ? <AddChoiceButton /> : null} */}
         </div>
       </div>
 
@@ -118,7 +121,7 @@ export default function PageEditPage() {
 
 function ChoiceList({page}: {page: Page}) {
   const {bookId, pageId} = useParams();
-  const {isSaving, updateChoiceOrder} = useFlowChartStore();
+  // const {updateChoiceOrder} = useFlowChartStore();
   const loadChoiceOrder = useFlowChartEditorStore(state => state.loadChoiceOrder);
   const queryClient = useQueryClient();
   const [choiceDraggingState, setChoiceDraggingState] = useState({
@@ -127,27 +130,26 @@ function ChoiceList({page}: {page: Page}) {
   });
 
   const handleChoiceDrag = (choiceId: number, relativeOrder: number) => {
-    setChoiceDraggingState({choiceId, relativeOrder});
+    // setChoiceDraggingState({choiceId, relativeOrder});
   };
   const handleChoiceDragEnd = async (choiceId: number, relativeOrder: number) => {
-    let newOrder = page.choices.find(c => c.id === choiceId)?.order;
-    if (newOrder === undefined) {
-      setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
-      return;
-    }
-    newOrder += relativeOrder;
-    newOrder = Math.max(0, Math.min(newOrder, page.choices.length - 1));
-
-    await updateChoiceOrder({
-      bookId: +bookId!,
-      pageId: +pageId!,
-      choiceId,
-      order: newOrder,
-    });
-    loadChoiceOrder(choiceId, newOrder);
-    queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
-    queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
-    setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
+    // let newOrder = page.choices.find(c => c.id === choiceId)?.order;
+    // if (newOrder === undefined) {
+    //   setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
+    //   return;
+    // }
+    // newOrder += relativeOrder;
+    // newOrder = Math.max(0, Math.min(newOrder, page.choices.length - 1));
+    // await updateChoiceOrder({
+    //   bookId: +bookId!,
+    //   pageId: +pageId!,
+    //   choiceId,
+    //   order: newOrder,
+    // });
+    // loadChoiceOrder(choiceId, newOrder);
+    // queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
+    // queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
+    // setChoiceDraggingState({choiceId: -1, relativeOrder: 0});
   };
 
   const choices = page.choices;
@@ -196,7 +198,7 @@ function ChoiceForm({
   const {content, onInputContent} = useChoiceContentInput(+bookId!, +pageId!, choice);
   const {isOpen, openModal, closeModal} = useModal();
 
-  const {deleteChoice} = useFlowChartStore();
+  // const {deleteChoice} = useFlowChartStore();
   const queryClient = useQueryClient();
   const onSuccessToDelete = async () => {
     queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
@@ -208,10 +210,10 @@ function ChoiceForm({
     onInputContent(event);
   };
   const onConfirm = async () => {
-    await deleteChoice(
-      {bookId: +bookId!, pageId: +pageId!, choiceId: choice.id},
-      onSuccessToDelete,
-    );
+    // await deleteChoice(
+    //   {bookId: +bookId!, pageId: +pageId!, choiceId: choice.id},
+    //   onSuccessToDelete,
+    // );
     useFlowChartEditorStore.getState().unloadChoice(choice.id);
     closeModal();
   };
@@ -282,14 +284,14 @@ function ChoiceForm({
           : `translateY(${calcHeightWithGap() * relativeOrder}px)`,
       }}
       ref={containerRef}>
-      <button
+      {/* <button
         className="h-12 px-1 rounded-lg hover:bg-[#EFEFEF] transition-colors flex justify-center items-center gap-1 text-[#BBB]"
         onClick={openModal}>
         <TrashIcon width={28} height={28} stroke="#CBD2E0" />
-      </button>
-      <button onMouseDown={() => setDraggingState(state => ({...state, isDragging: true}))}>
+      </button> */}
+      {/* <button onMouseDown={() => setDraggingState(state => ({...state, isDragging: true}))}>
         <DragHandleIcon className="self-center" />
-      </button>
+      </button> */}
       <SizedBox width={4} />
       <input
         className="flex-1 px-4 border-2 border-black rounded-lg"
@@ -300,33 +302,33 @@ function ChoiceForm({
       />
       <ChoiceDestinationPageSelect bookId={+bookId!} pageId={+pageId!} choice={choice} />
 
-      <Modal.Dialog
+      {/* <Modal.Dialog
         isOpen={isOpen}
         title="선택지 삭제"
         message="정말로 선택지를 삭제하시겠어요?"
         confirmMessage="삭제하기"
         onConfirm={onConfirm}
         onCancel={closeModal}
-      />
+      /> */}
     </div>
   );
 }
 
 function AddChoiceButton() {
   const {bookId, pageId} = useParams();
-  const {isSaving, createChoice} = useFlowChartStore();
+  // const {isSaving, createChoice} = useFlowChartStore();
 
   const queryClient = useQueryClient();
   const onClick = async () => {
     const DEFAULT_CONTENT = "다음";
-    const choice = await createChoice({
-      bookId: +bookId!,
-      pageId: +pageId!,
-      content: DEFAULT_CONTENT,
-    });
-    useFlowChartEditorStore
-      .getState()
-      .loadNewChoice(choice.sourcePageId, choice.id, choice.content);
+    // const choice = await createChoice({
+    //   bookId: +bookId!,
+    //   pageId: +pageId!,
+    //   content: DEFAULT_CONTENT,
+    // });
+    // useFlowChartEditorStore
+    //   .getState()
+    //   .loadNewChoice(choice.sourcePageId, choice.id, choice.content);
     queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
     queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);
   };
@@ -335,7 +337,7 @@ function AddChoiceButton() {
     <button
       className="self-center flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#EFEFEF] transition-colors font-medium text-[#858585]"
       onClick={onClick}
-      disabled={isSaving}>
+      disabled={false}>
       <PlusCircleIcon stroke="#A5A5A5" fill="#A5A5A5" /> 선택지 추가하기
     </button>
   );

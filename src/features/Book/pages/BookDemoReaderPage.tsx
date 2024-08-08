@@ -7,6 +7,7 @@ import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowCh
 import {useProfile} from "@/features/Member/hooks";
 import {useAuthGuard} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
+import useFlowChartListStore from "@/stores/useFlowChartListStore";
 import {PageView} from "@/types/book";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useEffect, useLayoutEffect, useState} from "react";
@@ -22,21 +23,28 @@ export default function BookDemoReaderPage() {
     useBookReaderStore();
   const {profile} = useProfile();
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
+  const flowChart = useFlowChartListStore().getFlowChart(+bookId!);
+  const _introPage = flowChart.lanes.flatMap(l => l.pages).find(p => p.isIntro);
+  const introPage = _introPage
+    ? {..._introPage, isEnding: _introPage.choices.length === 0}
+    : _introPage;
+  const _page = flowChart.lanes.flatMap(l => l.pages).find(p => p.id === currentPageId);
+  const page = _page ? {..._page, isEnding: _page.choices.length === 0} : _page;
 
-  const {data: introPage, refetch: refetchIntroPage} = useQuery(
-    [keys.GET_DASHBOARD_INTRO_PAGE],
-    () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
-    {
-      enabled: Boolean(profile && book),
-    },
-  );
-  const {data: page, isFetching} = useQuery(
-    [keys.GET_DASHBOARD_PAGE, currentPageId],
-    () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
-    {
-      enabled: Boolean(profile && book && currentPageId),
-    },
-  );
+  // const {data: introPage, refetch: refetchIntroPage} = useQuery(
+  //   [keys.GET_DASHBOARD_INTRO_PAGE],
+  //   () => api.pages.fetchDashboardIntroPage(profile!.id, book!.id),
+  //   {
+  //     enabled: Boolean(profile && book),
+  //   },
+  // );
+  // const {data: page, isFetching} = useQuery(
+  //   [keys.GET_DASHBOARD_PAGE, currentPageId],
+  //   () => api.pages.fetchDashboardPage(profile!.id, book!.id, currentPageId!),
+  //   {
+  //     enabled: Boolean(profile && book && currentPageId),
+  //   },
+  // );
 
   const onLoadPage = (pageId: number) => {
     recordHistory(bookId!, {pageId, isEnding: false});
@@ -52,9 +60,9 @@ export default function BookDemoReaderPage() {
     setCurrentPageId(findLastHistory(bookId!)?.pageId);
   };
 
-  useLayoutEffect(() => {
-    refetchIntroPage();
-  }, []);
+  // useLayoutEffect(() => {
+  //   refetchIntroPage();
+  // }, []);
 
   const actionQueue = useFlowChartEditorStore(state => state.actionQueue);
   const queryClient = useQueryClient();
@@ -79,7 +87,7 @@ export default function BookDemoReaderPage() {
       recordHistory(bookId!, {pageId: introPage.id, isIntro: true});
       return setCurrentPage({...introPage});
     }
-  }, [introPage, page]);
+  }, [introPage?.id, page?.id]);
   useEffect(() => {
     if (!currentPage) return;
     document.getElementById("root")?.scrollTo({top: 0});
@@ -101,7 +109,7 @@ export default function BookDemoReaderPage() {
           <>
             <BookCoverImage
               className="self-center w-full max-w-[400px] rounded-lg"
-              src={book.coverImageUrl ?? undefined}
+              src={undefined}
             />
             <SizedBox height={32} />
           </>
@@ -120,7 +128,7 @@ export default function BookDemoReaderPage() {
             <button
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#717D96] font-medium leading-[2rem] text-white disabled:opacity-50"
               onClick={onPopHistory}
-              disabled={isFetching}>
+              disabled={false}>
               뒤로가기
             </button>
           ) : null}
@@ -129,7 +137,7 @@ export default function BookDemoReaderPage() {
               key={choice.id}
               className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem] disabled:text-[#666666] disabled:opacity-50"
               onClick={() => onLoadPage(choice.destinationPageId!)}
-              disabled={!choice.destinationPageId || isFetching}>
+              disabled={!choice.destinationPageId || false}>
               {choice.content}
             </button>
           ))}
@@ -138,7 +146,7 @@ export default function BookDemoReaderPage() {
               <button
                 className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]] disabled:opacity-50"
                 onClick={onGoBackToIntro}
-                disabled={isFetching}>
+                disabled={false}>
                 처음부터 다시 읽기
               </button>
               <button

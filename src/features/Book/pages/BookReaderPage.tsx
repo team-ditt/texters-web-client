@@ -98,7 +98,7 @@ export default function BookReaderPage() {
           <>
             <BookCoverImage
               className="self-center w-full max-w-[400px] rounded-lg"
-              src={book.coverImageUrl ?? undefined}
+              src={undefined}
             />
             <SizedBox height={32} />
           </>

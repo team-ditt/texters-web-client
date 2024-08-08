@@ -22,13 +22,13 @@ export default function DashboardBookListItem({book}: Props) {
         className="border border-[#D9D9D9] rounded-lg shadow-md flex flex-col hover:shadow-lg transition-all duration-100 cursor-pointer overflow-hidden"
         whileHover={{scale: 1.01}}
         onClick={openModal}>
-        <BookCoverImage className="w-full aspect-square" src={book.coverImageUrl ?? undefined} />
+        <BookCoverImage className="w-full aspect-square" src={undefined} />
 
         <div className="flex-1 flex flex-col justify-between items-stretch self-stretch px-3 py-2">
-          <div className="flex gap-1">
+          {/* <div className="flex gap-1">
             <BookStatusChip isPublished={book.isPublished} />
             {book.canUpdate ? <BookUpdatableChip /> : null}
-          </div>
+          </div> */}
 
           <span className="text-left font-bold text-[18px] text-[#2D3648] text-ellipsis line-clamp-2">
             {book.title}
@@ -37,9 +37,9 @@ export default function DashboardBookListItem({book}: Props) {
             {book.description}
           </span>
 
-          <div className="my-2 border-t border-[#D9D9D9]" />
+          {/* <div className="my-2 border-t border-[#D9D9D9]" /> */}
 
-          <div className="flex flex-row items-center gap-1">
+          {/* <div className="flex flex-row items-center gap-1">
             <p className="flex flex-col items-center">
               <span className="text-[12px] text-[#999999]">조회수</span>
               <span
@@ -69,7 +69,7 @@ export default function DashboardBookListItem({book}: Props) {
                 {book.commentsCount > 0 ? toCompactNumber(book.commentsCount) : "-"}
               </span>
             </p>
-          </div>
+          </div> */}
         </div>
       </motion.button>
 

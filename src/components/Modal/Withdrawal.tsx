@@ -18,7 +18,7 @@ export default function Withdrawal({onRequestClose, ...props}: Props) {
     isError,
     reset,
   } = useMutation({
-    mutationFn: () => api.members.withdraw(profile!.id),
+    // mutationFn: () => api.members.withdraw(profile!.id),
   });
   const onSuccess = () => {
     removeToken();

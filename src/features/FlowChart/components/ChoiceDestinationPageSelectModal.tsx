@@ -24,20 +24,20 @@ export default function ChoiceDestinationPageSelectModal({
   ...props
 }: Props) {
   const [selectedPageId, setSelectedPageId] = useState<number | null>(choice.destinationPageId);
-  const updateChoiceDestinationPageId = useFlowChartStore(
-    state => state.updateChoiceDestinationPageId,
-  );
+  // const updateChoiceDestinationPageId = useFlowChartStore(
+  //   state => state.updateChoiceDestinationPageId,
+  // );
   const loadChoiceDestination = useFlowChartEditorStore(state => state.loadChoiceDestination);
   const queryClient = useQueryClient();
 
   const isSelected = (pageId: number) => pageId === selectedPageId;
   const onUpdateDestinationPageId = async (event: MouseEvent) => {
-    await updateChoiceDestinationPageId({
-      bookId,
-      pageId,
-      choiceId: choice.id,
-      destinationPageId: selectedPageId,
-    });
+    // await updateChoiceDestinationPageId({
+    //   bookId,
+    //   pageId,
+    //   choiceId: choice.id,
+    //   destinationPageId: selectedPageId,
+    // });
     loadChoiceDestination(choice.id, selectedPageId);
     queryClient.invalidateQueries([keys.GET_DASHBOARD_INTRO_PAGE]);
     queryClient.invalidateQueries([keys.GET_DASHBOARD_PAGE]);

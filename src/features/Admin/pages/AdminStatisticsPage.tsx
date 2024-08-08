@@ -32,10 +32,10 @@ export default function AdminStatisticsPage() {
   const onGoBack = () => navigate(-1);
 
   useEffect(() => {
-    if (profile && profile.role !== "ROLE_ADMIN") {
-      alert("관리자만 사용할 수 있는 기능이에요!");
-      navigate("/", {replace: true});
-    }
+    // if (profile && profile.role !== "ROLE_ADMIN") {
+    //   alert("관리자만 사용할 수 있는 기능이에요!");
+    //   navigate("/", {replace: true});
+    // }
   }, [profile]);
 
   if (!newUsersStatistics || !newBooksStatistics) return null;

@@ -8,6 +8,7 @@ import {
 } from "@/features/Book/components";
 import {useMyBookInfo} from "@/features/FlowChart/hooks";
 import {useAuthGuard, useTextInput} from "@/hooks";
+import useDashboardStore from "@/stores/useDashboardStore";
 import {Validator} from "@/utils";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AnimatePresence, motion} from "framer-motion";
@@ -31,15 +32,20 @@ export default function BookInfoEditPage() {
   const canSubmit = title && description;
 
   const {book, NotAuthorAlert} = useMyBookInfo(+bookId!);
-  const {mutate: updateBookInfo, isLoading: isUpdating} = useMutation(
-    () => api.books.updateBookInfo(book!.id, {coverImage, title, description}),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
-        navigate("/studio/dashboard");
-      },
-    },
-  );
+  const {updateBook} = useDashboardStore();
+  const updateBookInfo = () => {
+    updateBook({id: book!.id, title, description});
+    navigate("/studio/dashboard");
+  };
+  // const {mutate: updateBookInfo, isLoading: isUpdating} = useMutation(
+  //   () => api.books.updateBookInfo(book!.id, {coverImage, title, description}),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries([keys.GET_MY_BOOKS]);
+  //       navigate("/studio/dashboard");
+  //     },
+  //   },
+  // );
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -84,7 +90,7 @@ export default function BookInfoEditPage() {
       <SizedBox height={24} />
 
       <BookCoverImageUploader
-        coverImageUrl={book.coverImageUrl ?? undefined}
+        coverImageUrl={undefined}
         setCoverImage={setCoverImage as (file: File) => void}
       />
       <SizedBox height={16} />
@@ -109,7 +115,7 @@ export default function BookInfoEditPage() {
         </button>
       </div>
 
-      {isUpdating ? (
+      {/* {isUpdating ? (
         <motion.div
           className="absolute inset-0 m-auto w-full h-full bg-white flex justify-center items-center"
           initial={{opacity: 0}}
@@ -117,7 +123,7 @@ export default function BookInfoEditPage() {
           exit={{opacity: 0}}>
           <SpinningLoader color="#BDBDBD" />
         </motion.div>
-      ) : null}
+      ) : null} */}
 
       <RequestSignInDialog />
       <NotAuthorAlert />

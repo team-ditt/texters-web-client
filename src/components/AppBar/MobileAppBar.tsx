@@ -21,16 +21,16 @@ export default function MobileAppBar() {
         <LogoPositive width={108} />
       </Link>
       <li className="list-none flex items-center">
-        {profile?.role === "ROLE_ADMIN" ? (
+        {/* {profile?.role === "ROLE_ADMIN" ? (
           <Link
             className="me-2 px-4 py-1 bg-[#242424] rounded-md text-white"
             to="/admin/statistics">
             관리자 통계보기
           </Link>
-        ) : null}
+        ) : null} */}
         <AppBarDashboardButton />
-        <AppBarSearchButton />
-        <AppBarSignInOutButton />
+        {/* <AppBarSearchButton /> */}
+        {/* <AppBarSignInOutButton /> */}
       </li>
     </motion.nav>
   );

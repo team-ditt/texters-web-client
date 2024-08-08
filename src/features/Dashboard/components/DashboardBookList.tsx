@@ -6,27 +6,10 @@ import {useInfiniteScroll} from "@/hooks";
 import {useInfiniteQuery} from "@tanstack/react-query";
 import {ReactComponent as BookOpenIcon} from "assets/icons/book-open.svg";
 import DashboardBookListItem from "./DashboardBookListItem";
+import useDashboardStore from "@/stores/useDashboardStore";
 
-type Props = {
-  memberId: number;
-};
-
-export default function DashboardBookList({memberId}: Props) {
-  const didSignIn = useDidSignIn();
-  const {data, hasNextPage, fetchNextPage} = useInfiniteQuery(
-    [keys.GET_MY_BOOKS, memberId],
-    ({pageParam = 0}) => api.books.fetchMyBooks({memberId, page: pageParam + 1, limit: 10}),
-    {
-      getNextPageParam: lastPage => (lastPage.hasNext ? lastPage.page : undefined),
-      enabled: didSignIn,
-    },
-  );
-  const fetchNext = () => {
-    if (didSignIn && hasNextPage) fetchNextPage();
-  };
-  const books = data?.pages.flatMap(page => page.data) ?? [];
-
-  const {triggerRef} = useInfiniteScroll(fetchNext);
+export default function DashboardBookList() {
+  const {books} = useDashboardStore();
 
   if (!books.length)
     return (
@@ -44,7 +27,6 @@ export default function DashboardBookList({memberId}: Props) {
       {books.map(book => (
         <DashboardBookListItem key={book.id} book={book} />
       ))}
-      <div ref={triggerRef} />
     </div>
   );
 }

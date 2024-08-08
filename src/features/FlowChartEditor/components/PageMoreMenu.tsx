@@ -2,7 +2,6 @@ import {Modal} from "@/components";
 import DynamicElementLocator from "@/features/FlowChartEditor/components/DynamicElementLocator";
 import StaticElementLocator from "@/features/FlowChartEditor/components/StaticElementLocator";
 import useFlowChartEditorStore from "@/features/FlowChartEditor/stores/useFlowChartEditorStore";
-import useIdProviderStore from "@/features/FlowChartEditor/stores/useIdProviderStore";
 import {useModal} from "@/hooks";
 import {useBookReaderStore} from "@/stores";
 import {ReactComponent as EditIcon} from "assets/icons/edit.svg";
@@ -44,14 +43,14 @@ export default function PageMoreMenu() {
 
   const onReadFromThePage = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const realId = useIdProviderStore.getState().getRealId(page.id)!;
+    const realId = page.id!;
     closePageMoreMenu();
     recordHistory(bookId!.toString(), {pageId: realId, isEnding: false});
     navigate(`/studio/books/${bookId}/read`);
   };
   const onPageEdit = (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const realId = useIdProviderStore.getState().getRealId(page.id);
+    const realId = page.id;
     closePageMoreMenu();
     navigate(`/studio/books/${bookId}/editor/pages/${realId}`);
   };
