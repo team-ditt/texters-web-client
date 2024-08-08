@@ -4,7 +4,7 @@
   "version": "1.2.4",
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build --mode production && zip -r dist/web.zip dist/*",
+    "build": "tsc && vite build --mode production && cp dist/index.html dist/404.html && zip -r dist/web.zip dist/*",
     "preview": "vite preview",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write \"src/**/*.ts\""
