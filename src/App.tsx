@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename="/texters-web-client">
         <div className="main">
           <MobileViewBackground />
           <RouterContainer>
