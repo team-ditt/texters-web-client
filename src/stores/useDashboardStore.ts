@@ -11,6 +11,7 @@ type DashboardStoreAction = {
   createBook: (book: Omit<Book, "id">) => Book;
   updateBook: (book: Book) => Book;
   removeBook: (bookId: number) => void;
+  saveBook: (book: Book, flowChart: FlowChart) => Book;
   saveSampleBook: (book: Book, flowChart: FlowChart) => Book;
 };
 
@@ -61,6 +62,26 @@ const useDashboardStore = create<DashboardStoreState & DashboardStoreAction>()(
       removeBook: (bookId: number) => {
         set({books: get().books.filter(b => b.id !== bookId)});
         useFlowChartListStore.getState().removeFlowChart(bookId);
+      },
+      saveBook: (book: Book, flowChart: FlowChart) => {
+        const savedBook = get().books.find(b => b.id === book.id);
+        const bookId = savedBook
+          ? savedBook.id
+          : get().books.reduce((a, b) => Math.max(a, b.id), 0) + 1;
+        const changedBook = {...book, id: bookId};
+        set({books: [...get().books.filter(b => b.id !== book.id), changedBook]});
+        if (savedBook) useFlowChartListStore.getState().removeFlowChart(savedBook.id);
+        const changedFlowChart: FlowChart = {
+          ...flowChart,
+          lanes: flowChart.lanes.map(l => ({
+            ...l,
+            bookId: bookId,
+            pages: l.pages.map(p => ({...p, bookId: bookId})),
+          })),
+          id: bookId,
+        };
+        useFlowChartListStore.getState().saveFlowChart(changedFlowChart);
+        return changedBook;
       },
       saveSampleBook: (book: Book, flowChart: FlowChart) => {
         const savedBook = get().books.find(b => b.sourceUrl === book.sourceUrl);

@@ -32,6 +32,7 @@ export default function BookSampleLoadPage() {
         if (!isValidFlowChart(jsonObject)) {
           alert("유효하지 않은 데이터입니다!");
           navigate("/");
+          return;
         }
         const sampleBook = saveSampleBook(
           {
@@ -45,7 +46,6 @@ export default function BookSampleLoadPage() {
         navigate("/", {replace: true});
         navigate(`/studio/books/${sampleBook.id}/read`);
       },
-
       () => {
         alert("데이터 조회에 실패하였습니다!");
         navigate("/");
