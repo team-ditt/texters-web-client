@@ -10,6 +10,7 @@ export type Book = {
   id: number;
   title: string;
   description: string;
+  sourceUrl?: string;
   // coverImageUrl: string | null;
   // author: Author;
 };

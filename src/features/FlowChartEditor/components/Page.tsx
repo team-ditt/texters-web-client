@@ -33,6 +33,7 @@ export default function Page({viewState}: Props) {
   const finishHover = useFlowChartEditorStore(state => state.finishHover);
   const appendChoice = useFlowChartEditorStore(state => state.appendChoice);
   const openPageMoreMenu = useFlowChartEditorStore(state => state.openPageMoreMenu);
+  const isReadOnly = useFlowChartEditorStore(state => state.isReadOnly);
   const {connectedPages} = useConnectedPages();
 
   const [title, setTitle] = useState(page.title);
@@ -98,25 +99,27 @@ export default function Page({viewState}: Props) {
 
   return (
     <div onMouseOver={handleHovered} onMouseLeave={finishHover}>
-      <DynamicElementLocator zIndex={50}>
-        <div
-          className="w-full h-full"
-          style={{
-            transform: `translate(${Math.round(
-              currentPosition.x + draggingPositionOffset.x,
-            )}px, ${Math.round(currentPosition.y + draggingPositionOffset.y)}px)`,
-            transition: `all ${isDragging ? 0 : 0.05}s ease`,
-            backgroundColor: "red",
-          }}>
+      {!isReadOnly && (
+        <DynamicElementLocator zIndex={50}>
           <div
-            className={`h-full w-full ${isDragging ? "scale-[1.02]" : ""}`}
+            className="w-full h-full"
             style={{
-              transformOrigin: `${elementState.box.width / 2}px ${elementState.box.height / 2}px`,
+              transform: `translate(${Math.round(
+                currentPosition.x + draggingPositionOffset.x,
+              )}px, ${Math.round(currentPosition.y + draggingPositionOffset.y)}px)`,
+              transition: `all ${isDragging ? 0 : 0.05}s ease`,
+              backgroundColor: "red",
             }}>
-            {!page.isIntro && <PageHandle pageId={page.id} />}
+            <div
+              className={`h-full w-full ${isDragging ? "scale-[1.02]" : ""}`}
+              style={{
+                transformOrigin: `${elementState.box.width / 2}px ${elementState.box.height / 2}px`,
+              }}>
+              {!page.isIntro && <PageHandle pageId={page.id} />}
+            </div>
           </div>
-        </div>
-      </DynamicElementLocator>
+        </DynamicElementLocator>
+      )}
       <DynamicElementLocator zIndex={isDragging ? 6 : 5}>
         <div
           style={{
@@ -184,6 +187,7 @@ export default function Page({viewState}: Props) {
                     placeholder="페이지 제목을 입력해주세요"
                     maxLength={30}
                     onInput={onInputTitle}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <button
@@ -203,15 +207,23 @@ export default function Page({viewState}: Props) {
                     left: PAGE_POINT_OFFSET_X,
                     top: PAGE_POINT_OFFSET_Y,
                   }}></div>
-                {page.choices.length < 5 && (
-                  <button
-                    className="absolute text-sm right-0.5 bottom-5 w-full flex justify-center items-center gap-[4px]"
-                    onClick={handleAddChoiceButtonClicked}>
-                    <PlusCircleIcon width={18} height={18} stroke="#A5A5A5" fill="#A5A5A5" />
-                    <div className="text-[#A5A5A5] text-[12px] font-[700] tracking-[-0.6px]">
-                      선택지 추가하기
+                {!isReadOnly ? (
+                  page.choices.length < 5 && (
+                    <button
+                      className="absolute text-sm right-0.5 bottom-5 w-full flex justify-center items-center gap-[4px]"
+                      onClick={handleAddChoiceButtonClicked}>
+                      <PlusCircleIcon width={18} height={18} stroke="#A5A5A5" fill="#A5A5A5" />
+                      <div className="text-[#A5A5A5] text-[12px] font-[700] tracking-[-0.6px]">
+                        선택지 추가하기
+                      </div>
+                    </button>
+                  )
+                ) : (
+                  <div className="absolute text-sm right-0.5 bottom-3 w-full flex justify-center items-center gap-[4px] px-3">
+                    <div className="text-[#A5A5A5] text-[12px] font-[700] tracking-[-0.6px] overflow-hidden line-clamp-2">
+                      {page.content}
                     </div>
-                  </button>
+                  </div>
                 )}
               </div>
             </div>

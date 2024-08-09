@@ -149,11 +149,13 @@ export default function BookDemoReaderPage() {
                 disabled={false}>
                 처음부터 다시 읽기
               </button>
-              <button
-                className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]"
-                onClick={onGoBack}>
-                플로우차트로 돌아가기
-              </button>
+              {!book.sourceUrl && (
+                <button
+                  className="self-center w-full max-w-[400px] min-h-[48px] px-4 py-2 rounded-lg bg-[#E3E3E3] font-medium leading-[2rem]"
+                  onClick={onGoBack}>
+                  플로우차트로 돌아가기
+                </button>
+              )}
             </>
           ) : null}
         </div>

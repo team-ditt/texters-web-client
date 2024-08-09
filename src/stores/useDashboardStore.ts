@@ -1,4 +1,4 @@
-import {Book} from "@/types/book";
+import {Book, FlowChart} from "@/types/book";
 import {create} from "zustand";
 import {createJSONStorage, persist} from "zustand/middleware";
 import useFlowChartListStore from "./useFlowChartListStore";
@@ -11,6 +11,7 @@ type DashboardStoreAction = {
   createBook: (book: Omit<Book, "id">) => Book;
   updateBook: (book: Book) => Book;
   removeBook: (bookId: number) => void;
+  saveSampleBook: (book: Book, flowChart: FlowChart) => Book;
 };
 
 const useDashboardStore = create<DashboardStoreState & DashboardStoreAction>()(
@@ -60,6 +61,26 @@ const useDashboardStore = create<DashboardStoreState & DashboardStoreAction>()(
       removeBook: (bookId: number) => {
         set({books: get().books.filter(b => b.id !== bookId)});
         useFlowChartListStore.getState().removeFlowChart(bookId);
+      },
+      saveSampleBook: (book: Book, flowChart: FlowChart) => {
+        const savedBook = get().books.find(b => b.sourceUrl === book.sourceUrl);
+        const sampleBookId = savedBook
+          ? savedBook.id
+          : get().books.reduce((a, b) => Math.min(a, b.id), 0) - 1;
+        const changedBook = {...book, id: sampleBookId};
+        set({books: [...get().books.filter(b => b.sourceUrl !== book.sourceUrl), changedBook]});
+        if (savedBook) useFlowChartListStore.getState().removeFlowChart(savedBook.id);
+        const changedFlowChart: FlowChart = {
+          ...flowChart,
+          lanes: flowChart.lanes.map(l => ({
+            ...l,
+            bookId: sampleBookId,
+            pages: l.pages.map(p => ({...p, bookId: sampleBookId})),
+          })),
+          id: sampleBookId,
+        };
+        useFlowChartListStore.getState().saveFlowChart(changedFlowChart);
+        return changedBook;
       },
     }),
     {

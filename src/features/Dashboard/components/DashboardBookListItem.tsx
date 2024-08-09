@@ -19,10 +19,15 @@ export default function DashboardBookListItem({book}: Props) {
   return (
     <>
       <motion.button
-        className="border border-[#D9D9D9] rounded-lg shadow-md flex flex-col hover:shadow-lg transition-all duration-100 cursor-pointer overflow-hidden"
+        className="border border-[#D9D9D9] rounded-lg shadow-md flex flex-col hover:shadow-lg transition-all duration-100 cursor-pointer overflow-hidden relative"
         whileHover={{scale: 1.01}}
         onClick={openModal}>
         <BookCoverImage className="w-full aspect-square" src={undefined} />
+        {book.sourceUrl && (
+          <div className="absolute top-1 right-1 z-100 bg-orange-500 rounded-full px-2 py-0.5 text-sm font-semibold text-white pb-1 shadow-md">
+            읽기 전용
+          </div>
+        )}
 
         <div className="flex-1 flex flex-col justify-between items-stretch self-stretch px-3 py-2">
           {/* <div className="flex gap-1">

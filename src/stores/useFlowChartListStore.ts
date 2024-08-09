@@ -34,6 +34,7 @@ type FlowChartListStoreAction = {
   updateFlowChart: (flowChart: FlowChart) => FlowChart;
   updateFlowChartLanes: (bookId: number, lanes: Lane[]) => FlowChart;
   removeFlowChart: (bookId: number) => void;
+  saveFlowChart: (flowChart: FlowChart) => FlowChart;
   getNextId: () => number;
 };
 
@@ -62,6 +63,30 @@ const useFlowChartListStore = create<FlowChartListStoreState & FlowChartListStor
         const _flowCharts = {...get().flowCharts};
         delete _flowCharts[bookId];
         set({flowCharts: _flowCharts});
+      },
+      saveFlowChart: (flowChart: FlowChart) => {
+        const maxId = flowChart.lanes.reduce(
+          (a, x) =>
+            Math.max(
+              a,
+              x.id,
+              x.pages.reduce(
+                (b, y) =>
+                  Math.max(
+                    b,
+                    y.id,
+                    y.choices.reduce((c, z) => Math.max(c, z.id), 0),
+                  ),
+                0,
+              ),
+            ),
+          0,
+        );
+        set({
+          nextId: Math.max(get().nextId, maxId + 1),
+          flowCharts: {...get().flowCharts, [flowChart.id]: flowChart},
+        });
+        return flowChart;
       },
       getNextId: () => {
         const nextId = get().nextId;

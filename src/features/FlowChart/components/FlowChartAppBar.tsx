@@ -70,7 +70,7 @@ export default function FlowChartAppBar() {
         <button onClick={onGoBack}>
           <LeftArrowIcon fill="#939393" />
         </button>
-        {/* <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1> */}
+        <h1 className="font-bold text-ellipsis line-clamp-1">{book?.title}</h1>
       </div>
       <div className="flex items-center gap-1">
         {/* <AutoSaveMarker isSaving={isSaving} updatedAt={updatedAt} error={flowChartError} /> */}

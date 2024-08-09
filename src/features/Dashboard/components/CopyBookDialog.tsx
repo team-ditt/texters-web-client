@@ -15,7 +15,8 @@ export default function CopyBookDialog({
   ...props
 }: Props) {
   const {book} = useMyBookInfo(bookId);
-  const flowchart = useFlowChartListStore().getFlowChart(bookId);
+  const flowchart = JSON.parse(JSON.stringify(useFlowChartListStore().getFlowChart(bookId)));
+  delete flowchart.sourceUrl;
   const flowchartJSON = JSON.stringify(flowchart, null, 2);
 
   const copyOnClipboard = () => {

@@ -22,6 +22,7 @@ const BoardThreadFormPage = lazy(() => import("@/features/Board/pages/BoardThrea
 const BoardThreadPage = lazy(() => import("@/features/Board/pages/BoardThreadPage"));
 const BoardThreadEditPage = lazy(() => import("@/features/Board/pages/BoardThreadEditPage"));
 const NotFoundPage = lazy(() => import("@/features/Error/pages/NotFoundPage"));
+const BookSampleLoadPage = lazy(() => import("@/features/Book/pages/BookSampleLoadPage"));
 
 export function Router() {
   const location = useLocation();
@@ -53,6 +54,7 @@ export function Router() {
         <Route path="/privacy-policy" element={<OfficialDocumentPage type="privacy policy" />} />
         <Route path="/admin/statistics" element={<AdminStatisticsPage />} />
         <Route path="/error/not-found" element={<NotFoundPage />} />
+        <Route path="/load-sample" element={<BookSampleLoadPage />} />
         <Route path="*" element={<Navigate to="/error/not-found" replace />} />
       </Routes>
     </AnimatePresence>

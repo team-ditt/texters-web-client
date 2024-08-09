@@ -29,6 +29,7 @@ import {immer} from "zustand/middleware/immer";
 
 type FlowChartStoreState = {
   bookId: number | null;
+  isReadOnly: boolean;
   modelLanes: Lane[];
   viewStates: ViewStates;
   draggingState: DraggingState;
@@ -107,6 +108,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
     immer((set, get) => {
       return {
         bookId: null,
+        isReadOnly: false,
         modelLanes: [],
         viewStates: {
           lanes: {},
@@ -136,7 +138,7 @@ const useFlowChartEditorStore = create<FlowChartStoreState & FlowChartStoreActio
         openedMoreMenuPageId: null,
         loadFlowChart: flowChart => {
           get().clearFlowChart();
-          set({bookId: flowChart.id});
+          set({bookId: flowChart.id, isReadOnly: !!flowChart.sourceUrl});
           const lanes = deepCopyLanes(flowChart.lanes);
           // get().setModelLanes(idProvider().convertFlowChart(lanes));
           get().setModelLanes(lanes);

@@ -107,7 +107,7 @@ export default function DashboardBookModal({book, onRequestClose, ...props}: Pro
         </div>
 
         <button className="w-full min-h-[48px] bg-[#242424] text-white" onClick={onClick.toEditor}>
-          <span>텍스터즈 에디터로 이동하기</span>
+          <span>텍스터즈 에디터로 이동하기{book.sourceUrl && " (읽기전용)"}</span>
         </button>
       </ReactModal>
 
@@ -273,12 +273,14 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
       <span className="font-bold text-[18px] text-[#242424]">작품 설정</span>
       <SizedBox height={8} />
       <div className="flex flex-wrap gap-x-1 gap-y-2">
-        <button
-          className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 border border-[#D9D9D9] rounded-md bg-[#EFEFEF] text-[#242424]"
-          onClick={onEditBookInfo}>
-          <BookOpenIcon width={16} height={16} fill="#242424" />
-          작품 개요 수정하기
-        </button>
+        {!book.sourceUrl && (
+          <button
+            className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 border border-[#D9D9D9] rounded-md bg-[#EFEFEF] text-[#242424]"
+            onClick={onEditBookInfo}>
+            <BookOpenIcon width={16} height={16} fill="#242424" />
+            작품 개요 수정하기
+          </button>
+        )}
         <button
           className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#0D77E7] text-white"
           onClick={openCopyModal}>
@@ -313,7 +315,7 @@ function BookActions({book, className}: HTMLAttributes<HTMLDivElement> & {book: 
           className="flex items-center gap-1.5 font-semibold text-[14px] ps-4 pe-5 h-7 rounded-md bg-[#F04438] text-white"
           onClick={openDeleteModal}>
           <TrashIcon width={16} height={16} fill="white" stroke="white" />
-          작품 완전삭제하기
+          {book.sourceUrl ? "작품 제거하기" : "작품 완전삭제하기"}
         </button>
       </div>
 

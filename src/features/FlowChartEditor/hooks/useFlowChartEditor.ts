@@ -12,6 +12,7 @@ import {Choice, Page} from "@/types/book";
 import {useEffect} from "react";
 
 export default function useFlowChartEditor() {
+  const isReadOnly = useFlowChartEditorStore(state => state.isReadOnly);
   const setViewLanes = useFlowChartEditorStore(state => state.setViewLanes);
   const updateTransitions = useFlowChartEditorStore(state => state.updateTransitions);
   const finishDrag = useFlowChartEditorStore(state => state.finishDrag);
@@ -253,8 +254,8 @@ export default function useFlowChartEditor() {
   );
 
   /* show new page button on hover between pages */
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (!isReadOnly) {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
@@ -311,13 +312,13 @@ export default function useFlowChartEditor() {
           hideNewPageButton();
           hideNewLanePageButton();
         },
-      ),
-    [],
-  );
+      );
+    }
+  }, [isReadOnly]);
 
   /* show new lane button on hover between lanes */
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (!isReadOnly) {
       useFlowChartEditorStore.subscribe(
         state => state.draggingState,
         draggingState => {
@@ -335,7 +336,7 @@ export default function useFlowChartEditor() {
           }
           hideNewLaneButton();
         },
-      ),
-    [],
-  );
+      );
+    }
+  }, [isReadOnly]);
 }

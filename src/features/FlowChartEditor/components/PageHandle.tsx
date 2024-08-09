@@ -36,7 +36,7 @@ export default function PageHandle({pageId}: Props) {
   return (
     <div
       ref={containerRef}
-      className="absolute cursor-move"
+      className="absolute cursor-move select-none"
       style={{
         transform: `translate(${OFFSET.x}px, ${OFFSET.y}px)`,
         opacity: isDragging || isHovering ? 1 : 0,
